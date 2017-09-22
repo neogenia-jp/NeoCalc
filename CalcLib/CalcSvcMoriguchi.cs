@@ -11,73 +11,114 @@ namespace CalcLib
     {
         class CalcContextMoriguchi : CalcContext
         {
+            public string Value { get; set; }
+            public CalcButton? Ope { get; set; }
+
+            public CalcButton? Ope2 { get; set; }
+
+            public string Buffer { get; set; }
+
+            public bool Reset { get; set; }
+
+            public string OpeName { get; set; }
+
         }
 
         public virtual ICalcContext CreateContext() => new CalcContextMoriguchi();
 
         public virtual void OnButtonClick(ICalcContext ctx0, CalcButton btn)
         {
-            var ctx = ctx0 as CalcContext;
+            var ctx = ctx0 as CalcContextMoriguchi;
             Debug.WriteLine($"Button Clicked {btn}, context={ctx}");
-
-            var answer = 0;
 
             switch (btn)
             {
                 //演算子
                 case CalcButton.BtnPlus:
                     ctx.Ope = btn;
+                    ctx.OpeName = "＋";
                     break;
                 case CalcButton.BtnMinus:
                     ctx.Ope = btn;
+                    ctx.OpeName = "－";
                     break;
                 case CalcButton.BtnDivide:
                     ctx.Ope = btn;
+                    ctx.OpeName = "÷";
                     break;
                 case CalcButton.BtnMultiple:
                     ctx.Ope = btn;
-                    break;
-
-                //計算
-                case CalcButton.BtnEqual:
-                    answer = Calc(ctx.Value1, ctx.Value2, ctx.Ope.Value);
-                    ctx.DisplayText = answer.ToString();
+                    ctx.OpeName = "×";
                     break;
 
                 //クリア
                 case CalcButton.BtnClear:
-
+                    ctx.Buffer = null;
+                    ctx.Value = null;
+                    ctx.Ope = null;
+                    ctx.Ope2 = null;
+                    ctx.DisplayText = "0";
+                    ctx.SubDisplayText = null;
                     break;
                 case CalcButton.BtnClearEnd:
-
                     break;
                 case CalcButton.BtnBS:
-
+                    //TODO
                     break;
 
-                //値入力
+                //計算
+                case CalcButton.BtnEqual:
+                    if (!string.IsNullOrEmpty(ctx.Buffer) && !string.IsNullOrEmpty(ctx.Value) && ctx.Ope2 != null)
+                    {
+                        ctx.Buffer = Calc(ctx.Value, ctx.Buffer, ctx.Ope2.Value).ToString();
+                        ctx.Value = null;
+                        ctx.Ope = null;
+                        ctx.Ope2 = null;
+                        ctx.Reset = true;
+                        ctx.SubDisplayText = null;
+                    }
+                    break;
+
+                //入力数値取得
                 default:
-                    if (ctx.Ope == null)
+                    if (ctx.Reset)
                     {
-                        ctx.Value1 += (int)btn;
-                        ctx.DisplayText = ctx.Value1;
+                        ctx.Buffer = null;
+                        ctx.DisplayText = null;
+                        ctx.Reset = false;
                     }
-                    else
-                    {
-                        ctx.Value2 += (int)btn;
-                        ctx.DisplayText = ctx.Value2;
-                    }
+                    ctx.Buffer += (int)btn;
                     break;
             }
 
+            //値の処理
+            if (ctx.Ope != null)
+            {
+                ctx.Ope2 = ctx.Ope;
+                ctx.SubDisplayText += ctx.Buffer;
 
-            //出力
 
-            //Displayには一回一回結果が表示されている
-            //ctx.DisplayText 
+                if (string.IsNullOrEmpty(ctx.Value))
+                {
+                    ctx.Value = ctx.Buffer;
+                    ctx.Buffer = null;
+                    ctx.Ope = null;
+                    ctx.SubDisplayText += ctx.OpeName;
+                    ctx.OpeName = null;
+                }
+                else if (!string.IsNullOrEmpty(ctx.Buffer))
+                {
+                    ctx.Value = Calc(ctx.Value, ctx.Buffer, ctx.Ope2.Value).ToString();
+                    ctx.Ope = null;
+                    ctx.Buffer = null;
+                    ctx.Reset = true;
+                    ctx.SubDisplayText += ctx.OpeName;
+                    ctx.OpeName = null;
+                }
+            }
 
-            //SubDisplayには履歴が表示されている
-            //ctx.SubDisplayText 
+            //表示
+            ctx.DisplayText = ctx.Buffer == null ? ctx.Value : ctx.Buffer;
         }
 
         /// <summary>
@@ -87,12 +128,12 @@ namespace CalcLib
         /// <param name="Value2"></param>
         /// <param name="Ope"></param>
         /// <returns></returns>
-        public int Calc(string Value1, string Value2, CalcButton Ope)
+        public double Calc(string Value, string Buffer, CalcButton Ope)
         {
-            int answer = 0;
+            double answer = 0;
 
-            var val1 = int.Parse(Value1);
-            var val2 = int.Parse(Value2);
+            var val1 = double.Parse(Value);
+            var val2 = double.Parse(Buffer);
 
             if (Ope == CalcButton.BtnPlus)
             {
@@ -102,11 +143,11 @@ namespace CalcLib
             {
                 answer = val1 - val2;
             }
-            else if (Ope == CalcButton.BtnDivide)
+            else if (Ope == CalcButton.BtnMultiple)
             {
                 answer = val1 * val2;
             }
-            else if (Ope == CalcButton.BtnMultiple)
+            else if (Ope == CalcButton.BtnDivide)
             {
                 answer = val1 / val2;
             }

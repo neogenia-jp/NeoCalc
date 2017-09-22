@@ -20,12 +20,5 @@ namespace CalcLib
 
 
         public override string ToString() => $"{DisplayText} ({SubDisplayText})";
-
-
-
-        public string Value1 { get; set; }
-        public string Value2 { get; set; }
-        public CalcButton? Ope { get; set; }
-
     }
 }
