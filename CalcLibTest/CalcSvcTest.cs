@@ -74,7 +74,7 @@ namespace CalcLibTest
             // 2桁2口
             svc.OnButtonClick(ctx, CalcLib.CalcButton.Btn1);
             svc.OnButtonClick(ctx, CalcLib.CalcButton.Btn2);
-            svc.OnButtonClick(ctx, CalcLib.CalcButton.BtnPlus);
+            svc.OnButtonClick(ctx, CalcLib.CalcButton.BtnMinus);
             svc.OnButtonClick(ctx, CalcLib.CalcButton.Btn4);
             svc.OnButtonClick(ctx, CalcLib.CalcButton.Btn5);
             svc.OnButtonClick(ctx, CalcLib.CalcButton.BtnEqual);
@@ -163,7 +163,8 @@ namespace CalcLibTest
             svc.OnButtonClick(ctx, CalcLib.CalcButton.Btn3);
             svc.OnButtonClick(ctx, CalcLib.CalcButton.BtnEqual);
 
-            Assert.AreEqual("0.333333333333", ctx.DisplayText);
+            // double型の有効桁数が15～16桁のため16桁としておく
+            Assert.AreEqual("0.333333333333333", ctx.DisplayText);
         }
     }
 }
