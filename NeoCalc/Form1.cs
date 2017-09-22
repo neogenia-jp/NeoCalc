@@ -52,6 +52,11 @@ namespace NeoCalc
             label2.Text = ctx.SubDisplayText;
         }
 
+        /// <summary>
+        /// ボタン「1」
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void button9_Click(object sender, EventArgs e)
         {
             svc.OnButtonClick(ctx, CalcLib.CalcButton.Btn1);

@@ -12,6 +12,12 @@ namespace CalcLib
         Btn1,
         Btn2,
         Btn3,
+        Btn4,
+        Btn5,
+        Btn6,
+        Btn7,
+        Btn8,
+        Btn9,
 
 
         BtnPlus,
