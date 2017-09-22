@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CalcLib", "CalcLib\CalcLib.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CalcLibTest", "CalcLibTest\CalcLibTest.csproj", "{5A004B0C-EAFB-416C-A176-838AD1D5D4BE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebCalc", "WebCalc\WebCalc.csproj", "{9540DD66-80A3-43DC-ADF9-E88E21C7C839}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{5A004B0C-EAFB-416C-A176-838AD1D5D4BE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5A004B0C-EAFB-416C-A176-838AD1D5D4BE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5A004B0C-EAFB-416C-A176-838AD1D5D4BE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9540DD66-80A3-43DC-ADF9-E88E21C7C839}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9540DD66-80A3-43DC-ADF9-E88E21C7C839}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9540DD66-80A3-43DC-ADF9-E88E21C7C839}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9540DD66-80A3-43DC-ADF9-E88E21C7C839}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
