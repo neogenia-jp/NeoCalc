@@ -9,8 +9,9 @@ namespace CalcLib
 {
     internal class CalcSvc : ICalcSvc
     {
+        public virtual ICalcContext CreateContext() => new CalcContext();
 
-        public void OnButtonClick(ICalcContext ctx0, CalcButton btn)
+        public virtual void OnButtonClick(ICalcContext ctx0, CalcButton btn)
         {
             var ctx = ctx0 as CalcContext;
             Debug.WriteLine($"Button Clicked {btn}, context={ctx}");

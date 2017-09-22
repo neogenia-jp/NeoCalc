@@ -11,12 +11,12 @@ namespace CalcLib
         /// <summary>
         /// ディスプレイに表示する文字列
         /// </summary>
-        public string DisplayText { get; set; }
+        public virtual string DisplayText { get; set; }
 
         /// <summary>
         /// サブディスプレイに表示する文字列
         /// </summary>
-        public string SubDisplayText { get; set; }
+        public virtual string SubDisplayText { get; set; }
 
 
         public override string ToString() => $"{DisplayText} ({SubDisplayText})";
