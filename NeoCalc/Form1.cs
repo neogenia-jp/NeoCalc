@@ -41,6 +41,7 @@ namespace NeoCalc
         {
             ctx = CalcLib.Factory.CreateContext();
             svc = CalcLib.Factory.CreateService();
+            SetupExtButtons(svc as ICalcSvcEx);
             UpdateContext();
         }
 
@@ -51,6 +52,21 @@ namespace NeoCalc
         {
             label1.Text = ctx.DisplayText;
             label2.Text = ctx.SubDisplayText;
+        }
+
+        /// <summary>
+        /// 拡張ボタンのセットアップ
+        /// </summary>
+        /// <param name="svc"></param>
+        private void SetupExtButtons(ICalcSvcEx svc)
+        {
+            var btns = new[] { button21, button22, button23, button24 };
+            for (int i = 0; i < btns.Length; i++)
+            {
+                var txt = svc?.GetExtButtonText(i+1);
+                btns[i].Text = txt;
+                btns[i].Enabled = txt != null;
+            }
         }
 
         /// <summary>

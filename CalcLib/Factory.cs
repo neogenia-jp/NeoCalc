@@ -15,7 +15,7 @@ namespace CalcLib
         {
             // 環境変数「CalcSvcClass」よりクラス名を決定する
             var clsName = Environment.GetEnvironmentVariable("CalcSvcClass");
-            if (string.IsNullOrWhiteSpace(clsName))
+        //    if (string.IsNullOrWhiteSpace(clsName))
             {
                 return new CalcSvc();
             }

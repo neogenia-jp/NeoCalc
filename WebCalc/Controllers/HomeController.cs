@@ -10,7 +10,18 @@ namespace WebCalc.Controllers
     public class HomeController : Controller
     {
         [HttpGet]
-        public ActionResult Index() => View();
+        public ActionResult Index()
+        {
+            var svc = Factory.CreateService();
+            SetupExtButtons(svc as ICalcSvcEx);
+            return View();
+        }
+
+        private void SetupExtButtons(ICalcSvcEx svc)
+        {
+            if (svc == null) return;
+            ViewBag.ExtButtonText = new[] { 0, 1, 2, 3 }.Select(i => svc.GetExtButtonText(i+1)).ToArray();
+        }
 
         [HttpPost]
         public ActionResult Index(string btn)

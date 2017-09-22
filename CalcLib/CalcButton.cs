@@ -34,5 +34,10 @@ namespace CalcLib
         BtnClear,
         BtnClearEnd,
         BtnBS,
+
+        BtnExt1,
+        BtnExt2,
+        BtnExt3,
+        BtnExt4,
     }
 }
