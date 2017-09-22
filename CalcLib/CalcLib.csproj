@@ -41,6 +41,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CalcButton.cs" />
+    <Compile Include="CalcSvcMaeda.cs" />
     <Compile Include="CalcSvc.cs" />
     <Compile Include="CalcContext.cs" />
     <Compile Include="Factory.cs" />
