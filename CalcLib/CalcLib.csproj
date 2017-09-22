@@ -41,9 +41,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CalcButton.cs" />
+    <Compile Include="Calculator.cs" />
     <Compile Include="CalcSvcMaeda.cs" />
     <Compile Include="CalcSvc.cs" />
     <Compile Include="CalcContext.cs" />
+    <Compile Include="CalcSvcYamamoto.cs" />
     <Compile Include="Factory.cs" />
     <Compile Include="ICalcContext.cs" />
     <Compile Include="ICalcSvc.cs" />

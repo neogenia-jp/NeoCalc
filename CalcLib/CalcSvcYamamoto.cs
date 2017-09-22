@@ -12,20 +12,40 @@ namespace CalcLib
         class CalcContextYamamoto : CalcContext
         {
             /// <summary>
-            /// 演算子を保持しておく
+            /// 入力状態
             /// </summary>
-            public CalcButton Operator { get; set; }
+            public enum State
+            {
+                Num = 0,    // 数字入力後
+                Operator,   // 演算子入力後
+                Equal       // イコール入力後
+            }
 
             /// <summary>
-            /// 結果値を保持しておく
+            /// 入力状態
             /// </summary>
-            public double ResultValue { get; set; }
-            
-            /// <summary>
-            /// ディスプレイテキストをクリアするフラグ
-            /// </summary>
-            public bool DisplayTextClearFlag { get; set; }
+            public State InputState { get; set; }
 
+            /// <summary>
+            /// 入力値を入れておく場所
+            /// </summary>
+            public Calculator Cal { get; set; }
+
+            /// <summary>
+            /// コンストラクタ
+            /// </summary>
+            public CalcContextYamamoto()
+            {
+                Cal = new Calculator();
+            }
+
+            /// <summary>
+            /// 表示値クリア
+            /// </summary>
+            public void DisplayTextClear()
+            {
+                DisplayText = "";
+            }
         }
         
         public virtual ICalcContext CreateContext() => new CalcContextYamamoto();
@@ -42,35 +62,85 @@ namespace CalcLib
 
             switch (btn)
             {
+                // "＋"
                 case CalcButton.BtnPlus:
                     OperatorProc(ctx, btn);
                     break;
 
+                // "－"
                 case CalcButton.BtnMinus:
                     OperatorProc(ctx, btn);
                     break;
 
+                // "×"
                 case CalcButton.BtnMultiple:
                     OperatorProc(ctx, btn);
                     break;
 
+                // "÷"
                 case CalcButton.BtnDivide:
                     OperatorProc(ctx, btn);
                     break;
 
+                // "＝"
                 case CalcButton.BtnEqual:
-                    EqualProc(ctx);
+                    EqualProc(ctx, btn);
+                    break;
+
+                // "."
+                case CalcButton.BtnDot:
+                    DotProc(ctx, btn);
                     break;
 
                 default:
-                    if(ctx.DisplayTextClearFlag)
-                    {
-                        ctx.DisplayText = "";
-                        ctx.DisplayTextClearFlag = false;
-                    }
-                    ctx.DisplayText += ((int)btn).ToString();
+                    NumProc(ctx, btn);
                     break;
             }
+        }
+
+        /// <summary>
+        /// ドットを押されたときの処理
+        /// </summary>
+        /// <param name="ctx"></param>
+        /// <param name="btn"></param>
+        private void DotProc(CalcContextYamamoto ctx, CalcButton btn)
+        {
+            if (!string.IsNullOrWhiteSpace(ctx.DisplayText) && ctx.DisplayText.IndexOf(".") > 0)
+            {
+                // すでにドットが入力されている場合は入力不可
+                return;
+            }
+
+            // 演算子またはイコールが押されていれば表示値を消しておく
+            if (ctx.InputState == CalcContextYamamoto.State.Operator || ctx.InputState == CalcContextYamamoto.State.Equal)
+            {
+                ctx.DisplayTextClear();
+            }
+
+            // 一桁もない場合は0を付与しておく
+            if(string.IsNullOrWhiteSpace(ctx.DisplayText))
+            {
+                ctx.DisplayText += "0";
+            }
+            ctx.DisplayText += Calculator.CalcItem.GetBtnString(btn);
+        }
+
+        /// <summary>
+        /// 数字を押されたときの処理
+        /// </summary>
+        /// <param name="ctx"></param>
+        /// <param name="btn"></param>
+        private void NumProc(CalcContextYamamoto ctx, CalcButton btn)
+        {
+            // 演算子またはイコールが押されていれば表示値を消しておく
+            if (ctx.InputState == CalcContextYamamoto.State.Operator || ctx.InputState == CalcContextYamamoto.State.Equal)
+            {
+                ctx.DisplayTextClear();
+            }
+            ctx.DisplayText += Calculator.CalcItem.GetBtnString(btn);
+
+            // 数字ボタン押下後の状態へ遷移
+            ctx.InputState = CalcContextYamamoto.State.Num;
         }
 
         /// <summary>
@@ -80,90 +150,60 @@ namespace CalcLib
         /// <param name="btn"></param>
         private void OperatorProc(CalcContextYamamoto ctx, CalcButton btn)
         {
-            switch(btn)
+            // 入力値をリストに追加
+            if (string.IsNullOrWhiteSpace(ctx.DisplayText))
             {
-                case CalcButton.BtnPlus:
-                    ctx.ResultValue += double.Parse(ctx.DisplayText);
-                    break;
-                case CalcButton.BtnMinus:
-                    ctx.ResultValue -= double.Parse(ctx.DisplayText);
-                    break;
-                case CalcButton.BtnMultiple:
-                    ctx.ResultValue *= double.Parse(ctx.DisplayText);
-                    break;
-                case CalcButton.BtnDivide:
-                    ctx.ResultValue /= double.Parse(ctx.DisplayText);
-                    break;
-                default:
-                    break;
+                // 入力値がない場合は0を入れておく
+                ctx.Cal.Add(new Calculator.CalcItem("0"));
             }
+            else
+            {
+                // 現在の入力値を計算
+                ctx.Cal.Add(new Calculator.CalcItem(ctx.DisplayText));
+            }
+            ctx.Cal.Add(new Calculator.CalcItem(Calculator.CalcItem.GetBtnString(btn)));
+
+            // 計算結果を表示
+            var answer = ctx.Cal.Calc();
+            ctx.DisplayText = answer.ToString();
 
             // 計算過程を反映
-            ctx.SubDisplayText += (ctx.DisplayText + GetOperatorString(btn));
+            var process = ctx.Cal.GetCalcProcess();
+            ctx.SubDisplayText = process;
 
-            // 演算子を覚えておく
-            ctx.Operator = btn;
-
-            // 次に入力するときはディスプレイテキストを消す
-            ctx.DisplayTextClearFlag = true;
+            // 演算子ボタン押下後の状態へ遷移
+            ctx.InputState = CalcContextYamamoto.State.Operator;
         }
 
         /// <summary>
         /// 最終結果計算
         /// </summary>
         /// <param name="ctx"></param>
-        private void EqualProc(CalcContextYamamoto ctx)
+        private void EqualProc(CalcContextYamamoto ctx, CalcButton btn)
         {
-            // 前回入力された演算子に応じて処理を行う
-            switch(ctx.Operator)
+            // 入力値をリストに追加
+            if (string.IsNullOrWhiteSpace(ctx.DisplayText))
             {
-                case CalcButton.BtnPlus:
-                    ctx.ResultValue += double.Parse(ctx.DisplayText);
-                    break;
-                case CalcButton.BtnMinus:
-                    ctx.ResultValue -= double.Parse(ctx.DisplayText);
-                    break;
-                case CalcButton.BtnMultiple:
-                    ctx.ResultValue *= double.Parse(ctx.DisplayText);
-                    break;
-                case CalcButton.BtnDivide:
-                    ctx.ResultValue /= double.Parse(ctx.DisplayText);
-                    break;
-                default:
-                    break;
+                // 入力値がない場合は0を入れておく
+                ctx.Cal.Add(new Calculator.CalcItem("0"));
             }
+            else
+            {
+                ctx.Cal.Add(new Calculator.CalcItem(ctx.DisplayText));
+            }
+            ctx.Cal.Add(new Calculator.CalcItem(Calculator.CalcItem.GetBtnString(btn)));
 
-            // 結果を表示
-            ctx.DisplayText = ctx.ResultValue.ToString();
+            // 計算結果を表示
+            var answer = ctx.Cal.Calc();
+            ctx.DisplayText = answer.ToString();
 
             // 計算過程クリア
             ctx.SubDisplayText = "";
-            ctx.ResultValue = 0;
+            ctx.Cal.Clear();
 
-            // 次に入力するときはディスプレイテキストを消す
-            ctx.DisplayTextClearFlag = true;
+            // イコールボタン押下後の状態へ遷移
+            ctx.InputState = CalcContextYamamoto.State.Equal;
         }
 
-        /// <summary>
-        /// 演算子ボタンに対応する文字を返す
-        /// </summary>
-        /// <param name="btn"></param>
-        /// <returns></returns>
-        private string GetOperatorString(CalcButton btn)
-        {
-            switch(btn)
-            {
-                case CalcButton.BtnPlus:
-                    return "+";
-                case CalcButton.BtnMinus:
-                    return "-";
-                case CalcButton.BtnMultiple:
-                    return "×";
-                case CalcButton.BtnDivide:
-                    return "÷";
-                default:
-                    return "";
-            }
-        }
     }
 }
