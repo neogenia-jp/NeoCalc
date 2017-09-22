@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CalcLib;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -52,33 +53,28 @@ namespace NeoCalc
             label2.Text = ctx.SubDisplayText;
         }
 
-        private void button9_Click(object sender, EventArgs e)
+        /// <summary>
+        /// ボタンクリックイベント
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void btn_Clicked(object sender, EventArgs e)
         {
-            svc.OnButtonClick(ctx, CalcLib.CalcButton.Btn1);
-            UpdateContext();
-        }
+            var btn = sender as Button;
+            if (btn == null) return;
 
-        private void button10_Click(object sender, EventArgs e)
-        {
-            svc.OnButtonClick(ctx, CalcLib.CalcButton.Btn2);
-            UpdateContext();
-        }
+            // ボタンの Tag より CalcButton enum を決定する（Tagが設定されていなければTextを見る）
+            var tag = btn.Tag?.ToString();
+            if (string.IsNullOrEmpty(tag)) tag = btn.Text;
 
-        private void button11_Click(object sender, EventArgs e)
-        {
-            svc.OnButtonClick(ctx, CalcLib.CalcButton.Btn3);
-            UpdateContext();
-        }
+            var btnName = $"Btn{tag}";
+            CalcButton cb;
+            if (!Enum.TryParse(btnName, out cb))
+            {
+                throw new ApplicationException($"ボタン'{btnName}'が解釈できません。");
+            }
 
-        private void button12_Click(object sender, EventArgs e)
-        {
-            svc.OnButtonClick(ctx, CalcLib.CalcButton.BtnPlus);
-            UpdateContext();
-        }
-
-        private void button16_Click(object sender, EventArgs e)
-        {
-            svc.OnButtonClick(ctx, CalcLib.CalcButton.BtnEqual);
+            svc.OnButtonClick(ctx, cb);
             UpdateContext();
         }
     }
