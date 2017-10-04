@@ -166,13 +166,13 @@ namespace CalcLib
             public CalcBuffer Buffer { get; } = new CalcBuffer();
 
             public string Value1;
-            public decimal Value1Decimal => decimal.Parse(Value1);
+            public decimal Value1Decimal => string.IsNullOrWhiteSpace(Value1) ? 0m : decimal.Parse(Value1);
 
             public IOperator Operator;
 
             public decimal Value2Decimal => decimal.Parse(Buffer.ToString());
 
-            public string DisplayText => Buffer.IsNull ? null : string.Format("{0:#,0.############}", Buffer.IsEmpty ? Value1Decimal: Value2Decimal);
+            public string DisplayText => Buffer.IsNull ? null : string.Format("{0:#,0.#############}", Buffer.IsEmpty ? Value1Decimal: Value2Decimal);
 
             public string SubDisplayText => Operator!=null ? $"{Value1} {(Operator as ArithmeticOperator)?.Label}" : null;
 
