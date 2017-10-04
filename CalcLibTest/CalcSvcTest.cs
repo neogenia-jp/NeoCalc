@@ -163,7 +163,7 @@ namespace CalcLibTest
             svc.OnButtonClick(ctx, CalcLib.CalcButton.Btn3);
             svc.OnButtonClick(ctx, CalcLib.CalcButton.BtnEqual);
 
-            Assert.AreEqual("0.333333333333333", ctx.DisplayText);
+            Assert.AreEqual("0.333333333333", ctx.DisplayText);
         }
     }
 }
