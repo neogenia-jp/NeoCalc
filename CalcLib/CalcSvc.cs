@@ -17,6 +17,7 @@ namespace CalcLib
             Debug.WriteLine($"Button Clicked {btn}, context={ctx}");
 
             ctx.DisplayText = "Test";
+
         }
     }
 }

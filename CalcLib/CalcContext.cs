@@ -20,6 +20,5 @@ namespace CalcLib
 
 
         public override string ToString() => $"{DisplayText} ({SubDisplayText})";
-
     }
 }

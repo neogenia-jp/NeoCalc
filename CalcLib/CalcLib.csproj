@@ -46,6 +46,7 @@
     <Compile Include="CalcSvc.cs" />
     <Compile Include="CalcContext.cs" />
     <Compile Include="CalcSvcYamamoto.cs" />
+    <Compile Include="CalcSvcMoriguchi.cs" />
     <Compile Include="Factory.cs" />
     <Compile Include="ICalcContext.cs" />
     <Compile Include="ICalcSvc.cs" />
