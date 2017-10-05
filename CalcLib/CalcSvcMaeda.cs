@@ -171,7 +171,7 @@ namespace CalcLib
 
             public IOperator Operator;
 
-            public decimal Value2Decimal => decimal.Parse(Buffer.ToString());
+            public decimal Value2Decimal => Buffer.IsEmpty ? 0m : decimal.Parse(Buffer.ToString());
 
             public string DisplayText => Buffer.IsNull ? null : string.Format("{0:#,0.#############}", Buffer.IsEmpty ? Value1Decimal: Value2Decimal);
 
