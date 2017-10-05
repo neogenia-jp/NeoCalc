@@ -143,7 +143,7 @@ namespace CalcLib
             {
                 var v = decimal.Parse(ctx.Buffer.ToString());
                 ctx.Buffer.Clear();
-                ctx.Buffer.Append(ctx.Value1Decimal * 100m / v);
+                ctx.Buffer.Append(ctx.Value1Decimal / v);
             }
         }
 
@@ -157,6 +157,7 @@ namespace CalcLib
             { CalcButton.BtnClearEnd, new ClearEndOperator() },
             { CalcButton.BtnBS, new BackSpaceOperator() },
             { CalcButton.BtnEqual, new EqualOperator() },
+            { CalcButton.BtnExt1, new PercentOperator() },
         };
 
 
