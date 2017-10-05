@@ -63,8 +63,8 @@
 <script type="text/javascript">
     $(function () {
         function onAjaxSuccess(json) {
-            $(".display-text").text(json.DisplayText);
-            $(".sub-display-text").text(json.SubDisplayText);
+            $(".display-text").text(json.DisplayText || '');
+            $(".sub-display-text").text(json.SubDisplayText || '');
         }
 
         $(".calc-button").click(function (evt) {
