@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace CalcLib
 {
-    internal class CalcSvcYamamoto : ICalcSvc
+    internal class CalcSvcYamamoto : ICalcSvcEx
     {
         class CalcContextYamamoto : CalcContext
         {
@@ -92,10 +92,26 @@ namespace CalcLib
                     DotProc(ctx, btn);
                     break;
 
+                // "%"
+                case CalcButton.BtnExt1:
+                    PercentProc(ctx, btn);
+                    break;
+
                 default:
                     NumProc(ctx, btn);
                     break;
             }
+        }
+
+        /// <summary>
+        /// 拡張ボタンのテキストを返す
+        /// </summary>
+        /// <param name="num"></param>
+        /// <returns></returns>
+        public string GetExtButtonText(int num)
+        {
+            if (num == 1) return "%";
+            return null;
         }
 
         /// <summary>
@@ -203,6 +219,24 @@ namespace CalcLib
 
             // イコールボタン押下後の状態へ遷移
             ctx.InputState = CalcContextYamamoto.State.Equal;
+        }
+
+        /// <summary>
+        /// パーセントを押されたときの処理
+        /// </summary>
+        /// <param name="ctx"></param>
+        /// <param name="btn"></param>
+        private void PercentProc(CalcContextYamamoto ctx, CalcButton btn)
+        {
+            // サブディスプレイの内容を計算
+            var subResult = ctx.Cal.Calc();
+
+            // 入力されている値を%として計算する
+            var answer = subResult * (double.Parse(ctx.DisplayText) / 100);
+
+            // 表示
+            ctx.DisplayText = answer.ToString();
+            ctx.SubDisplayText += answer.ToString();
         }
 
     }
