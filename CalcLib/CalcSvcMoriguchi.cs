@@ -9,18 +9,48 @@ namespace CalcLib
 {
     internal class CalcSvcMoriguchi : ICalcSvc
     {
-        class CalcContextMoriguchi : CalcContext
+        class OpeNameHelper
         {
+            static readonly Dictionary<CalcButton, string> OpeTextTable = new Dictionary<CalcButton, string>
+            {
+                {                CalcButton.BtnPlus, "+" },
+                {              CalcButton.BtnMinus, "-" },
+                { CalcButton.BtnMultiple, "×" },
+              {  CalcButton.BtnDivide, "÷"},
+            };
+            public static string Get(CalcButton? opeButton) => opeButton.HasValue ? OpeTextTable[opeButton.Value] : "";
+        }
+
+        class CalcContextMoriguchi : ICalcContext
+        {
+
+            /// <summary>
+            /// 左辺の値
+            /// </summary>
             public string Value { get; set; }
-            public CalcButton? Ope { get; set; }
 
-            public CalcButton? Ope2 { get; set; }
+            
+            /// <summary>
+            /// 計算対象とする演算子
+            /// </summary>
+            public CalcButton? Operation { get; set; }
 
+            /// <summary>
+            /// 入力中の値（Valueがセットされている時は右辺となる）
+            /// </summary>
             public string Buffer { get; set; }
 
             public bool Reset { get; set; }
 
-            public string OpeName { get; set; }
+
+            public string DisplayText => Buffer == null ? Value : Buffer;
+
+
+            /// <summary>
+            /// サブディスプレイに表示する文字列
+            /// </summary>
+            public virtual string SubDisplayText => Operation == null ? "" : Value + OpeNameHelper.Get(Operation);
+
 
         }
 
@@ -35,30 +65,18 @@ namespace CalcLib
             {
                 //演算子
                 case CalcButton.BtnPlus:
-                    ctx.Ope = btn;
-                    ctx.OpeName = "＋";
-                    break;
                 case CalcButton.BtnMinus:
-                    ctx.Ope = btn;
-                    ctx.OpeName = "－";
-                    break;
                 case CalcButton.BtnDivide:
-                    ctx.Ope = btn;
-                    ctx.OpeName = "÷";
-                    break;
                 case CalcButton.BtnMultiple:
-                    ctx.Ope = btn;
-                    ctx.OpeName = "×";
+                    OnOpeButtonClick(ctx, btn);   // 演算子ボタン押下時の処理
                     break;
 
                 //クリア
                 case CalcButton.BtnClear:
                     ctx.Buffer = null;
                     ctx.Value = null;
-                    ctx.Ope = null;
-                    ctx.Ope2 = null;
-                    ctx.DisplayText = "0";
-                    ctx.SubDisplayText = null;
+                    ctx.Operation = null;
+                    //ctx.SubDisplayText = null;
                     break;
                 case CalcButton.BtnClearEnd:
                     break;
@@ -68,14 +86,11 @@ namespace CalcLib
 
                 //計算
                 case CalcButton.BtnEqual:
-                    if (!string.IsNullOrEmpty(ctx.Buffer) && !string.IsNullOrEmpty(ctx.Value) && ctx.Ope2 != null)
+                    if (!string.IsNullOrEmpty(ctx.Buffer) && !string.IsNullOrEmpty(ctx.Value) && ctx.Operation != null)
                     {
-                        ctx.Buffer = Calc(ctx.Value, ctx.Buffer, ctx.Ope2.Value).ToString();
-                        ctx.Value = null;
-                        ctx.Ope = null;
-                        ctx.Ope2 = null;
-                        ctx.Reset = true;
-                        ctx.SubDisplayText = null;
+                        ExecCalcuration(ctx, ctx.Operation.Value);
+                        ctx.Operation = null;
+                        //ctx.SubDisplayText = null;
                     }
                     break;
 
@@ -84,41 +99,57 @@ namespace CalcLib
                     if (ctx.Reset)
                     {
                         ctx.Buffer = null;
-                        ctx.DisplayText = null;
                         ctx.Reset = false;
                     }
                     ctx.Buffer += (int)btn;
                     break;
             }
+        }
 
-            //値の処理
-            if (ctx.Ope != null)
+        /// <summary>
+        /// 演算子ボタン押下時の処理
+        /// </summary>
+        /// <param name="ctx"></param>
+        private void OnOpeButtonClick(CalcContextMoriguchi ctx, CalcButton btn)
+        {
+            ctx.Operation = btn;
+            //ctx.SubDisplayText += ctx.Buffer;
+
+            if (string.IsNullOrEmpty(ctx.Value))
             {
-                ctx.Ope2 = ctx.Ope;
-                ctx.SubDisplayText += ctx.Buffer;
+                // 左辺が未入力の時、Bufferの値を左辺とする
+                ctx.Value = ctx.Buffer;
+                ctx.Buffer = null;
+                //ctx.SubDisplayText += ctx.Buffer + OpeNameHelper.Get(btn);
+            }
+            else if (!string.IsNullOrEmpty(ctx.Buffer))
+            {
+                // 左辺が入力済みで、Bufferが入力済みの時、計算処理を実行する
+                var x = ExecCalcuration(ctx, btn);
 
+                // 続けて計算できるよう実行結果を左辺にセットする。
+                ctx.Value = x;
+                ctx.Buffer = null;
+                //ctx.SubDisplayText += OpeNameHelper.Get(btn);
+            }
+        }
 
-                if (string.IsNullOrEmpty(ctx.Value))
-                {
-                    ctx.Value = ctx.Buffer;
-                    ctx.Buffer = null;
-                    ctx.Ope = null;
-                    ctx.SubDisplayText += ctx.OpeName;
-                    ctx.OpeName = null;
-                }
-                else if (!string.IsNullOrEmpty(ctx.Buffer))
-                {
-                    ctx.Value = Calc(ctx.Value, ctx.Buffer, ctx.Ope2.Value).ToString();
-                    ctx.Ope = null;
-                    ctx.Buffer = null;
-                    ctx.Reset = true;
-                    ctx.SubDisplayText += ctx.OpeName;
-                    ctx.OpeName = null;
-                }
+        /// <summary>
+        /// 計算処理を実行します
+        /// </summary>
+        /// <param name="ctx"></param>
+        /// <returns></returns>
+        private string ExecCalcuration(CalcContextMoriguchi ctx, CalcButton operation)
+        {
+            string x;
+            {
+                x = Calc(ctx.Value, ctx.Buffer, operation).ToString();
+                ctx.Reset = true;
+                ctx.Buffer = x;
+                ctx.Value = null;
             }
 
-            //表示
-            ctx.DisplayText = ctx.Buffer == null ? ctx.Value : ctx.Buffer;
+            return x;
         }
 
         /// <summary>
