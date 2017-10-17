@@ -163,8 +163,8 @@ namespace CalcLibTest
             svc.OnButtonClick(ctx, CalcLib.CalcButton.Btn3);
             svc.OnButtonClick(ctx, CalcLib.CalcButton.BtnEqual);
 
-            // double型の有効桁数が15～16桁のため16桁としておく
-            Assert.AreEqual("0.333333333333333", ctx.DisplayText);
+            // 小数点以下は13桁までとする
+            Assert.AreEqual("0.3333333333333", ctx.DisplayText);
         }
     }
 }
