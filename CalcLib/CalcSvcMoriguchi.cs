@@ -50,6 +50,17 @@ namespace CalcLib
 
         public virtual ICalcContext CreateContext() => new CalcContextMoriguchi();
 
+        /// <summary>
+        /// 拡張ボタンのテキストを返す
+        /// </summary>
+        /// <param name="num"></param>
+        /// <returns></returns>
+        public string GetExtButtonText(int num)
+        {
+            if (num == 1) return "%";
+            return null;
+        }
+
         public virtual void OnButtonClick(ICalcContext ctx0, CalcButton btn)
         {
             var ctx = ctx0 as CalcContextMoriguchi;
