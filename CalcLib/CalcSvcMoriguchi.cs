@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace CalcLib
 {
-    internal class CalcSvcMoriguchi : ICalcSvc
+    internal class CalcSvcMoriguchi : ICalcSvcEx
     {
         class OpeNameHelper
         {
