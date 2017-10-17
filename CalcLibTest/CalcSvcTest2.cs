@@ -1,11 +1,52 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Linq;
 
 namespace CalcLibTest
 {
     [TestClass]
     public class CalcSvcTest2
     {
+        [TestMethod]
+        public void 小数点以下の有効桁数は13桁でそれ以下は四捨五入されること()
+        {
+            var ctx = CalcLib.Factory.CreateContext();
+            var svc = CalcLib.Factory.CreateService();
+
+            // 0.0000000000005 (小数点以下13桁)
+            svc.OnButtonClick(ctx, CalcLib.CalcButton.Btn0);
+            svc.OnButtonClick(ctx, CalcLib.CalcButton.BtnDot);
+            Enumerable.Range(1, 12).ToList().ForEach(i => svc.OnButtonClick(ctx, CalcLib.CalcButton.Btn0));
+            svc.OnButtonClick(ctx, CalcLib.CalcButton.Btn5);
+
+            Assert.AreEqual("0.0000000000005", ctx.DisplayText);
+
+            // × 0.7
+            svc.OnButtonClick(ctx, CalcLib.CalcButton.BtnMultiple);
+            svc.OnButtonClick(ctx, CalcLib.CalcButton.Btn0);
+            svc.OnButtonClick(ctx, CalcLib.CalcButton.BtnDot);
+            svc.OnButtonClick(ctx, CalcLib.CalcButton.Btn7);
+
+            // =
+            svc.OnButtonClick(ctx, CalcLib.CalcButton.BtnEqual);
+
+            // 0.00000000000035 であるが、有効桁数以下は四捨五入される
+            Assert.AreEqual("0.0000000000004", ctx.DisplayText);
+
+            // × 1.1
+            svc.OnButtonClick(ctx, CalcLib.CalcButton.BtnMultiple);
+            svc.OnButtonClick(ctx, CalcLib.CalcButton.Btn1);
+            svc.OnButtonClick(ctx, CalcLib.CalcButton.BtnDot);
+            svc.OnButtonClick(ctx, CalcLib.CalcButton.Btn1);
+
+            // =
+            svc.OnButtonClick(ctx, CalcLib.CalcButton.BtnEqual);
+
+            // 0.00000000000044 であるが、有効桁数以下は四捨五入される
+            Assert.AreEqual("0.0000000000004", ctx.DisplayText);
+
+        }
+
         [TestMethod]
         public void 小数の2進数演算誤差のテスト()
         {
@@ -30,11 +71,24 @@ namespace CalcLibTest
             svc.OnButtonClick(ctx, CalcLib.CalcButton.Btn2);
             svc.OnButtonClick(ctx, CalcLib.CalcButton.Btn1);
 
+            // -
+            svc.OnButtonClick(ctx, CalcLib.CalcButton.BtnMinus);
+
+            // 62
+            svc.OnButtonClick(ctx, CalcLib.CalcButton.Btn6);
+            svc.OnButtonClick(ctx, CalcLib.CalcButton.Btn2);
+
+            // ×
+            svc.OnButtonClick(ctx, CalcLib.CalcButton.BtnMultiple);
+
+            // 10
+            svc.OnButtonClick(ctx, CalcLib.CalcButton.Btn1);
+            svc.OnButtonClick(ctx, CalcLib.CalcButton.Btn0);
+
             // =
             svc.OnButtonClick(ctx, CalcLib.CalcButton.BtnEqual);
 
-
-            Assert.AreEqual("63", ctx.DisplayText);
+            Assert.AreEqual("10", ctx.DisplayText);
         }
 
         public void サブディスプレイのテスト()
@@ -85,7 +139,7 @@ namespace CalcLibTest
             Assert.AreEqual("-3,329.8", ctx.DisplayText);
         }
 
-        public void BacnSpaceのテスト()
+        public void BackSpaceのテスト()
         {
             var ctx = CalcLib.Factory.CreateContext();
             var svc = CalcLib.Factory.CreateService();
