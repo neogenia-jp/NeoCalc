@@ -89,6 +89,18 @@ namespace CalcLib
                     //TODO
                     break;
 
+                //パーセント(BtnExt1)押下時
+                case CalcButton.BtnExt1:
+                    //Valueがnullでない時、valueのbuffer%をbufferに入れる
+                    //TODO:Valueに値が入っていると%ボタンを押下する度に計算してしまう
+                    if (!string.IsNullOrEmpty(ctx.Value))
+                    {
+                        var val = double.Parse(ctx.Value);
+                        var buf = double.Parse(ctx.Buffer);
+                        ctx.Buffer = (val * (buf / 100)).ToString();
+                    }
+                    break;
+
                 //計算
                 case CalcButton.BtnEqual:
                     if (!string.IsNullOrEmpty(ctx.Buffer) && !string.IsNullOrEmpty(ctx.Value) && ctx.Operation != null)
