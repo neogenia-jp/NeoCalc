@@ -54,20 +54,25 @@ namespace CalcLib
             void Exec(CalcContextMaeda ctx);
         }
 
+        interface IBinaryOperator : IOperator
+        { 
+            void Calc(CalcContextMaeda ctx);
+        }
+
         /// <summary>
         /// 四則演算等の汎用のオペレータ
         /// </summary>
-        class ArithmeticOperator : IOperator
+        class ArithmeticOperator : IBinaryOperator
         {
             public string Label { get; }
             Func<decimal, decimal, decimal> _f;
             public ArithmeticOperator(string label, Func<decimal, decimal, decimal> f) { Label = label; _f = f; }
             public void Exec(CalcContextMaeda ctx)
             {
-                if (ctx.Value1 != null && !ctx.Buffer.IsEmpty)
+                if (ctx.Value1 != null && !ctx.Buffer.IsEmpty && ctx.Operator != null)
                 {
                     // まず計算する 
-                    Calc(ctx);
+                    ctx.Operator.Calc(ctx);
                 }
                 else if (!ctx.Buffer.IsEmpty)
                 {
@@ -169,7 +174,7 @@ namespace CalcLib
             public string Value1;
             public decimal Value1Decimal => string.IsNullOrWhiteSpace(Value1) ? 0m : decimal.Parse(Value1);
 
-            public IOperator Operator;
+            public IBinaryOperator Operator;
 
             public decimal Value2Decimal => Buffer.IsEmpty ? 0m : decimal.Parse(Buffer.ToString());
 
