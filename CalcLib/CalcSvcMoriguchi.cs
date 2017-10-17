@@ -13,22 +13,20 @@ namespace CalcLib
         {
             static readonly Dictionary<CalcButton, string> OpeTextTable = new Dictionary<CalcButton, string>
             {
-                {                CalcButton.BtnPlus, "+" },
-                {              CalcButton.BtnMinus, "-" },
-                { CalcButton.BtnMultiple, "×" },
-              {  CalcButton.BtnDivide, "÷"},
+              { CalcButton.BtnPlus, "+" },
+              { CalcButton.BtnMinus, "-" },
+              { CalcButton.BtnMultiple, "×" },
+              { CalcButton.BtnDivide, "÷"},
             };
             public static string Get(CalcButton? opeButton) => opeButton.HasValue ? OpeTextTable[opeButton.Value] : "";
         }
 
         class CalcContextMoriguchi : ICalcContext
         {
-
             /// <summary>
             /// 左辺の値
             /// </summary>
             public string Value { get; set; }
-
             
             /// <summary>
             /// 計算対象とする演算子
@@ -42,16 +40,12 @@ namespace CalcLib
 
             public bool Reset { get; set; }
 
-
             public string DisplayText => Buffer == null ? Value : Buffer;
-
 
             /// <summary>
             /// サブディスプレイに表示する文字列
             /// </summary>
             public virtual string SubDisplayText => Operation == null ? "" : Value + OpeNameHelper.Get(Operation);
-
-
         }
 
         public virtual ICalcContext CreateContext() => new CalcContextMoriguchi();
