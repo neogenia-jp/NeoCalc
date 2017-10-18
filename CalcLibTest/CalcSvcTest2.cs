@@ -317,10 +317,16 @@ namespace CalcLibTest
             Assert.AreEqual("", $"{ctx.SubDisplayText}");
             Assert.AreEqual("0", $"{ctx.DisplayText}");
 
+            // +
+            svc.OnButtonClick(ctx, CalcLib.CalcButton.BtnPlus);
+
+            Assert.AreEqual("0 +", $"{ctx.SubDisplayText}");
+            Assert.AreEqual("0", $"{ctx.DisplayText}");
+
             // 5
             svc.OnButtonClick(ctx, CalcLib.CalcButton.Btn5);
 
-            Assert.AreEqual("", ctx.SubDisplayText);
+            Assert.AreEqual("0 +", ctx.SubDisplayText);
             Assert.AreEqual("5", ctx.DisplayText);
 
             // =

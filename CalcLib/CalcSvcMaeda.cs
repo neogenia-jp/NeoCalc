@@ -158,6 +158,7 @@ namespace CalcLib
                 ctx.Value1 = null;
                 ctx.Buffer.Null();
                 ctx.Operator = null;
+                ctx.History.Clear();
             }
         }
 
@@ -249,7 +250,14 @@ namespace CalcLib
             }
             internal void OverrideLastHistory(ArithmeticOperator ope)
             {
-                History.RemoveAt(History.Count - 1);
+                if (History.Count < 2)
+                {
+                    History.Add("0");
+                }
+                else
+                {
+                    History.RemoveAt(History.Count - 1);
+                }
                 History.Add(ope.Label);
             }
         }
