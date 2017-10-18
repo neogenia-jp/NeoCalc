@@ -41,11 +41,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CalcButton.cs" />
-    <Compile Include="CalcSvcMaeda.cs" />
+    <Compile Include="Maeda\CalcSvcMaeda.cs" />
     <Compile Include="CalcSvc.cs" />
     <Compile Include="CalcContext.cs" />
-    <Compile Include="CalcSvcYamamoto.cs" />
-    <Compile Include="CalcSvcMoriguchi.cs" />
+    <Compile Include="Yamamoto\CalcSvcYamamoto.cs" />
+    <Compile Include="Moriguchi\CalcSvcMoriguchi.cs" />
     <Compile Include="Factory.cs" />
     <Compile Include="ICalcContext.cs" />
     <Compile Include="ICalcSvc.cs" />
