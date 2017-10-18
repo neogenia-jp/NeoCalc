@@ -41,6 +41,7 @@ namespace NeoCalc
         {
             ctx = CalcLib.Factory.CreateContext();
             svc = CalcLib.Factory.CreateService();
+            this.Text += $" ({svc.GetType().Name})";
             SetupExtButtons(svc as ICalcSvcEx);
             UpdateContext();
         }
