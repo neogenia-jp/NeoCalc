@@ -119,12 +119,12 @@ namespace CalcLibTest
             svc.OnButtonClick(ctx, CalcLib.CalcButton.BtnMultiple);
 
             Assert.AreEqual("1 + 2.2 ×", ctx.SubDisplayText);
-            Assert.AreEqual("2.2", ctx.DisplayText);
+            Assert.AreEqual("3.2", ctx.DisplayText);
 
             svc.OnButtonClick(ctx, CalcLib.CalcButton.BtnMinus);
 
             Assert.AreEqual("1 + 2.2 -", ctx.SubDisplayText);
-            Assert.AreEqual("2.2", ctx.DisplayText);
+            Assert.AreEqual("3.2", ctx.DisplayText);
 
             svc.OnButtonClick(ctx, CalcLib.CalcButton.Btn3);
             svc.OnButtonClick(ctx, CalcLib.CalcButton.Btn3);
@@ -137,6 +137,11 @@ namespace CalcLibTest
             svc.OnButtonClick(ctx, CalcLib.CalcButton.BtnEqual);
 
             Assert.AreEqual("", $"{ctx.SubDisplayText}");
+            Assert.AreEqual("-3,329.8", ctx.DisplayText);
+
+            svc.OnButtonClick(ctx, CalcLib.CalcButton.BtnPlus);
+
+            Assert.AreEqual("-3329.8 +", ctx.SubDisplayText);
             Assert.AreEqual("-3,329.8", ctx.DisplayText);
         }
 
@@ -169,32 +174,32 @@ namespace CalcLibTest
             // + 
             svc.OnButtonClick(ctx, CalcLib.CalcButton.BtnPlus);
 
-            Assert.AreEqual("1 + 2 + ", ctx.SubDisplayText);
+            Assert.AreEqual("1 + 2 +", ctx.SubDisplayText);
             Assert.AreEqual("3", ctx.DisplayText);
 
             // <BS>
             svc.OnButtonClick(ctx, CalcLib.CalcButton.BtnBS);
 
-            Assert.AreEqual("1 + 2 + ", ctx.SubDisplayText);
+            Assert.AreEqual("1 + 2 +", ctx.SubDisplayText);
             Assert.AreEqual("3", $"{ctx.DisplayText}");
 
             // 44
             svc.OnButtonClick(ctx, CalcLib.CalcButton.Btn4);
             svc.OnButtonClick(ctx, CalcLib.CalcButton.Btn4);
 
-            Assert.AreEqual("1 + 2 + ", ctx.SubDisplayText);
+            Assert.AreEqual("1 + 2 +", ctx.SubDisplayText);
             Assert.AreEqual("44", ctx.DisplayText);
 
             // <BS>
             svc.OnButtonClick(ctx, CalcLib.CalcButton.BtnBS);
 
-            Assert.AreEqual("1 + 2 + ", ctx.SubDisplayText);
+            Assert.AreEqual("1 + 2 +", ctx.SubDisplayText);
             Assert.AreEqual("4", $"{ctx.DisplayText}");
 
             // 5
             svc.OnButtonClick(ctx, CalcLib.CalcButton.Btn5);
 
-            Assert.AreEqual("1 + 2 + ", ctx.SubDisplayText);
+            Assert.AreEqual("1 + 2 +", ctx.SubDisplayText);
             Assert.AreEqual("45", ctx.DisplayText);
 
             // =
@@ -233,32 +238,32 @@ namespace CalcLibTest
             // + 
             svc.OnButtonClick(ctx, CalcLib.CalcButton.BtnPlus);
 
-            Assert.AreEqual("1 + 2 + ", ctx.SubDisplayText);
+            Assert.AreEqual("1 + 2 +", ctx.SubDisplayText);
             Assert.AreEqual("3", ctx.DisplayText);
 
             // <CE>
             svc.OnButtonClick(ctx, CalcLib.CalcButton.BtnClearEnd);
 
-            Assert.AreEqual("1 + 2 + ", ctx.SubDisplayText);
+            Assert.AreEqual("1 + 2 +", ctx.SubDisplayText);
             Assert.AreEqual("0", $"{ctx.DisplayText}");
 
             // 44
             svc.OnButtonClick(ctx, CalcLib.CalcButton.Btn4);
             svc.OnButtonClick(ctx, CalcLib.CalcButton.Btn4);
 
-            Assert.AreEqual("1 + 2 + ", ctx.SubDisplayText);
+            Assert.AreEqual("1 + 2 +", ctx.SubDisplayText);
             Assert.AreEqual("44", ctx.DisplayText);
 
             // <CE>
             svc.OnButtonClick(ctx, CalcLib.CalcButton.BtnClearEnd);
 
-            Assert.AreEqual("1 + 2 + ", ctx.SubDisplayText);
+            Assert.AreEqual("1 + 2 +", ctx.SubDisplayText);
             Assert.AreEqual("0", $"{ctx.DisplayText}");
 
             // 5
             svc.OnButtonClick(ctx, CalcLib.CalcButton.Btn5);
 
-            Assert.AreEqual("1 + 2 + ", ctx.SubDisplayText);
+            Assert.AreEqual("1 + 2 +", ctx.SubDisplayText);
             Assert.AreEqual("5", ctx.DisplayText);
 
             // =
@@ -297,13 +302,13 @@ namespace CalcLibTest
             // + 
             svc.OnButtonClick(ctx, CalcLib.CalcButton.BtnPlus);
 
-            Assert.AreEqual("1 + 2 + ", ctx.SubDisplayText);
+            Assert.AreEqual("1 + 2 +", ctx.SubDisplayText);
             Assert.AreEqual("3", ctx.DisplayText);
 
             // 4
             svc.OnButtonClick(ctx, CalcLib.CalcButton.Btn4);
 
-            Assert.AreEqual("1 + 2 + ", ctx.SubDisplayText);
+            Assert.AreEqual("1 + 2 +", ctx.SubDisplayText);
             Assert.AreEqual("4", ctx.DisplayText);
 
             // <C>
