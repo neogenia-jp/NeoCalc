@@ -91,8 +91,13 @@ namespace CalcLib
                     break;
                 case CalcButton.BtnClearEnd:
                     break;
+                //バックスペース
                 case CalcButton.BtnBS:
-                    //TODO
+                    if (!string.IsNullOrEmpty(ctx.Buffer))
+                    {
+                        var test = ctx.Buffer.Length;
+                        ctx.Buffer = ctx.Buffer.Remove(ctx.Buffer.Length - 1);
+                    }
                     break;
 
                 //パーセント(BtnExt1)押下時
