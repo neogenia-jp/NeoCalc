@@ -26,7 +26,7 @@ namespace CalcLib.Yamamoto
                 public const string EIGHT = "8";
                 public const string NINE = "9";
                 public const string DOT = ".";
-                public const string OPE_PLUS = "＋";
+                public const string OPE_PLUS = "+";
                 public const string OPE_MINUS = "－";
                 public const string OPE_MULTIPLE = "×";
                 public const string OPE_DIVIDE = "÷";
@@ -69,10 +69,10 @@ namespace CalcLib.Yamamoto
                 /// <summary>
                 /// 数値への変換
                 /// </summary>
-                public double ToDouble()
+                public decimal ToDecimal()
                 {
-                    double result;
-                    if(double.TryParse(Item, out result))
+                    decimal result;
+                    if(decimal.TryParse(Item, out result))
                     {
                         return result;
                     }
@@ -147,14 +147,14 @@ namespace CalcLib.Yamamoto
             /// <summary>
             /// 現状での計算結果を返す
             /// </summary>
-            public double Calc()
+            public decimal Calc()
             {
                 if(Queue.Count < 1)
                 {
                     return 0;
                 }
 
-                double answer = Queue[0].ToDouble();
+                decimal answer = Queue[0].ToDecimal();
                 var tmpQueue = Queue.GetRange(1, Queue.Count - 1);
                 string ope = "";
                 foreach(var item in tmpQueue)
@@ -169,10 +169,22 @@ namespace CalcLib.Yamamoto
                         ope = item.ToString();
                         continue;
                     }
-                    answer = SingleCalc(answer, item.ToDouble(), ope);
+                    answer = SingleCalc(answer, item.ToDecimal(), ope);
+                    answer = Rounding(answer);
                 }
 
                 return answer;
+            }
+
+            /// <summary>
+            /// 四捨五入を行う
+            /// </summary>
+            /// <param name="num"></param>
+            /// <returns></returns>
+            private decimal Rounding(decimal num)
+            {
+                // 少数第14位で四捨五入し、小数点第13位までとする
+                return Math.Round(num, 13);
             }
 
             /// <summary>
@@ -207,7 +219,7 @@ namespace CalcLib.Yamamoto
             /// <summary>
             /// 値と演算子を渡すことで計算してくれる関数
             /// </summary>
-            private double SingleCalc(double value1, double value2, string ope)
+            private decimal SingleCalc(decimal value1, decimal value2, string ope)
             {
                 switch(ope)
                 {
@@ -396,6 +408,7 @@ namespace CalcLib.Yamamoto
 
             // 計算結果を表示
             var answer = ctx.Cal.Calc();
+            answer = CutTrailingZero(answer);
             ctx.DisplayText = answer.ToString();
 
             // 計算過程を反映
@@ -426,6 +439,7 @@ namespace CalcLib.Yamamoto
 
             // 計算結果を表示
             var answer = ctx.Cal.Calc();
+            answer = CutTrailingZero(answer);
             ctx.DisplayText = answer.ToString();
 
             // 計算過程クリア
@@ -447,12 +461,36 @@ namespace CalcLib.Yamamoto
             var subResult = ctx.Cal.Calc();
 
             // 入力されている値を%として計算する
-            var answer = subResult * (double.Parse(ctx.DisplayText) / 100);
+            var answer = subResult * (decimal.Parse(ctx.DisplayText) / 100);
 
             // 表示
+            answer = CutTrailingZero(answer);
             ctx.DisplayText = answer.ToString();
             ctx.SubDisplayText += answer.ToString();
         }
 
+        /// <summary>
+        /// 小数点以下の末尾についている0を削除する
+        /// </summary>
+        /// <param name="d"></param>
+        /// <returns></returns>
+        private decimal CutTrailingZero(decimal d)
+        {
+            if(d.ToString().IndexOf('.') < 1)
+            {
+                return d;
+            }
+
+            var numString = d.ToString();
+            numString = numString.TrimEnd('0');
+            if(numString.Last() == '.')
+            {
+                numString.TrimEnd('.');
+            }
+
+            return decimal.Parse(numString);
+        }
+
     }
+
 }
