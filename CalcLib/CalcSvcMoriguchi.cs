@@ -160,7 +160,7 @@ namespace CalcLib
         {
             string x;
             {
-                x = Calc(ctx.Value, ctx.Buffer, operation).ToString();
+                x = string.Format("{0:#,0.#############}",Calc(ctx.Value, ctx.Buffer, operation));
                 ctx.Reset = true;
                 ctx.Buffer = x;
                 ctx.Value = null;
