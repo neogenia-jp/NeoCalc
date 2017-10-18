@@ -23,7 +23,7 @@ namespace CalcLib
             public bool IsNull { get; private set; }
 
             public override string ToString() => _buff.ToString();
-            public decimal ToDecimal() => decimal.Parse(_buff.ToString());
+            public decimal ToDecimal() => IsEmpty ? 0m : decimal.Parse(_buff.ToString());
 
             public void Clear() => _buff.Clear();
 
@@ -104,17 +104,21 @@ namespace CalcLib
             {
                 if (ctx.Value1 != null && !ctx.Buffer.IsEmpty && ctx.Operator != null)
                 {
-                    // まず計算する 
+                    // 履歴プッシュ
+                    ctx.PushHistory(this);
+                    // 次に計算する 
                     ctx.Operator.Calc(ctx);
                 }
                 else if (!ctx.Buffer.IsEmpty)
                 {
+                    // 履歴プッシュ
+                    ctx.PushHistory(this);
                     // バッファに入力があれば Value1 に送る
                     ctx.Value1 = ctx.Buffer.Truncate().ToString();
                     ctx.Buffer.Clear();
                 }
-                
                 ctx.Operator = this;
+                ctx.OverrideLastHistory(this);
             }
             public void Calc(CalcContextMaeda ctx) {
                 var v = _f(ctx.Value1Decimal, ctx.Value2Decimal);
@@ -131,12 +135,15 @@ namespace CalcLib
         {
             public void Exec(CalcContextMaeda ctx)
             {
+                ctx.History.Clear();
                 if (ctx.Operator == null)
                 {
                     ctx.Buffer.Truncate();
                     return;
                 }
                 ctx.Operator.Exec(ctx);
+                ctx.History.Clear();
+                ctx.PushHistory();
                 ctx.Operator = null;
             }
         }
@@ -208,6 +215,8 @@ namespace CalcLib
         {
             public CalcBuffer Buffer { get; } = new CalcBuffer();
 
+            public List<string> History { get; } = new List<string>();
+
             public string Value1;
             public decimal Value1Decimal => string.IsNullOrWhiteSpace(Value1) ? 0m : decimal.Parse(Value1);
 
@@ -219,12 +228,12 @@ namespace CalcLib
             {
                 get
                 {
-                    if (Buffer.IsNull) return null;
+                    if (Buffer.IsNull) return "0";
                     return Buffer.IsEmpty ? string.Format("{0:#,0.#############}", Value1Decimal) : Buffer.DisplayText();
                 }
             }
 
-            public string SubDisplayText => Operator!=null ? $"{DecimalFormatter.Format(Value1Decimal)} {(Operator as ArithmeticOperator)?.Label}" : null;
+            public string SubDisplayText => Operator!=null ? string.Join(" ", History) : "";
 
             internal void AppendNum(string num)
             {
@@ -232,6 +241,17 @@ namespace CalcLib
                 if (Operator == null) Value1 = null;
             }
 
+            internal void PushHistory(ArithmeticOperator ope = null)
+            {
+                History.Add(Buffer.IsEmpty ? Value1 : DecimalFormatter.Format(Buffer.ToDecimal()));
+                ope = ope ?? Operator as ArithmeticOperator;
+                if (ope != null) History.Add(ope.Label);
+            }
+            internal void OverrideLastHistory(ArithmeticOperator ope)
+            {
+                History.RemoveAt(History.Count - 1);
+                History.Add(ope.Label);
+            }
         }
 
         /// <summary>
