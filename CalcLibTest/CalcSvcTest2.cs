@@ -91,6 +91,7 @@ namespace CalcLibTest
             Assert.AreEqual("10", ctx.DisplayText);
         }
 
+        [TestMethod]
         public void サブディスプレイのテスト()
         {
             var ctx = CalcLib.Factory.CreateContext();
@@ -139,6 +140,7 @@ namespace CalcLibTest
             Assert.AreEqual("-3,329.8", ctx.DisplayText);
         }
 
+        [TestMethod]
         public void BackSpaceのテスト()
         {
             var ctx = CalcLib.Factory.CreateContext();
@@ -202,7 +204,7 @@ namespace CalcLibTest
             Assert.AreEqual("48", ctx.DisplayText);
         }
 
-        
+        [TestMethod]
         public void ClearEndのテスト()
         {
             var ctx = CalcLib.Factory.CreateContext();
@@ -266,7 +268,7 @@ namespace CalcLibTest
             Assert.AreEqual("8", ctx.DisplayText);
         }
 
-        
+        [TestMethod]
         public void Clearのテスト()
         {
             var ctx = CalcLib.Factory.CreateContext();
