@@ -3,12 +3,19 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace CalcLib
 {
     internal class CalcSvcMaeda : ICalcSvcEx
     {
+        static class DecimalFormatter
+        {
+            public static string Format(decimal val) => val.ToString("0.################");
+            public static string DisplayFormat(decimal val) => string.Format("{0:#,0.#############}", val);
+        }
+
         class CalcBuffer 
         {
             StringBuilder _buff = new StringBuilder();
@@ -16,6 +23,7 @@ namespace CalcLib
             public bool IsNull { get; private set; }
 
             public override string ToString() => _buff.ToString();
+            public decimal ToDecimal() => decimal.Parse(_buff.ToString());
 
             public void Clear() => _buff.Clear();
 
@@ -29,6 +37,12 @@ namespace CalcLib
 
             public void Append(object str)
             {
+                if (str.Equals("."))
+                {
+                    // ドット
+                    if (IsEmpty) _buff.Append("0");
+                    else if (_buff.ToString().Contains(".")) return;  // ドットの多重入力を回避
+                }
                 _buff.Append(str);
                 IsNull = false;
             }
@@ -39,14 +53,33 @@ namespace CalcLib
                 _buff.Length -= 1;
             }
 
-            public void Replace(string str)
+            public CalcBuffer Replace(string str)
             {
                 Clear();
                 Append(str);
+                return this;
             }
 
-            public string Coaesce(string other) => IsNull ? other : ToString();
+            public CalcBuffer Truncate() => Replace(DecimalFormatter.Format(ToDecimal()));
 
+            public string Coalesce(string other) => IsNull ? other : ToString();
+
+            public string DisplayText()
+            {
+                var str = DecimalFormatter.DisplayFormat(ToDecimal());
+                var buff = _buff.ToString();
+                if (buff.EndsWith("."))
+                {
+                    str += ".";  // ドットで終わっていればそれを付ける
+                }
+                else if (buff.Contains("."))
+                {
+                    // 途中にドットを含む場合
+                    var m = Regex.Match(_buff.ToString(), @"\.?0*$");
+                    if (m.Success) str += m.Value;  // 0 の繰り返しで終わっていればをそれを付ける
+                }
+                return str;
+            }
         }
 
         interface IOperator
@@ -77,7 +110,7 @@ namespace CalcLib
                 else if (!ctx.Buffer.IsEmpty)
                 {
                     // バッファに入力があれば Value1 に送る
-                    ctx.Value1 = ctx.Buffer.ToString();
+                    ctx.Value1 = ctx.Buffer.Truncate().ToString();
                     ctx.Buffer.Clear();
                 }
                 
@@ -98,7 +131,11 @@ namespace CalcLib
         {
             public void Exec(CalcContextMaeda ctx)
             {
-                if (ctx.Operator == null) return;
+                if (ctx.Operator == null)
+                {
+                    ctx.Buffer.Truncate();
+                    return;
+                }
                 ctx.Operator.Exec(ctx);
                 ctx.Operator = null;
             }
@@ -178,9 +215,16 @@ namespace CalcLib
 
             public decimal Value2Decimal => Buffer.IsEmpty ? 0m : decimal.Parse(Buffer.ToString());
 
-            public string DisplayText => Buffer.IsNull ? null : string.Format("{0:#,0.#############}", Buffer.IsEmpty ? Value1Decimal: Value2Decimal);
+            public string DisplayText
+            {
+                get
+                {
+                    if (Buffer.IsNull) return null;
+                    return Buffer.IsEmpty ? string.Format("{0:#,0.#############}", Value1Decimal) : Buffer.DisplayText();
+                }
+            }
 
-            public string SubDisplayText => Operator!=null ? $"{Value1} {(Operator as ArithmeticOperator)?.Label}" : null;
+            public string SubDisplayText => Operator!=null ? $"{DecimalFormatter.Format(Value1Decimal)} {(Operator as ArithmeticOperator)?.Label}" : null;
 
             internal void AppendNum(string num)
             {
