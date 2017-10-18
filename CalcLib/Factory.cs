@@ -20,7 +20,7 @@ namespace CalcLib
                 return new CalcSvc();
             }
 
-            var obj = Activator.CreateInstance(Assembly.GetExecutingAssembly().GetType($"CalcLib.{clsName}"));
+            var obj = Activator.CreateInstance(Assembly.GetExecutingAssembly().GetTypes().First(x=>x.Name == clsName));
             return obj as ICalcSvc;
         }
     }
