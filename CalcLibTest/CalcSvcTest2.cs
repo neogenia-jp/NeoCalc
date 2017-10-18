@@ -399,7 +399,38 @@ namespace CalcLibTest
         }
 
         [TestMethod]
-        public void 小数点の連続押しは無視されること()
+        public void 小数点以下のゼロの表示()
+        {
+            var ctx = CalcLib.Factory.CreateContext();
+            var svc = CalcLib.Factory.CreateService();
+
+            svc.OnButtonClick(ctx, CalcLib.CalcButton.BtnDot);
+
+            Assert.AreEqual("0.", ctx.DisplayText);
+
+            svc.OnButtonClick(ctx, CalcLib.CalcButton.BtnDot);
+
+            Assert.AreEqual("0.", ctx.DisplayText);
+
+            svc.OnButtonClick(ctx, CalcLib.CalcButton.Btn0);
+
+            Assert.AreEqual("0.0", ctx.DisplayText);
+
+            svc.OnButtonClick(ctx, CalcLib.CalcButton.Btn1);
+
+            Assert.AreEqual("0.01", ctx.DisplayText);
+
+            svc.OnButtonClick(ctx, CalcLib.CalcButton.Btn0);
+
+            Assert.AreEqual("0.010", ctx.DisplayText);
+
+            svc.OnButtonClick(ctx, CalcLib.CalcButton.Btn2);
+
+            Assert.AreEqual("0.0102", ctx.DisplayText);
+        }
+
+        [TestMethod]
+        public void 小数点の連続押しは無視されることとイコールを押すと丸められること()
         {
             var ctx = CalcLib.Factory.CreateContext();
             var svc = CalcLib.Factory.CreateService();
