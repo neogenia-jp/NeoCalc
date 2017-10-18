@@ -65,7 +65,7 @@ namespace CalcLib
         {
             var ctx = ctx0 as CalcContextMoriguchi;
             Debug.WriteLine($"Button Clicked {btn}, context={ctx}");
-
+            
             switch (btn)
             {
                 //演算子
@@ -73,6 +73,12 @@ namespace CalcLib
                 case CalcButton.BtnMinus:
                 case CalcButton.BtnDivide:
                 case CalcButton.BtnMultiple:
+                    //小数点押下直後に演算子を押下すると小数点を削除する
+                    if (ctx.Buffer.EndsWith("."))
+                    {
+                        char[] dot = {'.'};
+                        ctx.Buffer = ctx.Buffer.TrimEnd(dot);
+                    }
                     OnOpeButtonClick(ctx, btn);   // 演算子ボタン押下時の処理
                     break;
 
@@ -99,6 +105,11 @@ namespace CalcLib
                         var buf = double.Parse(ctx.Buffer);
                         ctx.Buffer = (val * (buf / 100)).ToString();
                     }
+                    break;
+
+                //小数点押下時
+                case CalcButton.BtnDot:
+                    if (!ctx.Buffer.EndsWith(".")) ctx.Buffer += ".";
                     break;
 
                 //計算
