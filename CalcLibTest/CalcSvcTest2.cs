@@ -322,5 +322,107 @@ namespace CalcLibTest
             Assert.AreEqual("", $"{ctx.SubDisplayText}");
             Assert.AreEqual("5", ctx.DisplayText);
         }
+
+        [TestMethod]
+        public void DisplayTextのカンマ編集のテスト()
+        {
+            var ctx = CalcLib.Factory.CreateContext();
+            var svc = CalcLib.Factory.CreateService();
+
+
+            // 100
+            svc.OnButtonClick(ctx, CalcLib.CalcButton.Btn1);
+            svc.OnButtonClick(ctx, CalcLib.CalcButton.Btn0);
+            svc.OnButtonClick(ctx, CalcLib.CalcButton.Btn0);
+
+            Assert.AreEqual("100", ctx.DisplayText);
+
+            // 1000
+            svc.OnButtonClick(ctx, CalcLib.CalcButton.Btn0);
+
+            Assert.AreEqual("1,000", ctx.DisplayText);
+
+            // BS -> 100
+            svc.OnButtonClick(ctx, CalcLib.CalcButton.BtnBS);
+
+            Assert.AreEqual("100", ctx.DisplayText);
+
+            // 1000
+            svc.OnButtonClick(ctx, CalcLib.CalcButton.Btn0);
+
+            Assert.AreEqual("1,000", ctx.DisplayText);
+
+            // 1000000
+            svc.OnButtonClick(ctx, CalcLib.CalcButton.Btn0);
+            svc.OnButtonClick(ctx, CalcLib.CalcButton.Btn0);
+            svc.OnButtonClick(ctx, CalcLib.CalcButton.Btn0);
+
+            Assert.AreEqual("1,000,000", ctx.DisplayText);
+
+            svc.OnButtonClick(ctx, CalcLib.CalcButton.BtnDot);
+
+            Assert.AreEqual("1,000,000.", ctx.DisplayText);
+
+            svc.OnButtonClick(ctx, CalcLib.CalcButton.Btn1);
+
+            Assert.AreEqual("1,000,000.1", ctx.DisplayText);
+        }
+
+
+        [TestMethod]
+        public void 何もない状態で小数点を押した場合は小数入力が可能となること()
+        {
+            var ctx = CalcLib.Factory.CreateContext();
+            var svc = CalcLib.Factory.CreateService();
+
+            svc.OnButtonClick(ctx, CalcLib.CalcButton.BtnDot);
+
+            Assert.AreEqual("0.", ctx.DisplayText);
+
+            svc.OnButtonClick(ctx, CalcLib.CalcButton.Btn1);
+
+            Assert.AreEqual("0.1", ctx.DisplayText);
+
+            svc.OnButtonClick(ctx, CalcLib.CalcButton.BtnPlus);
+
+            svc.OnButtonClick(ctx, CalcLib.CalcButton.BtnDot);
+
+            Assert.AreEqual("0.", ctx.DisplayText);
+
+            svc.OnButtonClick(ctx, CalcLib.CalcButton.Btn2);
+
+            Assert.AreEqual("0.2", ctx.DisplayText);
+
+            svc.OnButtonClick(ctx, CalcLib.CalcButton.BtnEqual);
+
+            Assert.AreEqual("0.3", ctx.DisplayText);
+        }
+
+        [TestMethod]
+        public void 小数点の連続押しは無視されること()
+        {
+            var ctx = CalcLib.Factory.CreateContext();
+            var svc = CalcLib.Factory.CreateService();
+
+            svc.OnButtonClick(ctx, CalcLib.CalcButton.BtnDot);
+
+            Assert.AreEqual("0.", ctx.DisplayText);
+
+            svc.OnButtonClick(ctx, CalcLib.CalcButton.BtnDot);
+
+            Assert.AreEqual("0.", ctx.DisplayText);
+
+            svc.OnButtonClick(ctx, CalcLib.CalcButton.Btn0);
+
+            Assert.AreEqual("0.0", ctx.DisplayText);
+
+            svc.OnButtonClick(ctx, CalcLib.CalcButton.BtnDot);
+
+            Assert.AreEqual("0.0", ctx.DisplayText);
+
+            svc.OnButtonClick(ctx, CalcLib.CalcButton.BtnEqual);
+
+            Assert.AreEqual("0", ctx.DisplayText);
+        }
     }
 }
