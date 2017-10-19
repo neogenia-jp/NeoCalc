@@ -41,10 +41,10 @@ namespace CalcLib.Maeda.Basis
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        /// <param name="btnNum"></param>
         /// <param name="text"></param>
         /// <param name="svc"></param>
-        public SvcNode(int btnNum, string text, IBackendSvc svc)
+        /// 
+        public SvcNode(string text, IBackendSvc svc)
         {
             ButtonText = text;
             _Svc = svc;
@@ -56,7 +56,7 @@ namespace CalcLib.Maeda.Basis
         /// <param name="child">子とするノード</param>
         /// <returns>子を内包する親ノード</returns>
         public static SvcNode CreateParentChild(SvcNode child)
-            => new SvcNode(-1, child.ButtonText, null)
+            => new SvcNode(child.ButtonText, null)
             {
                 Child = child
             };
@@ -104,13 +104,16 @@ namespace CalcLib.Maeda.Basis
         /// GetExtButtonTextをラップしてSvcTreeNodeのリストに変換して返してくれる便利なやつ
         /// </summary>
         /// <param name="self"></param>
+        /// <param name="offsetId">ボタンの変換を行うためのオフセット。サービス番号を渡す。</param>
         /// <returns></returns>
-        public static IEnumerable<SvcNode> GetExtButtons(this IBackendSvc self)
+        public static IEnumerable<SvcNode> GetExtButtons(this SvcBtnConvertAdapter self, int offsetId=0)
         {
             string t;
             for (int i = 1; (t = self.GetExtButtonText(i)) != null; i++)
             {
-                yield return new SvcNode(i, t, self);
+                var btn = CalcButton.BtnExt1 + i - 1;
+                self.Add(btn + offsetId, btn);
+                yield return new SvcNode(t, self);
             }
         }
 

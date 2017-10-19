@@ -53,7 +53,6 @@ namespace CalcLib.Maeda.Basis
             // 復帰ボタンであれば復帰する
             if (ReturnButtons.Any(x => x == btn)) return false;
 
-            // TODO キーのコンバート。BtnExt2 -> BtnExt1 というようにコンバートするアダプタクラスを作ってかます
             return TryButtonClick((T)ctx, btn);
         }
     }

@@ -41,6 +41,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CalcButton.cs" />
+    <Compile Include="Maeda\Basis\SvcBtnConvertAdapter.cs" />
     <Compile Include="Maeda\Basis\SvcHolder.cs" />
     <Compile Include="Maeda\CalcuratorSvc.cs" />
     <Compile Include="Maeda\Basis\IBackendSvc.cs" />

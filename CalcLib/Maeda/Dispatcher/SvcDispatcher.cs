@@ -86,10 +86,12 @@ namespace CalcLib.Maeda.Dispatcher
         {
             if (Backends != null) return;
             Backends = new SvcTree();
+            int offset = 0;
             foreach (var name in serviceNames)
             {
                 var svc = Util.SvcActivator.GetOrCreate(name);
-                foreach (var b in svc.GetExtButtons())
+                var adapter = new SvcBtnConvertAdapter(svc);
+                foreach (var b in adapter.GetExtButtons(offset++))
                 {
                     Backends.AddChildWithParent(b);
                 }
