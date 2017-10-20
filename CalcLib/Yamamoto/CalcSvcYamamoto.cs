@@ -514,7 +514,8 @@ namespace CalcLib.Yamamoto
 
             if(!string.IsNullOrEmpty(ctx.DisplayText))
             {
-                ctx.DisplayText = ctx.DisplayText.Remove(ctx.DisplayText.Length - 1);
+                var tmpText = ctx.DisplayText.Remove(ctx.DisplayText.Length - 1);
+                ctx.DisplayText = decimal.Parse(tmpText).CutTrailingZero().ToCommaString();
             }
 
             // HACK 拡張メソッドで破壊的メソッドを定義出来たらこんな書き方にしたい
