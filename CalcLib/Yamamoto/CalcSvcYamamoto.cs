@@ -319,6 +319,11 @@ namespace CalcLib.Yamamoto
                     BackSpaceProc(ctx, btn);
                     break;
 
+                // "CE"
+                case CalcButton.BtnClearEnd:
+                    ClearEndProc(ctx, btn);
+                    break;
+
                 // "%"
                 case CalcButton.BtnExt1:
                     PercentProc(ctx, btn);
@@ -500,6 +505,16 @@ namespace CalcLib.Yamamoto
 
             // HACK 拡張メソッドで破壊的メソッドを定義出来たらこんな書き方にしたい
             //ctx.DisplayText.BackSpace();
+        }
+
+        /// <summary>
+        /// ClearEndを押されたときの処理
+        /// </summary>
+        /// <param name="ctx"></param>
+        /// <param name="btn"></param>
+        private void ClearEndProc(CalcContextYamamoto ctx, CalcButton btn)
+        {
+            ctx.DisplayText = "0";
         }
     }
 }
