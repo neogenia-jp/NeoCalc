@@ -238,9 +238,9 @@ namespace CalcLib.Yamamoto
             /// </summary>
             public enum State
             {
-                Num = 0,    // 数字入力後
-                Operator,   // 演算子入力後
-                Equal       // イコール入力後
+                Operator = 0,  // 演算子入力後
+                Equal,         // イコール入力後
+                Other,         // その他
             }
 
             /// <summary>
@@ -367,16 +367,16 @@ namespace CalcLib.Yamamoto
         /// <param name="btn"></param>
         private void DotProc(CalcContextYamamoto ctx, CalcButton btn)
         {
-            if (!string.IsNullOrWhiteSpace(ctx.DisplayText) && ctx.DisplayText.IndexOf(".") > 0)
-            {
-                // すでにドットが入力されている場合は入力不可
-                return;
-            }
-
             // 演算子またはイコールが押されていれば表示値を消しておく
             if (ctx.InputState == CalcContextYamamoto.State.Operator || ctx.InputState == CalcContextYamamoto.State.Equal)
             {
                 ctx.DisplayTextClear();
+            }
+
+            if (!string.IsNullOrWhiteSpace(ctx.DisplayText) && ctx.DisplayText.IndexOf(".") > 0)
+            {
+                // すでにドットが入力されている場合は入力不可
+                return;
             }
 
             // 一桁もない場合は0を付与しておく
@@ -385,6 +385,9 @@ namespace CalcLib.Yamamoto
                 ctx.DisplayText += "0";
             }
             ctx.DisplayText += Calculator.CalcItem.GetBtnString(btn);
+
+            // その他ボタン押下後の状態へ遷移
+            ctx.InputState = CalcContextYamamoto.State.Other;
         }
 
         /// <summary>
@@ -402,8 +405,8 @@ namespace CalcLib.Yamamoto
             var num = decimal.Parse(ctx.DisplayText + Calculator.CalcItem.GetBtnString(btn));
             ctx.DisplayText = num.ToCommaString();
 
-            // 数字ボタン押下後の状態へ遷移
-            ctx.InputState = CalcContextYamamoto.State.Num;
+            // その他ボタン押下後の状態へ遷移
+            ctx.InputState = CalcContextYamamoto.State.Other;
         }
 
         /// <summary>
