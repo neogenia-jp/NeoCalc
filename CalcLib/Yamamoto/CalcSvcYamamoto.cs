@@ -314,6 +314,11 @@ namespace CalcLib.Yamamoto
                     DotProc(ctx, btn);
                     break;
 
+                // "BS"
+                case CalcButton.BtnBS:
+                    BackSpaceProc(ctx, btn);
+                    break;
+
                 // "%"
                 case CalcButton.BtnExt1:
                     PercentProc(ctx, btn);
@@ -473,6 +478,28 @@ namespace CalcLib.Yamamoto
             // 表示
             ctx.DisplayText = answer.CutTrailingZero().ToCommaString();
             ctx.SubDisplayText += answer.CutTrailingZero().ToString();
+        }
+
+        /// <summary>
+        /// BackSpaceを押されたときの処理
+        /// </summary>
+        /// <param name="ctx"></param>
+        /// <param name="btn"></param>
+        private void BackSpaceProc(CalcContextYamamoto ctx, CalcButton btn)
+        {
+            // 演算子またはイコールが押されていればそのままにしておく
+            if (ctx.InputState == CalcContextYamamoto.State.Operator || ctx.InputState == CalcContextYamamoto.State.Equal)
+            {
+                return;
+            }
+
+            if(!string.IsNullOrEmpty(ctx.DisplayText))
+            {
+                ctx.DisplayText = ctx.DisplayText.Remove(ctx.DisplayText.Length - 1);
+            }
+
+            // HACK 拡張メソッドで破壊的メソッドを定義出来たらこんな書き方にしたい
+            //ctx.DisplayText.BackSpace();
         }
     }
 }
