@@ -74,7 +74,12 @@ namespace CalcLib.Moriguchi
         {
             var ctx = ctx0 as CalcContextMoriguchi;
             Debug.WriteLine($"Button Clicked {btn}, context={ctx}");
-            
+
+            CalcMethod(btn, ctx);
+        }
+
+        private void CalcMethod(CalcButton btn, CalcContextMoriguchi ctx)
+        {
             switch (btn)
             {
                 //演算子
@@ -85,7 +90,7 @@ namespace CalcLib.Moriguchi
                     //小数点押下直後に演算子を押下すると小数点を削除する
                     if (ctx.Buffer.EndsWith("."))
                     {
-                        char[] dot = {'.'};
+                        char[] dot = { '.' };
                         ctx.Buffer = ctx.Buffer.TrimEnd(dot);
                     }
                     OnOpeButtonClick(ctx, btn);   // 演算子ボタン押下時の処理
