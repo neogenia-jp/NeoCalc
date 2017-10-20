@@ -46,6 +46,8 @@ namespace CalcLib.Moriguchi
             /// サブディスプレイに表示する文字列
             /// </summary>
             public virtual string SubDisplayText => Operation == null ? "" : Value + OpeNameHelper.Get(Operation);
+
+            public enum Mode { Calc,Omikuji};
         }
 
         public virtual ICalcContext CreateContext() => new CalcContextMoriguchi();
