@@ -13,6 +13,7 @@ namespace WebCalc.Controllers
         public ActionResult Index()
         {
             var svc = Factory.CreateService();
+            ViewBag.SvcClassName = svc.GetType().Name;
             SetupExtButtons(svc as ICalcSvcEx);
             return View();
         }
