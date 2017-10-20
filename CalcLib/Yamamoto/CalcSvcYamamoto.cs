@@ -27,7 +27,7 @@ namespace CalcLib.Yamamoto
                 public const string NINE = "9";
                 public const string DOT = ".";
                 public const string OPE_PLUS = "+";
-                public const string OPE_MINUS = "－";
+                public const string OPE_MINUS = "-";
                 public const string OPE_MULTIPLE = "×";
                 public const string OPE_DIVIDE = "÷";
                 public const string OPE_PLUS_MINUS = "±";
@@ -192,12 +192,7 @@ namespace CalcLib.Yamamoto
             /// </summary>
             public string GetCalcProcess()
             {
-                string process = "";
-                foreach(var item in Queue)
-                {
-                    process += item.ToString();
-                }
-                return process;
+                return string.Join(" ", Queue);
             }
 
             /// <summary>
@@ -380,7 +375,8 @@ namespace CalcLib.Yamamoto
             {
                 ctx.DisplayTextClear();
             }
-            ctx.DisplayText += Calculator.CalcItem.GetBtnString(btn);
+            var num = decimal.Parse(ctx.DisplayText + Calculator.CalcItem.GetBtnString(btn));
+            ctx.DisplayText = num.ToCommaString();
 
             // 数字ボタン押下後の状態へ遷移
             ctx.InputState = CalcContextYamamoto.State.Num;
@@ -393,6 +389,19 @@ namespace CalcLib.Yamamoto
         /// <param name="btn"></param>
         private void OperatorProc(CalcContextYamamoto ctx, CalcButton btn)
         {
+            // 前回が演算子の場合は上書き
+            if (ctx.InputState == CalcContextYamamoto.State.Operator)
+            {
+                // [HACK]
+                //    一番最後を削除できる拡張メソッドを作ったらきれいに書けそう
+                ctx.Cal.Queue.RemoveAt(ctx.Cal.Queue.Count - 1);
+                ctx.Cal.Add(new Calculator.CalcItem(Calculator.CalcItem.GetBtnString(btn)));
+
+                // 計算過程を反映
+                ctx.SubDisplayText = ctx.Cal.GetCalcProcess();
+                return;
+            }
+
             // 入力値をリストに追加
             if (string.IsNullOrWhiteSpace(ctx.DisplayText))
             {
@@ -401,15 +410,14 @@ namespace CalcLib.Yamamoto
             }
             else
             {
-                // 現在の入力値を計算
-                ctx.Cal.Add(new Calculator.CalcItem(ctx.DisplayText));
+                // 現在の入力値を追加
+                ctx.Cal.Add(new Calculator.CalcItem(decimal.Parse(ctx.DisplayText).ToString()));
             }
             ctx.Cal.Add(new Calculator.CalcItem(Calculator.CalcItem.GetBtnString(btn)));
 
             // 計算結果を表示
             var answer = ctx.Cal.Calc();
-            answer = CutTrailingZero(answer);
-            ctx.DisplayText = answer.ToString();
+            ctx.DisplayText = answer.CutTrailingZero().ToCommaString();
 
             // 計算過程を反映
             var process = ctx.Cal.GetCalcProcess();
@@ -439,8 +447,7 @@ namespace CalcLib.Yamamoto
 
             // 計算結果を表示
             var answer = ctx.Cal.Calc();
-            answer = CutTrailingZero(answer);
-            ctx.DisplayText = answer.ToString();
+            ctx.DisplayText = answer.CutTrailingZero().ToCommaString();
 
             // 計算過程クリア
             ctx.SubDisplayText = "";
@@ -464,33 +471,8 @@ namespace CalcLib.Yamamoto
             var answer = subResult * (decimal.Parse(ctx.DisplayText) / 100);
 
             // 表示
-            answer = CutTrailingZero(answer);
-            ctx.DisplayText = answer.ToString();
-            ctx.SubDisplayText += answer.ToString();
+            ctx.DisplayText = answer.CutTrailingZero().ToCommaString();
+            ctx.SubDisplayText += answer.CutTrailingZero().ToString();
         }
-
-        /// <summary>
-        /// 小数点以下の末尾についている0を削除する
-        /// </summary>
-        /// <param name="d"></param>
-        /// <returns></returns>
-        private decimal CutTrailingZero(decimal d)
-        {
-            if(d.ToString().IndexOf('.') < 1)
-            {
-                return d;
-            }
-
-            var numString = d.ToString();
-            numString = numString.TrimEnd('0');
-            if(numString.Last() == '.')
-            {
-                numString.TrimEnd('.');
-            }
-
-            return decimal.Parse(numString);
-        }
-
     }
-
 }
