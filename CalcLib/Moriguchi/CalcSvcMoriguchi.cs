@@ -17,6 +17,7 @@ namespace CalcLib.Moriguchi
               { CalcButton.BtnMinus, "-" },
               { CalcButton.BtnMultiple, "×" },
               { CalcButton.BtnDivide, "÷"},
+              { CalcButton.BtnExt2,""},
             };
             public static string Get(CalcButton? opeButton) => opeButton.HasValue ? OpeTextTable[opeButton.Value] : "";
         }
@@ -27,7 +28,7 @@ namespace CalcLib.Moriguchi
             /// 左辺の値
             /// </summary>
             public string Value { get; set; }
-            
+
             /// <summary>
             /// 計算対象とする演算子
             /// </summary>
@@ -47,7 +48,15 @@ namespace CalcLib.Moriguchi
             /// </summary>
             public virtual string SubDisplayText => Operation == null ? "" : Value + OpeNameHelper.Get(Operation);
 
-            public enum Mode { Calc,Omikuji};
+            /// <summary>
+            /// モードの状態(trueならおみくじモード)
+            /// </summary>
+            public bool Mode;
+
+            /// <summary>
+            /// おみくじ
+            /// </summary>
+            public string[] omikuji  = {"大吉","中吉","小吉","凶"};
         }
 
         public virtual ICalcContext CreateContext() => new CalcContextMoriguchi();
@@ -63,7 +72,7 @@ namespace CalcLib.Moriguchi
             {
                 return "%";
             }
-            else if(num == 2)
+            else if (num == 2)
             {
                 return "おみくじ";
             }
@@ -75,11 +84,79 @@ namespace CalcLib.Moriguchi
             var ctx = ctx0 as CalcContextMoriguchi;
             Debug.WriteLine($"Button Clicked {btn}, context={ctx}");
 
-            CalcMethod(btn, ctx);
+            if (ctx.Mode)
+            {    //おみくじモード時
+                OmikujiMethod(btn, ctx);
+            }
+            else
+            {
+                //電卓モード時
+                CalcMethod(btn, ctx);
+            }
         }
 
+        /// <summary>
+        /// おみくじモード時の動作
+        /// </summary>
+        /// <param name="btn"></param>
+        /// <param name="ctx"></param>
+        private void OmikujiMethod(CalcButton btn, CalcContextMoriguchi ctx)
+        {
+            //押下ボタン判定
+            switch (btn)
+            {
+                case CalcButton.Btn1:
+                case CalcButton.Btn2:
+                case CalcButton.Btn3:
+                case CalcButton.Btn4:
+                    OpenOmikuji(btn,ctx);
+                    break;
+
+                //電卓モードへ戻る時
+                case CalcButton.BtnClear:
+                case CalcButton.BtnClearEnd:
+                case CalcButton.BtnExt2:
+                    ctx.Mode = false;
+                    ctx.Buffer = "電卓モードへ移行";
+                    ctx.Value = null;
+                    ctx.Operation = null;
+                    break;
+                //関係ないボタン押下時
+                default:
+                    ctx.Value = "おみくじは1～4を選択:[C]or[CE]で電卓ﾓｰﾄﾞ";
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// おみくじの開示
+        /// </summary>
+        /// <param name="btn"></param>
+        /// <param name="ctx"></param>
+        private void OpenOmikuji(CalcButton btn, CalcContextMoriguchi ctx)
+        {
+            //おみくじ配列のシャッフル
+            var test = ctx.omikuji.OrderBy(x => Guid.NewGuid()).ToArray();
+
+            //開示表示
+            ctx.Value = $"本日の運勢は「{test[(int)btn - 1]}」です";
+            ctx.Buffer = null;
+            foreach (var kekka in test.Select(x => x)){ ctx.Buffer += kekka + " "; };
+            //ctx.Buffer = $"{test[0] + test[1] + test[2] + test[3]}";
+
+        }
+
+
+
+
+        /// <summary>
+        /// 電卓モード時の動作
+        /// </summary>
+        /// <param name="btn"></param>
+        /// <param name="ctx"></param>
         private void CalcMethod(CalcButton btn, CalcContextMoriguchi ctx)
         {
+
             switch (btn)
             {
                 //演算子
@@ -126,6 +203,14 @@ namespace CalcLib.Moriguchi
                     }
                     break;
 
+                //おみくじモードボタン押下時
+                case CalcButton.BtnExt2:
+                    ctx.Mode = true;
+                    ctx.Value = "おみくじを選択してください";
+                    ctx.Operation = btn;
+                    ctx.Buffer = "[1] [2] [3] [4]";
+                    break;
+
                 //小数点押下時
                 case CalcButton.BtnDot:
                     if (!ctx.Buffer.EndsWith(".")) ctx.Buffer += ".";
@@ -151,6 +236,9 @@ namespace CalcLib.Moriguchi
                     ctx.Buffer += (int)btn;
                     break;
             }
+
+            if (!string.IsNullOrEmpty(ctx.Buffer)) ctx.Buffer = ctx.Buffer.Replace("電卓モードへ移行", "");
+
         }
 
         /// <summary>
