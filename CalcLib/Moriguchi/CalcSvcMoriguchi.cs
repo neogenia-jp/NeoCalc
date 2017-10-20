@@ -57,7 +57,14 @@ namespace CalcLib.Moriguchi
         /// <returns></returns>
         public string GetExtButtonText(int num)
         {
-            if (num == 1) return "%";
+            if (num == 1)
+            {
+                return "%";
+            }
+            else if(num == 2)
+            {
+                return "おみくじ";
+            }
             return null;
         }
 
