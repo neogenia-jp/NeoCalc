@@ -42,5 +42,15 @@ namespace CalcLib.Yamamoto
 
             return decimal.Parse(numString);
         }
+
+        /// <summary>
+        /// ディスプレイテキスト用の文字列に変換する
+        /// </summary>
+        /// <param name="num"></param>
+        /// <returns></returns>
+        internal static string ToDisplayText(this decimal num)
+        {
+            return num.CutTrailingZero().ToCommaString();
+        }
     }
 }

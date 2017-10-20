@@ -441,7 +441,7 @@ namespace CalcLib.Yamamoto
 
             // 計算結果を表示
             var answer = ctx.Cal.Calc();
-            ctx.DisplayText = answer.CutTrailingZero().ToCommaString();
+            ctx.DisplayText = answer.ToDisplayText();
 
             // 計算過程を反映
             var process = ctx.Cal.GetCalcProcess();
@@ -471,7 +471,7 @@ namespace CalcLib.Yamamoto
 
             // 計算結果を表示
             var answer = ctx.Cal.Calc();
-            ctx.DisplayText = answer.CutTrailingZero().ToCommaString();
+            ctx.DisplayText = answer.ToDisplayText();
 
             // 計算過程クリア
             ctx.SubDisplayText = "";
@@ -495,7 +495,7 @@ namespace CalcLib.Yamamoto
             var answer = subResult * (decimal.Parse(ctx.DisplayText) / 100);
 
             // 表示
-            ctx.DisplayText = answer.CutTrailingZero().ToCommaString();
+            ctx.DisplayText = answer.ToDisplayText();
             ctx.SubDisplayText += answer.CutTrailingZero().ToString();
         }
 
@@ -515,7 +515,7 @@ namespace CalcLib.Yamamoto
             if(!string.IsNullOrEmpty(ctx.DisplayText))
             {
                 var tmpText = ctx.DisplayText.Remove(ctx.DisplayText.Length - 1);
-                ctx.DisplayText = decimal.Parse(tmpText).CutTrailingZero().ToCommaString();
+                ctx.DisplayText = decimal.Parse(tmpText).ToDisplayText();
             }
 
             // HACK 拡張メソッドで破壊的メソッドを定義出来たらこんな書き方にしたい
