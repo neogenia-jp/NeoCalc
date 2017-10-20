@@ -268,6 +268,15 @@ namespace CalcLib.Yamamoto
             {
                 DisplayText = "";
             }
+
+            /// <summary>
+            /// 表示値クリア
+            /// </summary>
+            public void SubDisplayTextClear()
+            {
+                Cal.Clear();
+                SubDisplayText = "";
+            }
         }
         
         public virtual ICalcContext CreateContext() => new CalcContextYamamoto();
@@ -317,6 +326,11 @@ namespace CalcLib.Yamamoto
                 // "BS"
                 case CalcButton.BtnBS:
                     BackSpaceProc(ctx, btn);
+                    break;
+
+                // "C"
+                case CalcButton.BtnClear:
+                    ClearProc(ctx, btn);
                     break;
 
                 // "CE"
@@ -505,6 +519,17 @@ namespace CalcLib.Yamamoto
 
             // HACK 拡張メソッドで破壊的メソッドを定義出来たらこんな書き方にしたい
             //ctx.DisplayText.BackSpace();
+        }
+
+        /// <summary>
+        /// ClearEndを押されたときの処理
+        /// </summary>
+        /// <param name="ctx"></param>
+        /// <param name="btn"></param>
+        private void ClearProc(CalcContextYamamoto ctx, CalcButton btn)
+        {
+            ctx.SubDisplayTextClear();
+            ctx.DisplayText = "0";
         }
 
         /// <summary>
