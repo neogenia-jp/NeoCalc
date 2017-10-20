@@ -15,7 +15,15 @@ namespace CalcLib.Yamamoto
         /// <returns></returns>
         internal static string ToCommaString(this decimal num)
         {
-            return num.ToString("#,0.#");
+            // TODO ToStringかstring.Format書式指定でなんとかならないだろうか・・・
+            var parts = num.ToString().Split(new char[] { '.' });
+            string integerPart = decimal.Parse(parts[0]).ToString("#,0");
+            if(parts.Length == 1)
+            {
+                return integerPart;
+            }
+
+            return integerPart + "." + parts[1];
         }
 
         /// <summary>
