@@ -47,10 +47,12 @@
     <Compile Include="Maeda\Basis\IBackendSvc.cs" />
     <Compile Include="Maeda\Basis\SvcTree.cs" />
     <Compile Include="Maeda\Dispatcher\SvcDispatcher.cs" />
-    <Compile Include="Maeda\OmikujiSvc.cs" />
+    <Compile Include="Maeda\Omikuji\OmikujiImpl.cs" />
+    <Compile Include="Maeda\Omikuji\OmikujiSvc.cs" />
     <Compile Include="Maeda\CalcSvcMaeda.cs" />
     <Compile Include="CalcSvc.cs" />
     <Compile Include="CalcContext.cs" />
+    <Compile Include="Maeda\Util\EnumerableExt.cs" />
     <Compile Include="Maeda\Util\SvcActivator.cs" />
     <Compile Include="Yamamoto\CalcSvcYamamoto.cs" />
     <Compile Include="Moriguchi\CalcSvcMoriguchi.cs" />
