@@ -30,7 +30,7 @@ namespace CalcLib.Maeda.Basis
     /// <typeparam name="T">コンテキストクラス</typeparam>
     internal abstract class SvcBase<T> : IBackendSvc where T: ICalcContext
     {
-        protected abstract T _CreateContext();
+        internal abstract T _CreateContext();
         public ICalcContext CreateContext() => _CreateContext();
 
         public abstract string GetExtButtonText(int num);

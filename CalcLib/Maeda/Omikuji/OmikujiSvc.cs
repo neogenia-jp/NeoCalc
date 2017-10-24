@@ -18,7 +18,7 @@ namespace CalcLib.Maeda
 
         public string SubDisplayText { get; set; }
 
-        public Omikuji.OmikujiImpl omikuji { get; set; } = new Omikuji.OmikujiImpl();
+        public Omikuji.OmikujiBase omikuji { get; set; } = new Omikuji.OmikujiImpl();
 
         public bool finished;
 
@@ -48,7 +48,7 @@ namespace CalcLib.Maeda
     {
         public override string GetExtButtonText(int num) => num == 1 ? "*" : null;
 
-        protected override OmikujiContext _CreateContext() => new OmikujiContext();
+        internal override OmikujiContext _CreateContext() => new OmikujiContext();
 
 
         public override bool TryButtonClick(OmikujiContext ctx, CalcButton btn)

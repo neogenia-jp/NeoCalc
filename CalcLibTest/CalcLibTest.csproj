@@ -53,6 +53,7 @@
     <Compile Include="CalcSvcTestOmikuji.cs" />
     <Compile Include="CalcSvcTest2.cs" />
     <Compile Include="CalcSvcTest.cs" />
+    <Compile Include="Maeda\OmikujiSvcTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

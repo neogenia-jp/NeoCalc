@@ -7,34 +7,64 @@ using CalcLib.Maeda.Util;
 
 namespace CalcLib.Maeda.Omikuji
 {
+    /// <summary>
+    /// くじを表すクラス
+    /// </summary>
     public struct Kuji
     {
+        /// <summary>
+        /// 名称。"大吉" など。
+        /// </summary>
         public string Name { get; }
+
+        /// <summary>
+        /// くじの価値。大吉が価値が高く、凶は価値が低い。
+        /// </summary>
         public int Worth { get; }
+
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        /// <returns></returns>
         public Kuji(int worth, string name) { Name = name; Worth = worth; }
+
         public override string ToString() => (Name+"　").Substring(0, 2);
     }
 
+    /// <summary>
+    /// おみくじのベースクラス
+    /// </summary>
     [Serializable]
-    public class OmikujiImpl
+    public abstract class OmikujiBase
     {
-        public IList<Kuji> Items { get; private set; }
+        /// <summary>
+        /// くじの内容
+        /// </summary>
+        public IList<Kuji> Items { get; protected set; }
 
-        public int SelctedIdx { get; private set; } = -1;
+        /// <summary>
+        /// 選択したインデックス
+        /// </summary>
+        public int SelctedIdx { get; protected set; } = -1;
 
-        public void Init()
+        /// <summary>
+        /// くじの初期化を行う。
+        /// </summary>
+        /// <param name="initList">くじの中身</param>
+        public virtual void Init()
         {
-            Items = new List<Kuji>
-            {
-                new Kuji(-10, "凶"),
-                new Kuji(  3, "小吉"),
-                new Kuji(  6, "中吉"),
-                new Kuji( 10, "大吉"),
-            }.Shuffle();
+            Items = InitKuji().ToList();
             SelctedIdx = -1;
         }
 
-        public bool TryChoise(int num)
+        protected abstract IEnumerable<Kuji> InitKuji();
+
+        /// <summary>
+        /// 選択を試みる
+        /// </summary>
+        /// <param name="num"></param>
+        /// <returns>選択不可であればfalse</returns>
+        public virtual bool TryChoise(int num)
         {
             if (!IsFinished && 0 <= num && num < Items.Count)
             {
@@ -46,6 +76,28 @@ namespace CalcLib.Maeda.Omikuji
 
         public string ResultText => $"あなたの運勢は「{Items[SelctedIdx]}」です";
 
+        /// <summary>
+        /// 終了フラグ。くじが選択されると終了状態となる
+        /// </summary>
         public bool IsFinished => SelctedIdx >= 0;
+    }
+
+    /// <summary>
+    /// おみくじの実装
+    /// </summary>
+    [Serializable]
+    public class OmikujiImpl : OmikujiBase
+    {
+        /// <summary>
+        /// くじの初期化を行う。
+        /// </summary>
+        protected override IEnumerable<Kuji> InitKuji()
+            => new List<Kuji>
+            {
+                new Kuji(-10, "凶"),
+                new Kuji(  3, "小吉"),
+                new Kuji(  6, "中吉"),
+                new Kuji( 10, "大吉"),
+            }.Shuffle();
     }
 }
