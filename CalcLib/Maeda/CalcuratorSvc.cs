@@ -131,7 +131,7 @@ namespace CalcLib.Maeda
                 ctx.Buffer.Clear();
             }
         }
-
+        
         /// <summary>
         /// イコール
         /// </summary>
@@ -297,7 +297,7 @@ namespace CalcLib.Maeda
             {
                 OperatorTable[btn].Exec(ctx);
             }
-            else
+            else if (btn < CalcButton.BtnExt1)
             {
                 ctx.AppendNum(btn == CalcButton.BtnDot ? "." : $"{(int)btn}");
             }

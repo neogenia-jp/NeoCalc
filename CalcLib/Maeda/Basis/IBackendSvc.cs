@@ -38,7 +38,12 @@ namespace CalcLib.Maeda.Basis
         /// <summary>
         /// 元のサービスに復帰するボタンの一覧
         /// </summary>
-        protected virtual CalcButton[] ReturnButtons { get; } = { CalcButton.BtnClear, CalcButton.BtnClearEnd };
+        protected virtual IEnumerable<CalcButton> ReturnButtons { get; } = new [] { CalcButton.BtnClear, CalcButton.BtnClearEnd };
+
+        /// <summary>
+        /// このサービスから抜けるときに呼ばれる
+        /// </summary>
+        protected virtual void OnExitSvc(T ctx) { }
 
         /// <summary>
         /// ボタンクリック時の処理（サブクラスでオーバーライドする）
@@ -50,10 +55,19 @@ namespace CalcLib.Maeda.Basis
 
         public bool TryButtonClick(ICalcContext ctx, CalcButton btn)
         {
+            var result = true;
             // 復帰ボタンであれば復帰する
-            if (ReturnButtons.Any(x => x == btn)) return false;
-
-            return TryButtonClick((T)ctx, btn);
+            if (ReturnButtons.Any(x => x == btn))
+            {
+                result = false;
+            }
+            else
+            {
+                result = TryButtonClick((T)ctx, btn);
+            }
+            if (!result) OnExitSvc((T)ctx);
+            return result;
         }
+
     }
 }

@@ -19,7 +19,7 @@ namespace CalcLib.Maeda
         /// </summary>
         static readonly string[] _services = {
             typeof(CalcuratorSvc).FullName,
-            typeof(OmikujiSvc).FullName,
+            typeof(Omikuji.OmikujiSvc).FullName,
         };
 
         SvcDispatcher Dispatcher = new SvcDispatcher(_services);

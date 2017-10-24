@@ -25,10 +25,10 @@ namespace CalcLibTest.Maeda
         {
             svc = new OmikujiSvc();
             ctx = svc._CreateContext();
-            ctx.omikuji = new TestOmikujiImple();
+            ctx.Proxy = new TestOmikujiImple();
         }
 
-        public void SetKuji(params Kuji[] kuji) => (ctx.omikuji as TestOmikujiImple).Kuji = kuji.ToList();
+        public void SetKuji(params Kuji[] kuji) => (ctx.Proxy as TestOmikujiImple).Kuji = kuji.ToList();
 
         [TestMethod]
         public void TestKuji()

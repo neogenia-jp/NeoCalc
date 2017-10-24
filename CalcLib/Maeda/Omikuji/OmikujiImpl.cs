@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CalcLib.Maeda.Util;
+using CalcLib.Maeda.Basis;
 
 namespace CalcLib.Maeda.Omikuji
 {
@@ -37,6 +38,12 @@ namespace CalcLib.Maeda.Omikuji
     [Serializable]
     public abstract class OmikujiBase
     {
+        public string DisplayText { get; set; }
+
+        public string SubDisplayText { get; set; }
+
+        public SvcState State { get; set; }
+
         /// <summary>
         /// くじの内容
         /// </summary>
@@ -45,7 +52,7 @@ namespace CalcLib.Maeda.Omikuji
         /// <summary>
         /// 選択したインデックス
         /// </summary>
-        public int SelctedIdx { get; protected set; } = -1;
+        public int SelctedIdx { get; protected set; } = -2;
 
         /// <summary>
         /// くじの初期化を行う。
@@ -53,8 +60,11 @@ namespace CalcLib.Maeda.Omikuji
         /// <param name="initList">くじの中身</param>
         public virtual void Init()
         {
+            DisplayText = "[1 ] [2 ] [3 ] [4 ]";
+            SubDisplayText = "おみくじを選択して下さい";
             Items = InitKuji().ToList();
             SelctedIdx = -1;
+            State = SvcState.Initialized;
         }
 
         protected abstract IEnumerable<Kuji> InitKuji();
@@ -66,20 +76,18 @@ namespace CalcLib.Maeda.Omikuji
         /// <returns>選択不可であればfalse</returns>
         public virtual bool TryChoise(int num)
         {
-            if (!IsFinished && 0 <= num && num < Items.Count)
+            if (State == SvcState.Initialized && 0 <= num && num < Items.Count)
             {
                 SelctedIdx = num;
+                DisplayText = string.Join(" ", Items);
+                SubDisplayText = ResultText;
+                State = SvcState.Finished;
                 return true;
             }
             return false;
         }
 
-        public string ResultText => $"あなたの運勢は「{Items[SelctedIdx]}」です";
-
-        /// <summary>
-        /// 終了フラグ。くじが選択されると終了状態となる
-        /// </summary>
-        public bool IsFinished => SelctedIdx >= 0;
+        public string ResultText => $"本日の運勢は「{Items[SelctedIdx]}」です";
     }
 
     /// <summary>
