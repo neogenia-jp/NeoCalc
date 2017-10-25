@@ -25,7 +25,7 @@ namespace CalcLibTest
         {
             Assert.IsTrue(
                 Enumerable.SequenceEqual(new[] { "大吉", "中吉", "小吉", "凶　" }.OrderBy(x => x), ctx.DisplayText.Split(' ').OrderBy(x => x)),
-                $"DisplayTextの期待値が異なります: [{ctx.DisplayText}");
+                $"DisplayTextの期待値が異なります: [{ctx.DisplayText}]");
             Assert.IsTrue(
                 Regex.Match(ctx.SubDisplayText, "本日の運勢は「(大吉|中吉|小吉|凶　)」です").Success,
                 $"SubDisplayテキストの期待値が異なります: [{ctx.SubDisplayText}]");
