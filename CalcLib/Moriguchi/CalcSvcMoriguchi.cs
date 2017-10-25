@@ -110,6 +110,8 @@ namespace CalcLib.Moriguchi
                 case CalcButton.Btn3:
                 case CalcButton.Btn4:
                     OpenOmikuji(btn,ctx);
+                    //おみくじを1回でも引いたら電卓モードへ
+                    ctx.Mode = false;
                     break;
 
                 //電卓モードへ戻る時
@@ -142,12 +144,7 @@ namespace CalcLib.Moriguchi
             ctx.Value = $"本日の運勢は「{test[(int)btn - 1]}」です";
             ctx.Buffer = null;
             foreach (var kekka in test.Select(x => x)){ ctx.Buffer += kekka + " "; };
-            //ctx.Buffer = $"{test[0] + test[1] + test[2] + test[3]}";
-
         }
-
-
-
 
         /// <summary>
         /// 電卓モード時の動作
@@ -156,6 +153,11 @@ namespace CalcLib.Moriguchi
         /// <param name="ctx"></param>
         private void CalcMethod(CalcButton btn, CalcContextMoriguchi ctx)
         {
+            if (!string.IsNullOrEmpty(ctx.Value) && ctx.Value.StartsWith("本"))
+            {
+                ctx.Value = null;
+                ctx.Buffer = null;
+            }
 
             switch (btn)
             {
