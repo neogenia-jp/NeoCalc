@@ -47,7 +47,15 @@ namespace CalcLib.Moriguchi
             /// </summary>
             public virtual string SubDisplayText => Operation == null ? "" : Value + OpeNameHelper.Get(Operation);
 
-            public enum Mode { Calc,Omikuji};
+            /// <summary>
+            /// モードの状態(trueならおみくじモード)
+            /// </summary>
+            public bool Mode;
+
+            /// <summary>
+            /// おみくじ
+            /// </summary>
+            public string[] omikuji = { "大吉", "中吉", "小吉", "凶" };
         }
 
         public virtual ICalcContext CreateContext() => new CalcContextMoriguchi();
