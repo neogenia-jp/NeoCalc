@@ -26,8 +26,8 @@ namespace CalcLib.Yamamoto
                 public const string EIGHT = "8";
                 public const string NINE = "9";
                 public const string DOT = ".";
-                public const string OPE_PLUS = "＋";
-                public const string OPE_MINUS = "－";
+                public const string OPE_PLUS = "+";
+                public const string OPE_MINUS = "-";
                 public const string OPE_MULTIPLE = "×";
                 public const string OPE_DIVIDE = "÷";
                 public const string OPE_PLUS_MINUS = "±";
@@ -69,10 +69,10 @@ namespace CalcLib.Yamamoto
                 /// <summary>
                 /// 数値への変換
                 /// </summary>
-                public double ToDouble()
+                public decimal ToDecimal()
                 {
-                    double result;
-                    if(double.TryParse(Item, out result))
+                    decimal result;
+                    if(decimal.TryParse(Item, out result))
                     {
                         return result;
                     }
@@ -147,14 +147,14 @@ namespace CalcLib.Yamamoto
             /// <summary>
             /// 現状での計算結果を返す
             /// </summary>
-            public double Calc()
+            public decimal Calc()
             {
                 if(Queue.Count < 1)
                 {
                     return 0;
                 }
 
-                double answer = Queue[0].ToDouble();
+                decimal answer = Queue[0].ToDecimal();
                 var tmpQueue = Queue.GetRange(1, Queue.Count - 1);
                 string ope = "";
                 foreach(var item in tmpQueue)
@@ -169,10 +169,22 @@ namespace CalcLib.Yamamoto
                         ope = item.ToString();
                         continue;
                     }
-                    answer = SingleCalc(answer, item.ToDouble(), ope);
+                    answer = SingleCalc(answer, item.ToDecimal(), ope);
+                    answer = Rounding(answer);
                 }
 
                 return answer;
+            }
+
+            /// <summary>
+            /// 四捨五入を行う
+            /// </summary>
+            /// <param name="num"></param>
+            /// <returns></returns>
+            private decimal Rounding(decimal num)
+            {
+                // 少数第14位で四捨五入し、小数点第13位までとする
+                return Math.Round(num, 13);
             }
 
             /// <summary>
@@ -180,12 +192,7 @@ namespace CalcLib.Yamamoto
             /// </summary>
             public string GetCalcProcess()
             {
-                string process = "";
-                foreach(var item in Queue)
-                {
-                    process += item.ToString();
-                }
-                return process;
+                return string.Join(" ", Queue);
             }
 
             /// <summary>
@@ -207,7 +214,7 @@ namespace CalcLib.Yamamoto
             /// <summary>
             /// 値と演算子を渡すことで計算してくれる関数
             /// </summary>
-            private double SingleCalc(double value1, double value2, string ope)
+            private decimal SingleCalc(decimal value1, decimal value2, string ope)
             {
                 switch(ope)
                 {
@@ -231,9 +238,9 @@ namespace CalcLib.Yamamoto
             /// </summary>
             public enum State
             {
-                Num = 0,    // 数字入力後
-                Operator,   // 演算子入力後
-                Equal       // イコール入力後
+                Operator = 0,  // 演算子入力後
+                Equal,         // イコール入力後
+                Other,         // その他
             }
 
             /// <summary>
@@ -260,6 +267,15 @@ namespace CalcLib.Yamamoto
             public void DisplayTextClear()
             {
                 DisplayText = "";
+            }
+
+            /// <summary>
+            /// 表示値クリア
+            /// </summary>
+            public void SubDisplayTextClear()
+            {
+                Cal.Clear();
+                SubDisplayText = "";
             }
         }
         
@@ -307,6 +323,21 @@ namespace CalcLib.Yamamoto
                     DotProc(ctx, btn);
                     break;
 
+                // "BS"
+                case CalcButton.BtnBS:
+                    BackSpaceProc(ctx, btn);
+                    break;
+
+                // "C"
+                case CalcButton.BtnClear:
+                    ClearProc(ctx, btn);
+                    break;
+
+                // "CE"
+                case CalcButton.BtnClearEnd:
+                    ClearEndProc(ctx, btn);
+                    break;
+
                 // "%"
                 case CalcButton.BtnExt1:
                     PercentProc(ctx, btn);
@@ -336,16 +367,16 @@ namespace CalcLib.Yamamoto
         /// <param name="btn"></param>
         private void DotProc(CalcContextYamamoto ctx, CalcButton btn)
         {
-            if (!string.IsNullOrWhiteSpace(ctx.DisplayText) && ctx.DisplayText.IndexOf(".") > 0)
-            {
-                // すでにドットが入力されている場合は入力不可
-                return;
-            }
-
             // 演算子またはイコールが押されていれば表示値を消しておく
             if (ctx.InputState == CalcContextYamamoto.State.Operator || ctx.InputState == CalcContextYamamoto.State.Equal)
             {
                 ctx.DisplayTextClear();
+            }
+
+            if (!string.IsNullOrWhiteSpace(ctx.DisplayText) && ctx.DisplayText.IndexOf(".") > 0)
+            {
+                // すでにドットが入力されている場合は入力不可
+                return;
             }
 
             // 一桁もない場合は0を付与しておく
@@ -354,6 +385,9 @@ namespace CalcLib.Yamamoto
                 ctx.DisplayText += "0";
             }
             ctx.DisplayText += Calculator.CalcItem.GetBtnString(btn);
+
+            // その他ボタン押下後の状態へ遷移
+            ctx.InputState = CalcContextYamamoto.State.Other;
         }
 
         /// <summary>
@@ -368,10 +402,11 @@ namespace CalcLib.Yamamoto
             {
                 ctx.DisplayTextClear();
             }
-            ctx.DisplayText += Calculator.CalcItem.GetBtnString(btn);
+            var num = decimal.Parse(ctx.DisplayText + Calculator.CalcItem.GetBtnString(btn));
+            ctx.DisplayText = num.ToCommaString();
 
-            // 数字ボタン押下後の状態へ遷移
-            ctx.InputState = CalcContextYamamoto.State.Num;
+            // その他ボタン押下後の状態へ遷移
+            ctx.InputState = CalcContextYamamoto.State.Other;
         }
 
         /// <summary>
@@ -381,6 +416,19 @@ namespace CalcLib.Yamamoto
         /// <param name="btn"></param>
         private void OperatorProc(CalcContextYamamoto ctx, CalcButton btn)
         {
+            // 前回が演算子の場合は上書き
+            if (ctx.InputState == CalcContextYamamoto.State.Operator)
+            {
+                // [HACK]
+                //    一番最後を削除できる拡張メソッドを作ったらきれいに書けそう
+                ctx.Cal.Queue.RemoveAt(ctx.Cal.Queue.Count - 1);
+                ctx.Cal.Add(new Calculator.CalcItem(Calculator.CalcItem.GetBtnString(btn)));
+
+                // 計算過程を反映
+                ctx.SubDisplayText = ctx.Cal.GetCalcProcess();
+                return;
+            }
+
             // 入力値をリストに追加
             if (string.IsNullOrWhiteSpace(ctx.DisplayText))
             {
@@ -389,14 +437,14 @@ namespace CalcLib.Yamamoto
             }
             else
             {
-                // 現在の入力値を計算
-                ctx.Cal.Add(new Calculator.CalcItem(ctx.DisplayText));
+                // 現在の入力値を追加
+                ctx.Cal.Add(new Calculator.CalcItem(decimal.Parse(ctx.DisplayText).ToString()));
             }
             ctx.Cal.Add(new Calculator.CalcItem(Calculator.CalcItem.GetBtnString(btn)));
 
             // 計算結果を表示
             var answer = ctx.Cal.Calc();
-            ctx.DisplayText = answer.ToString();
+            ctx.DisplayText = answer.ToDisplayText();
 
             // 計算過程を反映
             var process = ctx.Cal.GetCalcProcess();
@@ -426,7 +474,7 @@ namespace CalcLib.Yamamoto
 
             // 計算結果を表示
             var answer = ctx.Cal.Calc();
-            ctx.DisplayText = answer.ToString();
+            ctx.DisplayText = answer.ToDisplayText();
 
             // 計算過程クリア
             ctx.SubDisplayText = "";
@@ -447,12 +495,55 @@ namespace CalcLib.Yamamoto
             var subResult = ctx.Cal.Calc();
 
             // 入力されている値を%として計算する
-            var answer = subResult * (double.Parse(ctx.DisplayText) / 100);
+            var answer = subResult * (decimal.Parse(ctx.DisplayText) / 100);
 
             // 表示
-            ctx.DisplayText = answer.ToString();
-            ctx.SubDisplayText += answer.ToString();
+            ctx.DisplayText = answer.ToDisplayText();
+            ctx.SubDisplayText += answer.CutTrailingZero().ToString();
         }
 
+        /// <summary>
+        /// BackSpaceを押されたときの処理
+        /// </summary>
+        /// <param name="ctx"></param>
+        /// <param name="btn"></param>
+        private void BackSpaceProc(CalcContextYamamoto ctx, CalcButton btn)
+        {
+            // 演算子またはイコールが押されていればそのままにしておく
+            if (ctx.InputState == CalcContextYamamoto.State.Operator || ctx.InputState == CalcContextYamamoto.State.Equal)
+            {
+                return;
+            }
+
+            if(!string.IsNullOrEmpty(ctx.DisplayText))
+            {
+                var tmpText = ctx.DisplayText.Remove(ctx.DisplayText.Length - 1);
+                ctx.DisplayText = decimal.Parse(tmpText).ToDisplayText();
+            }
+
+            // HACK 拡張メソッドで破壊的メソッドを定義出来たらこんな書き方にしたい
+            //ctx.DisplayText.BackSpace();
+        }
+
+        /// <summary>
+        /// ClearEndを押されたときの処理
+        /// </summary>
+        /// <param name="ctx"></param>
+        /// <param name="btn"></param>
+        private void ClearProc(CalcContextYamamoto ctx, CalcButton btn)
+        {
+            ctx.SubDisplayTextClear();
+            ctx.DisplayText = "0";
+        }
+
+        /// <summary>
+        /// ClearEndを押されたときの処理
+        /// </summary>
+        /// <param name="ctx"></param>
+        /// <param name="btn"></param>
+        private void ClearEndProc(CalcContextYamamoto ctx, CalcButton btn)
+        {
+            ctx.DisplayText = "0";
+        }
     }
 }
