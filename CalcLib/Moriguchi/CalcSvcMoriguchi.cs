@@ -110,6 +110,8 @@ namespace CalcLib.Moriguchi
                 case CalcButton.Btn3:
                 case CalcButton.Btn4:
                     OpenOmikuji(btn, ctx);
+                    //おみくじを1回でも引いたら電卓モードへ
+                    ctx.Mode = false;
                     break;
 
                 //電卓モードへ戻る時
@@ -148,6 +150,12 @@ namespace CalcLib.Moriguchi
 
         private void CalcMethod(CalcButton btn, CalcContextMoriguchi ctx)
         {
+            if (!string.IsNullOrEmpty(ctx.Value) && ctx.Value.StartsWith("本"))
+            {
+                ctx.Value = null;
+                ctx.Buffer = null;
+            }
+
             switch (btn)
             {
                 //演算子
