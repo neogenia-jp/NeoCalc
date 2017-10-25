@@ -44,8 +44,10 @@
     <Compile Include="Maeda\CalcSvcMaeda.cs" />
     <Compile Include="CalcSvc.cs" />
     <Compile Include="CalcContext.cs" />
+    <Compile Include="Moriguchi\CalcClass.cs" />
     <Compile Include="Moriguchi\ISubSvc.cs" />
     <Compile Include="Moriguchi\OmikujiClass.cs" />
+    <Compile Include="Moriguchi\UtlClass.cs" />
     <Compile Include="Yamamoto\CalcSvcYamamoto.cs" />
     <Compile Include="Moriguchi\CalcSvcMoriguchi.cs" />
     <Compile Include="Factory.cs" />

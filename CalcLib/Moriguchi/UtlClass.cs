@@ -6,10 +6,9 @@ using System.Threading.Tasks;
 
 namespace CalcLib.Moriguchi
 {
-    public interface ISubSvc
+    class UtlClass
     {
-        bool OnClick(ICalcContext ctx, CalcButton btn);
-
-        void Init(ICalcContext ctx);
+        public static void Chomp(CalcSvcMoriguchi.CalcContextMoriguchi ctx)
+          => ctx.Buffer = ctx.Buffer.Remove(ctx.Buffer.Length - 1);
     }
 }
