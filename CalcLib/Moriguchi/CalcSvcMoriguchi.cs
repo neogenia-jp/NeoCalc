@@ -17,6 +17,7 @@ namespace CalcLib.Moriguchi
               { CalcButton.BtnMinus, "-" },
               { CalcButton.BtnMultiple, "×" },
               { CalcButton.BtnDivide, "÷"},
+              { CalcButton.BtnExt2,""},
             };
             public static string Get(CalcButton? opeButton) => opeButton.HasValue ? OpeTextTable[opeButton.Value] : "";
         }
