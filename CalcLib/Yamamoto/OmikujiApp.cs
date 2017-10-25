@@ -6,21 +6,32 @@ using System.Threading.Tasks;
 
 namespace CalcLib.Yamamoto
 {
-    public class OmikujiApp : IApplication
+    public class OmikujiApp : BaseApp, IApplication
     {
         /// <summary>
         /// 入力状態
         /// </summary>
         public enum State
         {
-            Start = 0,     // 演算子入力後
+            Start,         // おみくじ開始
             Fin,           // おみくじ終了
         }
 
         /// <summary>
         /// 入力状態
         /// </summary>
-        public State InputState { get; set; }
+        public State InputState { get; set; } = State.Start;
+
+        /// <summary>
+        /// おみくじの種類
+        /// </summary>
+        public enum OmikujiKind
+        {
+            Daikiti = 0,    // 大吉
+            Chukiti,        // 中吉
+            Syokiti,        // 小吉
+            Kyo,            // 凶
+        }
 
         /// <summary>
         /// おみくじ

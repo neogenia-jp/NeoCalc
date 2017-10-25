@@ -9,9 +9,7 @@ namespace CalcLib.Yamamoto
     internal class ApplicationFactory
     {
         private static Calculator _calculator = null;
-        private static Calculator CreateCalculator() => _calculator == null ? _calculator = new Calculator() : _calculator;
         private static OmikujiApp _omikujiApp = null;
-        private static OmikujiApp CreateOmikujiApp() => _omikujiApp == null ? _omikujiApp = new OmikujiApp() : _omikujiApp;
 
         /// <summary>
         /// アプリ初期化
@@ -19,6 +17,7 @@ namespace CalcLib.Yamamoto
         public static void Init()
         {
             _calculator = null;
+            _omikujiApp = null;
         }
 
         /// <summary>
@@ -28,7 +27,7 @@ namespace CalcLib.Yamamoto
         /// <returns></returns>
         public static IApplication CreateApp(CalcSvcYamamoto.CalcContextYamamoto.AppMode mode)
         {
-            switch(mode)
+            switch (mode)
             {
                 case CalcSvcYamamoto.CalcContextYamamoto.AppMode.Calculator:
                     return CreateCalculator();
@@ -37,6 +36,32 @@ namespace CalcLib.Yamamoto
                 default:
                     return null;
             }
+        }
+
+        /// <summary>
+        /// 電卓アプリ作成
+        /// </summary>
+        /// <returns></returns>
+        private static Calculator CreateCalculator()
+        {
+            if (_calculator == null || _calculator.InputState == Calculator.State.Fin)
+            {
+                _calculator = new Calculator();
+            }
+            return _calculator;
+        }
+
+        /// <summary>
+        /// おみくじアプリ作成
+        /// </summary>
+        /// <returns></returns>
+        private static OmikujiApp CreateOmikujiApp()
+        {
+            if (_omikujiApp == null || _omikujiApp.InputState == OmikujiApp.State.Fin)
+            {
+                _omikujiApp = new OmikujiApp();
+            }
+            return _omikujiApp;
         }
     }
 }

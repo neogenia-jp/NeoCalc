@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CalcLib.Yamamoto
 {
-    public class Calculator : IApplication
+    public class Calculator : BaseApp, IApplication
     {
         /// <summary>
         /// 入力状態
@@ -16,6 +16,7 @@ namespace CalcLib.Yamamoto
             Operator = 0,  // 演算子入力後
             Equal,         // イコール入力後
             Other,         // その他
+            Fin,           // アプリ終了
         }
 
         /// <summary>
@@ -222,6 +223,10 @@ namespace CalcLib.Yamamoto
             }
         }
 
+        /// <summary>
+        /// アプリ実行
+        /// </summary>
+        /// <param name="ctx0"></param>
         /// <param name="btn"></param>
         public void Run(ICalcContext ctx0, CalcButton btn)
         {
@@ -291,6 +296,12 @@ namespace CalcLib.Yamamoto
                 case CalcButton.Btn9:
                 case CalcButton.Btn0:
                     NumProc(ctx, btn);
+                    break;
+
+                // "おみくじ"
+                case CalcButton.BtnExt2:
+                    ToOmikujiMode(ctx, btn);
+                    InputState = State.Fin;
                     break;
 
                 default:

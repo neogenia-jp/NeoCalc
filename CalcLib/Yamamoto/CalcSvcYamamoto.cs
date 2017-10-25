@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace CalcLib.Yamamoto
 {
-    internal class CalcSvcYamamoto : ICalcSvcEx
+    public class CalcSvcYamamoto : ICalcSvcEx
     {
-        public class CalcContextYamamoto : CalcContext
+        internal class CalcContextYamamoto : CalcContext
         {
             /// <summary>
             /// 電卓のモード
@@ -58,6 +58,7 @@ namespace CalcLib.Yamamoto
         public string GetExtButtonText(int num)
         {
             if (num == 1) return "%";
+            if (num == 2) return "おみくじ";
             return null;
         }
 
