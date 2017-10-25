@@ -74,7 +74,7 @@ namespace CalcLib.Moriguchi
                 case CalcButton.BtnDivide:
                 case CalcButton.BtnMultiple:
                     //小数点押下直後に演算子を押下すると小数点を削除する
-                    if (ctx.Buffer.EndsWith("."))
+                    if (ctx.Buffer?.EndsWith(".") == true)
                     {
                         char[] dot = {'.'};
                         ctx.Buffer = ctx.Buffer.TrimEnd(dot);
@@ -114,7 +114,7 @@ namespace CalcLib.Moriguchi
 
                 //小数点押下時
                 case CalcButton.BtnDot:
-                    if (!ctx.Buffer.EndsWith(".")) ctx.Buffer += ".";
+                    if (!ctx.Buffer?.EndsWith(".") == true) ctx.Buffer += ".";
                     break;
 
                 //計算
