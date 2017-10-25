@@ -10,6 +10,8 @@ namespace CalcLib.Yamamoto
     {
         private static Calculator _calculator = null;
         private static Calculator CreateCalculator() => _calculator == null ? _calculator = new Calculator() : _calculator;
+        private static OmikujiApp _omikujiApp = null;
+        private static OmikujiApp CreateOmikujiApp() => _omikujiApp == null ? _omikujiApp = new OmikujiApp() : _omikujiApp;
 
         /// <summary>
         /// アプリ初期化
@@ -30,8 +32,8 @@ namespace CalcLib.Yamamoto
             {
                 case CalcSvcYamamoto.CalcContextYamamoto.AppMode.Calculator:
                     return CreateCalculator();
-                //case CalcContextYamamoto.AppMode.Omikuji:
-                //    break;
+                case CalcSvcYamamoto.CalcContextYamamoto.AppMode.Omikuji:
+                    return CreateOmikujiApp();
                 default:
                     return null;
             }
