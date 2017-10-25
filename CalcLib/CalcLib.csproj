@@ -44,13 +44,16 @@
     <Compile Include="Maeda\CalcSvcMaeda.cs" />
     <Compile Include="CalcSvc.cs" />
     <Compile Include="CalcContext.cs" />
+    <Compile Include="Yamamoto\ApplicationFactory.cs" />
     <Compile Include="Yamamoto\CalcSvcYamamoto.cs" />
     <Compile Include="Moriguchi\CalcSvcMoriguchi.cs" />
     <Compile Include="Factory.cs" />
     <Compile Include="ICalcContext.cs" />
     <Compile Include="ICalcSvc.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Yamamoto\Calculator.cs" />
     <Compile Include="Yamamoto\DecimalExt.cs" />
+    <Compile Include="Yamamoto\IApplication.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
