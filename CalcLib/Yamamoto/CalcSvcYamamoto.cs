@@ -18,7 +18,13 @@ namespace CalcLib.Yamamoto
             {
                 Calculator = 0,  // 電卓
                 Omikuji,         // おみくじ
+                None,            // なし
             }
+
+            /// <summary>
+            /// 前回のモード
+            /// </summary>
+            public AppMode BeforeMode { get; set; } = AppMode.None;
 
             /// <summary>
             /// 現在のモード
@@ -48,6 +54,13 @@ namespace CalcLib.Yamamoto
 
             // アプリを実行
             app.Run(ctx, btn);
+
+            if(ctx.BeforeMode != ctx.Mode)
+            {
+                app = ApplicationFactory.CreateApp(ctx.Mode);
+                app.Run(ctx, btn);
+            }
+
         }
 
         /// <summary>

@@ -13,7 +13,8 @@ namespace CalcLib.Yamamoto
         /// </summary>
         public enum State
         {
-            Operator = 0,  // 演算子入力後
+            Init = 0,      // 初期状態
+            Operator,      // 演算子入力後
             Equal,         // イコール入力後
             Other,         // その他
             Fin,           // アプリ終了
@@ -22,7 +23,7 @@ namespace CalcLib.Yamamoto
         /// <summary>
         /// 入力状態
         /// </summary>
-        public State InputState { get; set; }
+        public State InputState { get; set; } = State.Init;
 
         /// <summary>
         /// 計算項目を入れておくQueue
@@ -232,6 +233,11 @@ namespace CalcLib.Yamamoto
         {
             var ctx = ctx0 as CalcSvcYamamoto.CalcContextYamamoto;
 
+            if(InputState == State.Init)
+            {
+                Init(ctx);
+            }
+
             switch (btn)
             {
                 // "＋"
@@ -300,13 +306,35 @@ namespace CalcLib.Yamamoto
 
                 // "おみくじ"
                 case CalcButton.BtnExt2:
-                    ToOmikujiMode(ctx, btn);
-                    InputState = State.Fin;
+                    if (ctx.BeforeMode == CalcSvcYamamoto.CalcContextYamamoto.AppMode.Omikuji)
+                    {
+                        DisplayTextClear(ctx, "0");
+                    }
+                    else
+                    {
+                        ToOmikujiMode(ctx, btn);
+                        InputState = State.Fin;
+                        return;
+                    }
                     break;
 
                 default:
                     break;
             }
+
+            ctx.BeforeMode = ctx.Mode;
+            ctx.Mode = CalcSvcYamamoto.CalcContextYamamoto.AppMode.Calculator;
+        }
+
+        /// <summary>
+        /// 電卓の初期化
+        /// </summary>
+        /// <param name="ctx"></param>
+        private void Init(CalcSvcYamamoto.CalcContextYamamoto ctx)
+        {
+            DisplayTextClear(ctx);
+            SubDisplayTextClear(ctx);
+            InputState = State.Other;
         }
 
         /// <summary>
@@ -483,7 +511,7 @@ namespace CalcLib.Yamamoto
         }
 
         /// <summary>
-        /// ClearEndを押されたときの処理
+        /// Clearを押されたときの処理
         /// </summary>
         /// <param name="ctx"></param>
         /// <param name="btn"></param>

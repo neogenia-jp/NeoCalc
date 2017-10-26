@@ -13,14 +13,16 @@ namespace CalcLib.Yamamoto
         /// </summary>
         public enum State
         {
+            Init = 0,      // 初期化
             Start,         // おみくじ開始
+            Opened,        // おみくじを開いた状態
             Fin,           // おみくじ終了
         }
 
         /// <summary>
         /// 入力状態
         /// </summary>
-        public State InputState { get; set; } = State.Start;
+        public State InputState { get; set; } = State.Init;
 
         /// <summary>
         /// おみくじの種類
@@ -55,6 +57,12 @@ namespace CalcLib.Yamamoto
         {
             var ctx = ctx0 as CalcSvcYamamoto.CalcContextYamamoto;
 
+            if(InputState == State.Init)
+            {
+                Init(ctx);
+                return;
+            }
+
             switch (btn)
             {
                 // "C"
@@ -64,7 +72,8 @@ namespace CalcLib.Yamamoto
                 case CalcButton.BtnClearEnd:
                 case CalcButton.BtnExt2:
                     ToCaliculatorMode(ctx, btn);
-                    break;
+                    InputState = State.Fin;
+                    return;
 
                 // "1"
                 // "2"
@@ -74,16 +83,56 @@ namespace CalcLib.Yamamoto
                 case CalcButton.Btn2:
                 case CalcButton.Btn3:
                 case CalcButton.Btn4:
+                    if(InputState == State.Opened)
+                    {
+                        ToCaliculatorMode(ctx, btn);
+                        InputState = State.Fin;
+                        return;
+                    }
                     OpenOmikuji(ctx, btn);
                     break;
 
                 default:
-                    if(InputState == State.Fin)
+                    if(InputState == State.Opened)
                     {
                         ToCaliculatorMode(ctx, btn);
+                        InputState = State.Fin;
+                        return;
                     }
                     break;
             }
+            ctx.BeforeMode = ctx.Mode;
+            ctx.Mode = CalcSvcYamamoto.CalcContextYamamoto.AppMode.Omikuji;
+        }
+
+        /// <summary>
+        /// おみくじの初期化
+        /// </summary>
+        /// <param name="ctx"></param>
+        private void Init(CalcSvcYamamoto.CalcContextYamamoto ctx)
+        {
+            // おみくじ箱にくじを入れる
+            foreach(var kind in Enum.GetValues(typeof(OmikujiKind)))
+            {
+                var omikuji = new Omikuji();
+                omikuji.Result = ((OmikujiKind)kind).DispName();
+                Box.Add(omikuji);
+            }
+
+            // おみくじ箱をシャッフル
+            Box = Box.OrderBy(i => Guid.NewGuid()).ToList();
+
+            // おみくじモードの初期表示テキストを設定
+            ctx.SubDisplayText = "おみくじを選択して下さい";
+            ctx.DisplayText = "";
+            for(int i = 0; i < Enum.GetNames(typeof(OmikujiKind)).Length; i++)
+            {
+                ctx.DisplayText += $"[{i + 1} ] ";
+            }
+            ctx.DisplayText = ctx.DisplayText.TrimEnd();
+
+            // 開始状態へ遷移
+            InputState = State.Start;
         }
 
         /// <summary>
@@ -91,17 +140,21 @@ namespace CalcLib.Yamamoto
         /// </summary>
         /// <param name="ctx"></param>
         /// <param name="btn"></param>
+        /// <param name="index"></param>
         private void OpenOmikuji(CalcSvcYamamoto.CalcContextYamamoto ctx, CalcButton btn)
         {
+            ctx.SubDisplayText = $"本日の運勢は「{Box[(int)btn - 1].Result}」です";
+            ctx.DisplayText = string.Join(" ", Box.Select(x => x.Result).ToList());
+            InputState = State.Opened;
         }
+    }
 
-        /// <summary>
-        /// 電卓モードへ移行
-        /// </summary>
-        /// <param name="ctx"></param>
-        /// <param name="btn"></param>
-        private void ToCaliculatorMode(CalcSvcYamamoto.CalcContextYamamoto ctx, CalcButton btn)
+    public static class OmikujiKindExt
+    {
+        public static string DispName(this OmikujiApp.OmikujiKind k)
         {
+            string[] names = { "大吉", "中吉", "小吉", "凶　" };
+            return names[(int)k];
         }
 
     }
