@@ -49,11 +49,6 @@ namespace CalcLib.Moriguchi
             public virtual string SubDisplayText => Operation == null ? "" : Value + OpeNameHelper.Get(Operation);
 
             /// <summary>
-            /// モードの状態(trueならおみくじモード)
-            /// </summary>
-            public bool Mode;
-
-            /// <summary>
             /// おみくじ
             /// </summary>
             public string[] omikuji = { "大吉", "中吉", "小吉", "凶　" };
@@ -64,7 +59,6 @@ namespace CalcLib.Moriguchi
                 Value = null;
                 Operation = null;
             }
-
         }
 
         /// <summary>

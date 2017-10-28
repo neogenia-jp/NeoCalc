@@ -14,7 +14,6 @@ namespace CalcLib.Moriguchi
         {
             var ctx = ctx0 as CalcSvcMoriguchi.CalcContextMoriguchi;
             //おみくじモードボタン押下時
-            ctx.Mode = true;
             ctx.Value = "おみくじを選択して下さい";
             ctx.Operation = CalcButton.BtnExt2;
             ctx.Buffer = "[1 ] [2 ] [3 ] [4 ]";
