@@ -9,6 +9,7 @@ namespace CalcLib.Moriguchi
 {
     public class CalcSvcMoriguchi : ICalcSvcEx
     {
+        //TODO:電卓の為だけのヘルパーになってる、移動したい
         class OpeNameHelper
         {
             static readonly Dictionary<CalcButton, string> OpeTextTable = new Dictionary<CalcButton, string>
@@ -22,6 +23,7 @@ namespace CalcLib.Moriguchi
             public static string Get(CalcButton? opeButton) => opeButton.HasValue ? OpeTextTable[opeButton.Value] : "";
         }
 
+        //共通部品のみに絞る。各機能の要素は移動する。
         public class CalcContextMoriguchi : ICalcContext
         {
             /// <summary>
@@ -62,10 +64,11 @@ namespace CalcLib.Moriguchi
         }
 
         /// <summary>
-        /// サービスの入れ物
+        /// サービス・コンテキストの入れ物
         /// </summary>
         static ISubSvc svc;
-
+        
+        //TODO:こいつを消してサービスごとのコンテキストへと移行したい
         public virtual ICalcContext CreateContext() => new CalcContextMoriguchi();
 
         /// <summary>
@@ -75,19 +78,27 @@ namespace CalcLib.Moriguchi
         /// <returns></returns>
         public string GetExtButtonText(int num)
         {
-            if (num == 1)
-            {
-                return "%";
-            }
-            else if(num == 2)
-            {
-                return "おみくじ";
-            }
+            if (num == 1) return "%";
+            else if(num == 2) return "おみくじ";
+            else if (num == 3) return "株価取得";
             return null;
         }
 
+
+        /// <summary>
+        /// まずここから始まる
+        /// </summary>
+        /// <param name="ctx0"></param>
+        /// <param name="btn"></param>
         public virtual void OnButtonClick(ICalcContext ctx0, CalcButton btn)
         {
+
+
+            //TODO:Factoryでサブクラスを切り替える
+
+
+
+
             var ctx = ctx0 as CalcContextMoriguchi;
             Debug.WriteLine($"Button Clicked {btn}, context={ctx}");
 
@@ -102,6 +113,10 @@ namespace CalcLib.Moriguchi
             {
                 case CalcButton.BtnExt2:
                     svc = new OmikujiClass();
+                    svc.Init(ctx);
+                    break;
+                case CalcButton.BtnExt3:
+                    svc = new StockAcquisitionSvc();
                     svc.Init(ctx);
                     break;
                 default:
