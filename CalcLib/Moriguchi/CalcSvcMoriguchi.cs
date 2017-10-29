@@ -9,23 +9,33 @@ namespace CalcLib.Moriguchi
 {
     public class CalcSvcMoriguchi : ICalcSvcEx
     {
-        //TODO:電卓の為だけのヘルパーになってる、移動したい
-        class OpeNameHelper
-        {
-            static readonly Dictionary<CalcButton, string> OpeTextTable = new Dictionary<CalcButton, string>
+        /// <summary>
+        /// サービス名の列挙体
+        /// </summary>
+        public static Dictionary<int, string> SvcName = new Dictionary<int, string>
             {
-              { CalcButton.BtnPlus, "+" },
-              { CalcButton.BtnMinus, "-" },
-              { CalcButton.BtnMultiple, "×" },
-              { CalcButton.BtnDivide, "÷"},
-              { CalcButton.BtnExt2,""},
+                { 99,"CalcClass"},
+                { 21,"OmikujiClass"},
+                { 22,"StockSvc"},
             };
-            public static string Get(CalcButton? opeButton) => opeButton.HasValue ? OpeTextTable[opeButton.Value] : "";
-        }
+
+        /// <summary>
+        /// 指定サービス番号
+        /// </summary>
+        public static int SvcNo;
 
         //共通部品のみに絞る。各機能の要素は移動する。
-        public class CalcContextMoriguchi : ICalcContext
+        public class ContextMoriguchi : ICalcContext
         {
+            /// <summary>
+            /// メインディスプレイに表示する文字列
+            /// </summary>
+            public string DisplayText => Buffer == null ? Value : Buffer;
+            /// <summary>
+            /// サブディスプレイに表示する文字列
+            /// </summary>
+            public virtual string SubDisplayText => Operation == null ? "" : Value + UtlClass.OpeNameHelper.Get(Operation);
+
             /// <summary>
             /// 左辺の値
             /// </summary>
@@ -41,19 +51,8 @@ namespace CalcLib.Moriguchi
             /// </summary>
             public string Buffer { get; set; }
 
+            //電卓にしか使ってない！邪魔
             public bool Reset { get; set; }
-
-            public string DisplayText => Buffer == null ? Value : Buffer;
-
-            /// <summary>
-            /// サブディスプレイに表示する文字列
-            /// </summary>
-            public virtual string SubDisplayText => Operation == null ? "" : Value + OpeNameHelper.Get(Operation);
-
-            /// <summary>
-            /// おみくじ
-            /// </summary>
-            public string[] omikuji = { "大吉", "中吉", "小吉", "凶　" };
 
             public void Clear()
             {
@@ -62,14 +61,14 @@ namespace CalcLib.Moriguchi
                 Operation = null;
             }
         }
-
-        /// <summary>
-        /// サービス・コンテキストの入れ物
-        /// </summary>
-        static ISubSvc svc;
         
-        //TODO:こいつを消してサービスごとのコンテキストへと移行したい
-        public virtual ICalcContext CreateContext() => new CalcContextMoriguchi();
+        /// <summary>
+        /// サービスの入れ物
+        /// </summary>
+        static ISubSvc FaSvc;
+        static ISubContext FaCtx;
+
+        public virtual ICalcContext CreateContext() => new ContextMoriguchi();
 
         /// <summary>
         /// 拡張ボタンのテキストを返す
@@ -84,7 +83,6 @@ namespace CalcLib.Moriguchi
             return null;
         }
 
-
         /// <summary>
         /// まずここから始まる
         /// </summary>
@@ -92,42 +90,25 @@ namespace CalcLib.Moriguchi
         /// <param name="btn"></param>
         public virtual void OnButtonClick(ICalcContext ctx0, CalcButton btn)
         {
-
-
-            //TODO:Factoryでサブクラスを切り替える
-
-
-
-
-            var ctx = ctx0 as CalcContextMoriguchi;
+            //ctx0(ディスプレイとサブディスプレイ)
+            var ctx = ctx0 as ContextMoriguchi;
             Debug.WriteLine($"Button Clicked {btn}, context={ctx}");
-
+            
             //defaultでは電卓モード
-            if (svc == null)
-            {
-                svc = new CalcClass();
-                svc.Init(ctx);
-            }
+            if (FaSvc == null) SvcNo = 99;
 
-            switch (btn)
-            {
-                case CalcButton.BtnExt2:
-                    svc = new OmikujiClass();
-                    svc.Init(ctx);
-                    break;
-                case CalcButton.BtnExt3:
-                    svc = new StockAcquisitionSvc();
-                    svc.Init(ctx);
-                    break;
-                default:
-                    break;
-            }
+            //機能別サービスNo取得
+            SvcNo = (int)btn;
 
-            var ret = svc.OnClick(ctx, btn);
+            //TODO:各機能のコンテキストとサービスを作成
+            FaCtx = SvcFactory.CreateContext();
+            FaSvc = SvcFactory.CreateService();
+
+            var ret = FaSvc.OnClick(ctx, btn);
 
             if (!ret)
             {
-                svc = null;
+                FaSvc = null;
             }
         }
     }

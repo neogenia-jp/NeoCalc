@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 
 namespace CalcLib.Moriguchi
 {
-    class ISubContext
+    public interface ISubContext
     {
+        string DisplayText { get; }
 
-
+        string SubDisplayText { get; }
     }
 }

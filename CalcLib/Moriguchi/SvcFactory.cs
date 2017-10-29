@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -12,21 +13,11 @@ namespace CalcLib.Moriguchi
 
         public static ISubSvc CreateService()
         {
+            //var ClassName = CalcSvcMoriguchi.SvcName[CalcSvcMoriguchi.SvcNo];
 
-
-
-
-            //// 環境変数「CalcSvcClass」よりクラス名を決定する
-            //var clsName = Environment.GetEnvironmentVariable("CalcSvcClass");
-            //if (string.IsNullOrWhiteSpace(clsName))
-            //{
-            //    return new CalcSvc();
-            //}
-
-            ICalcSvc obj = null;
-            return obj as ICalcSvc;
+            //object o = Activator.CreateInstance(Type.GetType(ClassName));
+            object o = new CalcClass();
+            return o as ISubSvc;
         }
-
-
     }
 }

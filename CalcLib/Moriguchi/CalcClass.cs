@@ -8,19 +8,50 @@ namespace CalcLib.Moriguchi
 {
     class CalcClass : ISubSvc
     {
-        public bool OnClick(ICalcContext ctx, CalcButton btn)
+        /// <summary>
+        /// おみくじモード用コンテキスト
+        /// </summary>
+        public class CalcContext : ISubContext
         {
-            CalcMethod(btn, (CalcSvcMoriguchi.CalcContextMoriguchi)ctx);
-            return true;
+            /// <summary>
+            /// メインディスプレイに表示する文字列
+            /// </summary>
+            public string DisplayText { get; }
+
+            /// <summary>
+            /// サブディスプレイに表示する文字列
+            /// </summary>
+            public string SubDisplayText { get; }
+
+            
+            
         }
 
+        public virtual ISubContext CreateContext() => new CalcContext();
+
+        /// <summary>
+        /// 初期動作
+        /// </summary>
+        /// <param name="ctx0"></param>
         public void Init(ICalcContext ctx0)
         {
-            var ctx = ctx0 as CalcSvcMoriguchi.CalcContextMoriguchi;
+            var ctx = ctx0 as CalcSvcMoriguchi.ContextMoriguchi;
             ctx.Clear();
         }
 
-        private void CalcMethod(CalcButton btn, CalcSvcMoriguchi.CalcContextMoriguchi ctx)
+        /// <summary>
+        /// クリック時動作
+        /// </summary>
+        /// <param name="ctx"></param>
+        /// <param name="btn"></param>
+        /// <returns></returns>
+        public bool OnClick(ICalcContext ctx, CalcButton btn)
+        {
+            CalcMethod(btn, (CalcSvcMoriguchi.ContextMoriguchi)ctx);
+            return true;
+        }
+
+        private void CalcMethod(CalcButton btn, CalcSvcMoriguchi.ContextMoriguchi ctx)
         {
             switch (btn)
             {
@@ -93,14 +124,13 @@ namespace CalcLib.Moriguchi
                     ctx.Buffer += (int)btn;
                     break;
             }
-
         }
 
         /// <summary>
         /// 演算子ボタン押下時の処理
         /// </summary>
         /// <param name="ctx"></param>
-        private void OnOpeButtonClick(CalcSvcMoriguchi.CalcContextMoriguchi ctx, CalcButton btn)
+        private void OnOpeButtonClick(CalcSvcMoriguchi.ContextMoriguchi ctx, CalcButton btn)
         {
             ctx.Operation = btn;
             //ctx.SubDisplayText += ctx.Buffer;
@@ -129,7 +159,7 @@ namespace CalcLib.Moriguchi
         /// </summary>
         /// <param name="ctx"></param>
         /// <returns></returns>
-        private string ExecCalcuration(CalcSvcMoriguchi.CalcContextMoriguchi ctx, CalcButton operation)
+        private string ExecCalcuration(CalcSvcMoriguchi.ContextMoriguchi ctx, CalcButton operation)
         {
             string x;
             {
