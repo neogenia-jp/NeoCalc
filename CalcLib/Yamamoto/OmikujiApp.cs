@@ -75,6 +75,12 @@ namespace CalcLib.Yamamoto
                     InputState = State.Fin;
                     return;
 
+                // "株価取得"
+                case CalcButton.BtnExt3:
+                    ToStockMode(ctx, btn);
+                    InputState = State.Fin;
+                    return;
+
                 // "1"
                 // "2"
                 // "3"
