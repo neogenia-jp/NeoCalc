@@ -73,6 +73,7 @@ namespace CalcLib.Yamamoto
         {
             if (num == 1) return "%";
             if (num == 2) return "おみくじ";
+            if (num == 3) return "株価取得";
             return null;
         }
 
