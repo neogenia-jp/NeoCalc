@@ -15,7 +15,8 @@ namespace CalcLib.Yamamoto
         public enum State
         {
             Init = 0,      // 初期化
-            Fin,           // 証券コード取得終了
+            ShowStock,     // 株価表示
+            Fin,           // 証券コード取得アプリ終了
         }
 
         /// <summary>
@@ -35,6 +36,7 @@ namespace CalcLib.Yamamoto
             if(InputState == State.Init)
             {
                 Init(ctx);
+                InputState = State.ShowStock;
                 return;
             }
 
@@ -62,6 +64,7 @@ namespace CalcLib.Yamamoto
                 case CalcButton.Btn9:
                 case CalcButton.Btn0:
                     ToCaliculatorMode(ctx, btn);
+                    InputState = State.Fin;
                     return;
 
                 default:
@@ -80,13 +83,15 @@ namespace CalcLib.Yamamoto
         {
             var stockSvc = StockSvcFactory.Create();
 
-            if (!IsShokenCode(ctx.DisplayText))
+            var text = ctx.DisplayText.Replace(",", "");
+            if (!IsShokenCode(text))
             {
                 ctx.SubDisplayText = "INPUT ERROR";
+                return;
             }
 
             decimal result = 0;
-            int shokenCd = int.Parse(ctx.DisplayText);
+            var shokenCd = int.Parse(text);
             try
             {
                 result = stockSvc.Scrape(shokenCd);
@@ -94,13 +99,10 @@ namespace CalcLib.Yamamoto
             catch
             {
                 ctx.SubDisplayText = "SCRAPING ERROR";
+                return;
             }
 
-            ctx.DisplayText = $"[{shokenCd}] {result.CutTrailingZero().ToCommaString()} JPY";
-
-
-            // 終了状態へ遷移
-            InputState = State.Fin;
+            ctx.DisplayText = $"[{shokenCd}] {result.ToCommaString()} JPY";
         }
 
         /// <summary>
