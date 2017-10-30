@@ -10,6 +10,7 @@ namespace CalcLib.Yamamoto
     {
         private static Calculator _calculator = null;
         private static OmikujiApp _omikujiApp = null;
+        private static StockApp _stockApp = null;
 
         /// <summary>
         /// アプリ初期化
@@ -18,6 +19,7 @@ namespace CalcLib.Yamamoto
         {
             _calculator = null;
             _omikujiApp = null;
+            _stockApp = null;
         }
 
         /// <summary>
@@ -33,6 +35,8 @@ namespace CalcLib.Yamamoto
                     return CreateCalculator();
                 case CalcSvcYamamoto.CalcContextYamamoto.AppMode.Omikuji:
                     return CreateOmikujiApp();
+                case CalcSvcYamamoto.CalcContextYamamoto.AppMode.Stock:
+                    return CreateStockApp();
                 default:
                     return null;
             }
@@ -62,6 +66,19 @@ namespace CalcLib.Yamamoto
                 _omikujiApp = new OmikujiApp();
             }
             return _omikujiApp;
+        }
+
+        /// <summary>
+        /// 株価取得アプリ作成
+        /// </summary>
+        /// <returns></returns>
+        private static StockApp CreateStockApp()
+        {
+            if (_stockApp == null || _stockApp.InputState == StockApp.State.Fin)
+            {
+                _stockApp = new StockApp();
+            }
+            return _stockApp;
         }
     }
 }

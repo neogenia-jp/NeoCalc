@@ -32,5 +32,17 @@ namespace CalcLib.Yamamoto
             ctx.Mode = CalcSvcYamamoto.CalcContextYamamoto.AppMode.Omikuji;
         }
 
+        /// <summary>
+        /// 株価モードへ移行
+        /// </summary>
+        /// <param name="ctx"></param>
+        /// <param name="btn"></param>
+        internal void ToStockMode(CalcSvcYamamoto.CalcContextYamamoto ctx, CalcButton btn)
+        {
+            // 株価モードへ変更
+            ctx.BeforeMode = ctx.Mode;
+            ctx.Mode = CalcSvcYamamoto.CalcContextYamamoto.AppMode.Stock;
+        }
+
     }
 }

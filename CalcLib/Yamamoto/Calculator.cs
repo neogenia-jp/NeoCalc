@@ -318,6 +318,12 @@ namespace CalcLib.Yamamoto
                     }
                     break;
 
+                // "株価取得"
+                case CalcButton.BtnExt3:
+                    ToStockMode(ctx, btn);
+                    InputState = State.Fin;
+                    return;
+
                 default:
                     break;
             }
