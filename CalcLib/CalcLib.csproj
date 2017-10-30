@@ -31,6 +31,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -41,6 +42,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CalcButton.cs" />
+    <Compile Include="Common\Stock\IStockSvc.cs" />
+    <Compile Include="Common\Stock\StockSvcFactory.cs" />
+    <Compile Include="Common\Stock\StockSvcMock.cs" />
+    <Compile Include="Common\Stock\StockSvc.cs" />
     <Compile Include="Maeda\CalcSvcMaeda.cs" />
     <Compile Include="CalcSvc.cs" />
     <Compile Include="CalcContext.cs" />
@@ -52,6 +57,7 @@
     <Compile Include="ICalcSvc.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Yamamoto\BaseApp.cs" />
+    <Compile Include="Yamamoto\StockApp.cs" />
     <Compile Include="Yamamoto\OmikujiApp.cs" />
     <Compile Include="Yamamoto\Calculator.cs" />
     <Compile Include="Yamamoto\DecimalExt.cs" />

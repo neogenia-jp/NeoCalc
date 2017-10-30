@@ -18,6 +18,7 @@ namespace CalcLib.Yamamoto
             {
                 Calculator = 0,  // 電卓
                 Omikuji,         // おみくじ
+                Stock,           // 株価
                 None,            // なし
             }
 
