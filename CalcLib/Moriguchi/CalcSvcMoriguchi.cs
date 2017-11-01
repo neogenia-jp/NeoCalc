@@ -65,7 +65,7 @@ namespace CalcLib.Moriguchi
         {
             var ctx = ctx0 as CalcContextMoriguchi;
             Debug.WriteLine($"Button Clicked {btn}, context={ctx}");
-
+            
             switch (btn)
             {
                 //演算子
@@ -73,6 +73,12 @@ namespace CalcLib.Moriguchi
                 case CalcButton.BtnMinus:
                 case CalcButton.BtnDivide:
                 case CalcButton.BtnMultiple:
+                    //小数点押下直後に演算子を押下すると小数点を削除する
+                    if (ctx.Buffer.EndsWith("."))
+                    {
+                        char[] dot = {'.'};
+                        ctx.Buffer = ctx.Buffer.TrimEnd(dot);
+                    }
                     OnOpeButtonClick(ctx, btn);   // 演算子ボタン押下時の処理
                     break;
 
@@ -85,8 +91,13 @@ namespace CalcLib.Moriguchi
                     break;
                 case CalcButton.BtnClearEnd:
                     break;
+                //バックスペース
                 case CalcButton.BtnBS:
-                    //TODO
+                    if (!string.IsNullOrEmpty(ctx.Buffer))
+                    {
+                        var test = ctx.Buffer.Length;
+                        ctx.Buffer = ctx.Buffer.Remove(ctx.Buffer.Length - 1);
+                    }
                     break;
 
                 //パーセント(BtnExt1)押下時
@@ -99,6 +110,11 @@ namespace CalcLib.Moriguchi
                         var buf = double.Parse(ctx.Buffer);
                         ctx.Buffer = (val * (buf / 100)).ToString();
                     }
+                    break;
+
+                //小数点押下時
+                case CalcButton.BtnDot:
+                    if (!ctx.Buffer.EndsWith(".")) ctx.Buffer += ".";
                     break;
 
                 //計算
@@ -160,7 +176,7 @@ namespace CalcLib.Moriguchi
         {
             string x;
             {
-                x = Calc(ctx.Value, ctx.Buffer, operation).ToString();
+                x = string.Format("{0:#,0.#############}",Calc(ctx.Value, ctx.Buffer, operation));
                 ctx.Reset = true;
                 ctx.Buffer = x;
                 ctx.Value = null;
