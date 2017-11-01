@@ -44,6 +44,7 @@
     <Compile Include="Maeda\CalcSvcMaeda.cs" />
     <Compile Include="CalcSvc.cs" />
     <Compile Include="CalcContext.cs" />
+    <Compile Include="Util\StockUtil.cs" />
     <Compile Include="Yamamoto\CalcSvcYamamoto.cs" />
     <Compile Include="Moriguchi\CalcSvcMoriguchi.cs" />
     <Compile Include="Factory.cs" />
