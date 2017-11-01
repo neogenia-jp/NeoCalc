@@ -41,18 +41,35 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CalcButton.cs" />
+    <Compile Include="Maeda\Basis\SvcBtnConvertAdapter.cs" />
+    <Compile Include="Maeda\Basis\SvcHolder.cs" />
+    <Compile Include="Maeda\Basis\SvcState.cs" />
+    <Compile Include="Maeda\CalcuratorSvc.cs" />
+    <Compile Include="Maeda\Basis\IBackendSvc.cs" />
+    <Compile Include="Maeda\Basis\SvcTree.cs" />
+    <Compile Include="Maeda\Dispatcher\SvcDispatcher.cs" />
+    <Compile Include="Maeda\Omikuji\OmikujiImpl.cs" />
+    <Compile Include="Maeda\Omikuji\OmikujiSvc.cs" />
     <Compile Include="Maeda\CalcSvcMaeda.cs" />
     <Compile Include="CalcSvc.cs" />
     <Compile Include="CalcContext.cs" />
-    <Compile Include="Util\StockUtil.cs" />
+    <Compile Include="Yamamoto\ApplicationFactory.cs" />
+    <Compile Include="Maeda\Util\EnumerableExt.cs" />
+    <Compile Include="Maeda\Util\SvcActivator.cs" />
     <Compile Include="Yamamoto\CalcSvcYamamoto.cs" />
     <Compile Include="Moriguchi\CalcSvcMoriguchi.cs" />
     <Compile Include="Factory.cs" />
     <Compile Include="ICalcContext.cs" />
     <Compile Include="ICalcSvc.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Yamamoto\BaseApp.cs" />
+    <Compile Include="Yamamoto\OmikujiApp.cs" />
+    <Compile Include="Yamamoto\Calculator.cs" />
     <Compile Include="Yamamoto\DecimalExt.cs" />
+    <Compile Include="Yamamoto\IApplication.cs" />
+    <Compile Include="Util\StockUtil.cs" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
