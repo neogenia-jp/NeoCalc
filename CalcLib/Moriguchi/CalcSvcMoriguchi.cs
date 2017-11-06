@@ -9,19 +9,6 @@ namespace CalcLib.Moriguchi
 {
     internal class CalcSvcMoriguchi : ICalcSvcEx
     {
-        class OpeNameHelper
-        {
-            static readonly Dictionary<CalcButton, string> OpeTextTable = new Dictionary<CalcButton, string>
-            {
-              { CalcButton.BtnPlus, "+" },
-              { CalcButton.BtnMinus, "-" },
-              { CalcButton.BtnMultiple, "×" },
-              { CalcButton.BtnDivide, "÷"},
-              { CalcButton.BtnExt2,""},
-            };
-            public static string Get(CalcButton? opeButton) => opeButton.HasValue ? OpeTextTable[opeButton.Value] : "";
-        }
-
         class CalcContextMoriguchi : ICalcContext
         {
             /// <summary>
@@ -46,7 +33,7 @@ namespace CalcLib.Moriguchi
             /// <summary>
             /// サブディスプレイに表示する文字列
             /// </summary>
-            public virtual string SubDisplayText => Operation == null ? "" : Value + OpeNameHelper.Get(Operation);
+            public virtual string SubDisplayText => Operation == null ? "" : Value + UtlClass.OpeNameHelper.Get(Operation);
 
             /// <summary>
             /// モードの状態(trueならおみくじモード)

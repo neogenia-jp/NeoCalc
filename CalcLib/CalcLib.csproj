@@ -56,6 +56,7 @@
     <Compile Include="Moriguchi\ISubContext.cs" />
     <Compile Include="Moriguchi\ISubSvc.cs" />
     <Compile Include="Moriguchi\SvcFactory.cs" />
+    <Compile Include="Moriguchi\UtlClass.cs" />
     <Compile Include="Yamamoto\ApplicationFactory.cs" />
     <Compile Include="Maeda\Util\EnumerableExt.cs" />
     <Compile Include="Maeda\Util\SvcActivator.cs" />
