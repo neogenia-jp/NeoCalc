@@ -13,8 +13,20 @@ namespace CalcLib.Moriguchi
 
         public static ISubSvc CreateService()
         {
-            ISubSvc o = null;
-            return o;
+            var No = CalcSvcMoriguchi.SvcNo;
+            object o = new CalcClass();
+
+            switch (No)
+            {
+                case 21:
+                    o = new OmikujiClass();
+                    break;
+                default:
+                    o = new CalcClass();
+                    break;
+            }
+
+            return o as ISubSvc;
         }
     }
 }
