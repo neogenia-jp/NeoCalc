@@ -55,6 +55,7 @@
     <Compile Include="CalcContext.cs" />
     <Compile Include="Moriguchi\ISubContext.cs" />
     <Compile Include="Moriguchi\ISubSvc.cs" />
+    <Compile Include="Moriguchi\OmikujiClass.cs" />
     <Compile Include="Moriguchi\SvcFactory.cs" />
     <Compile Include="Moriguchi\UtlClass.cs" />
     <Compile Include="Yamamoto\ApplicationFactory.cs" />
