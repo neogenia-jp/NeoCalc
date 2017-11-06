@@ -8,6 +8,10 @@ namespace CalcLib.Moriguchi
 {
     class UtlClass
     {
+        //TODO:もっと汎用的に使える様に作ろう
+        public static void Chomp(ISubContext ctx)
+          => ctx.DisplayText = ctx.DisplayText.Remove(ctx.DisplayText.Length - 1);
+
         public class OpeNameHelper
         {
             static readonly Dictionary<CalcButton, string> OpeTextTable = new Dictionary<CalcButton, string>

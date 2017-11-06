@@ -91,6 +91,7 @@ namespace CalcLib.Moriguchi
             {
                 ctx.DisplayText += kekka + " ";
             };
+            UtlClass.Chomp(ctx);
         }
     }
 }
