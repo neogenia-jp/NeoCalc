@@ -25,11 +25,11 @@ namespace CalcLib.Moriguchi
 
         public virtual ISubContext CreateContext() => new StockContext();
 
-        public void Init(ISubContext Factx)
+        public void Init(ISubContext Factx, ICalcContext prevCtx)
         {
             var ctx = (StockContext)Factx;
 
-            var code = CalcSvcMoriguchi.ContextMoriguchi.Disp;
+            var code = prevCtx.DisplayText; // CalcSvcMoriguchi.ContextMoriguchi.Disp;
 
             //４桁だったら株価取得へ
             if (code.Length == 4)

@@ -79,14 +79,14 @@ namespace CalcLib.Moriguchi
             if (FaSvc == null)
             {
                 SvcNo = 99;
-                MakeFactory();
+                MakeFactory(ctx);
             }
             else if ((int)btn >= 21)
             {
                 //サービスの切り替え時
                 SvcNo = (int)btn;
                 ContextMoriguchi.Disp = ctx.DisplayText;
-                MakeFactory();
+                MakeFactory(ctx);
             }
 
             //サービスメソッド実行
@@ -102,11 +102,13 @@ namespace CalcLib.Moriguchi
         /// <summary>
         /// ファクトリーによるサービス製造
         /// </summary>
-        private static void MakeFactory()
+        private static void MakeFactory(ICalcContext prevCtx)
         {
-            FaCtx = SvcFactory.CreateContext();
-            FaSvc = SvcFactory.CreateService();
-            FaSvc.Init(FaCtx);
+            var c = SvcFactory.CreateContext();
+            var s = SvcFactory.CreateService();
+            s.Init(c, prevCtx);
+            FaCtx = c;
+            FaSvc = s;
         }
     }
 }
