@@ -84,10 +84,11 @@ namespace CalcLib.Yamamoto
                 return;
             }
 
-            Util.StockPrice sp;
+            var sp = Util.StockUtilFactory.Create();
+            Util.StockPrice result;
             try
             {
-                sp = StockUtilWrapper.GetStockPrice(text);
+                result = sp.GetStockPrice(text);
             }
             catch
             {
@@ -95,7 +96,7 @@ namespace CalcLib.Yamamoto
                 return;
             }
 
-            ctx.DisplayText = $"[{sp.Code}] {sp.Price.ToCommaString()} JPY";
+            ctx.DisplayText = $"[{result.Code}] {result.Price.ToCommaString()} JPY";
         }
 
         /// <summary>

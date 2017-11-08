@@ -71,7 +71,8 @@
     <Compile Include="Yamamoto\IApplication.cs" />
     <Compile Include="Util\StockUtil.cs" />
     <Compile Include="Yamamoto\StockApp.cs" />
-    <Compile Include="Yamamoto\StockUtilWrapper.cs" />
+    <Compile Include="Util\StockUtilFactory.cs" />
+    <Compile Include="Util\StockUtilWrapper.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
