@@ -16,6 +16,7 @@ namespace CalcLib.Moriguchi
             {
                 { 99,"CalcClass"},
                 { 21,"OmikujiClass"},
+                { 22,"StockClass"},
             };
 
         /// <summary>
@@ -29,16 +30,16 @@ namespace CalcLib.Moriguchi
             /// <summary>
             /// メインディスプレイに表示する文字列
             /// </summary>
-            public string DisplayText => FaCtx.DisplayText;
+            public string DisplayText => FaCtx?.DisplayText;
             /// <summary>
             /// サブディスプレイに表示する文字列
             /// </summary>
-            public virtual string SubDisplayText => FaCtx.SubDisplayText;
+            public virtual string SubDisplayText => FaCtx?.SubDisplayText;
 
             /// <summary>
             /// サービス側から入れる
             /// </summary>
-            public string Disp;
+            public static string Disp;
             public string SubDisp;
         }
 
@@ -59,6 +60,7 @@ namespace CalcLib.Moriguchi
         {
             if (num == 1) return "%";
             else if (num == 2) return "おみくじ";
+            else if (num == 3) return "株価取得";
             return null;
         }
 
@@ -83,6 +85,7 @@ namespace CalcLib.Moriguchi
             {
                 //サービスの切り替え時
                 SvcNo = (int)btn;
+                ContextMoriguchi.Disp = ctx.DisplayText;
                 MakeFactory();
             }
 

@@ -87,8 +87,8 @@ namespace CalcLib.Moriguchi
         /// <param name="ctx0"></param>
         public void Init(ISubContext Factx)
         {
-            var ctx = Factx as CalcContext;
-            ctx.Clear();
+            var factx = Factx as CalcContext;
+            factx.Clear();
         }
 
         /// <summary>
