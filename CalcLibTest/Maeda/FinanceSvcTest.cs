@@ -5,17 +5,29 @@ using CalcLib.Maeda.Finance;
 using System.Collections.Generic;
 using System.Linq;
 using CalcLib;
+using CalcLib.Util;
 
 namespace CalcLibTest.Maeda
 {
     [TestClass]
     public class FinanceSvcTest
     {
+        /// <summary>
+        /// テスト用の切り替え元コンテキスト
+        /// </summary>
         class PrevContext : ICalcContext
         {
             public string DisplayText { get; set; }
 
             public string SubDisplayText { get; set; }
+        }
+
+        /// <summary>
+        /// テスト用のStockUtil
+        /// </summary>
+        class TestStockUtil : IStockUtil
+        {
+            public StockPrice GetStockPrice(string code) => new StockPrice(code, 2509m, new DateTime(2015, 5, 30));
         }
 
         FinanceContext ctx;
@@ -26,6 +38,9 @@ namespace CalcLibTest.Maeda
         {
             svc = new FinanceSvc();
             ctx = svc._CreateContext();
+
+            // テスト用のUtilクラスをActivatorに登録する
+            CalcLib.Maeda.Finance.Imple.UtilActivatorImple.Registor<IStockUtil, TestStockUtil>();
         }
 
 
@@ -42,7 +57,7 @@ namespace CalcLibTest.Maeda
             
             Assert.IsTrue(ret);
             Assert.AreEqual("", ctx.SubDisplayText);
-            Assert.AreEqual("[1301] 1000 JPY", ctx.DisplayText);
+            Assert.AreEqual("[1301] 2509 JPY", ctx.DisplayText);
 
             // 4 を押す
             ret = svc.TryButtonClick(ctx, CalcLib.CalcButton.Btn4);
