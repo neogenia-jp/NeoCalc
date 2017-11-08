@@ -25,13 +25,13 @@ namespace CalcLib.Yamamoto
         /// </summary>
         /// <param name="mode"></param>
         /// <returns></returns>
-        public static IApplication CreateApp(CalcSvcYamamoto.CalcContextYamamoto.AppMode mode)
+        public static BaseApp CreateApp(AppMode mode)
         {
             switch (mode)
             {
-                case CalcSvcYamamoto.CalcContextYamamoto.AppMode.Calculator:
+                case AppMode.Calculator:
                     return CreateCalculator();
-                case CalcSvcYamamoto.CalcContextYamamoto.AppMode.Omikuji:
+                case AppMode.Omikuji:
                     return CreateOmikujiApp();
                 default:
                     return null;

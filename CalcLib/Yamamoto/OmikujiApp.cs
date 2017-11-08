@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CalcLib.Yamamoto
 {
-    public class OmikujiApp : BaseApp, IApplication
+    public class OmikujiApp : BaseApp
     {
         /// <summary>
         /// 入力状態
@@ -53,7 +53,7 @@ namespace CalcLib.Yamamoto
         /// </summary>
         /// <param name="ctx0"></param>
         /// <param name="btn"></param>
-        public void Run(ICalcContext ctx0, CalcButton btn)
+        public override void Run(ICalcContext ctx0, CalcButton btn)
         {
             var ctx = ctx0 as CalcSvcYamamoto.CalcContextYamamoto;
 
@@ -71,9 +71,9 @@ namespace CalcLib.Yamamoto
                 case CalcButton.BtnClear:
                 case CalcButton.BtnClearEnd:
                 case CalcButton.BtnExt2:
-                    ToCaliculatorMode(ctx, btn);
+                    ToCaliculatorMode();
                     InputState = State.Fin;
-                    return;
+                    break;
 
                 // "1"
                 // "2"
@@ -85,9 +85,9 @@ namespace CalcLib.Yamamoto
                 case CalcButton.Btn4:
                     if(InputState == State.Opened)
                     {
-                        ToCaliculatorMode(ctx, btn);
+                        ToCaliculatorMode();
                         InputState = State.Fin;
-                        return;
+                        break;
                     }
                     OpenOmikuji(ctx, btn);
                     break;
@@ -95,14 +95,12 @@ namespace CalcLib.Yamamoto
                 default:
                     if(InputState == State.Opened)
                     {
-                        ToCaliculatorMode(ctx, btn);
+                        ToCaliculatorMode();
                         InputState = State.Fin;
-                        return;
+                        break;
                     }
                     break;
             }
-            ctx.BeforeMode = ctx.Mode;
-            ctx.Mode = CalcSvcYamamoto.CalcContextYamamoto.AppMode.Omikuji;
         }
 
         /// <summary>
