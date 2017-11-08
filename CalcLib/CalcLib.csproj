@@ -69,6 +69,7 @@
     <Compile Include="Yamamoto\DecimalExt.cs" />
     <Compile Include="Yamamoto\IApplication.cs" />
     <Compile Include="Util\StockUtil.cs" />
+    <Compile Include="Yamamoto\StockApp.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
