@@ -83,7 +83,7 @@ namespace CalcLib.Maeda.Finance
                     try
                     {
                         ctx.StockCode = CheckInput(ctx.StockCode);        // 入力チェック（エラー時は例外が出る）
-                        var sp = StockUtil.GetStockPrice(ctx.StockCode);  // 株価取得
+                        var sp = UtilActivator.Get<IStockUtil>().GetStockPrice(ctx.StockCode);  // 株価取得
                         ctx.Price = sp.Price;  // 株価
                         ctx.Currency = "JPY";  // 通貨は JPY 固定とする
                         ctx.Date = sp.Date;    // 日時
