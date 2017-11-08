@@ -102,7 +102,7 @@ namespace CalcLib.Moriguchi
         /// <summary>
         /// ファクトリーによるサービス製造
         /// </summary>
-        private static void MakeFactory(ICalcContext prevCtx)
+        private void MakeFactory(ICalcContext prevCtx)
         {
             var c = SvcFactory.CreateContext();
             var s = SvcFactory.CreateService();

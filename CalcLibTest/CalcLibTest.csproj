@@ -54,6 +54,7 @@
     <Compile Include="CalcSvcTest2.cs" />
     <Compile Include="CalcSvcTest.cs" />
     <Compile Include="Maeda\OmikujiSvcTest.cs" />
+    <Compile Include="Moriguchi\MoriguchuSvcTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
