@@ -7,9 +7,27 @@ using System.Configuration;
 
 namespace CalcLib.Util
 {
+    /// <summary>
+    /// StockUtilのラッパークラス（シングルトン）
+    /// </summary>
     public class StockUtilWrapper
     {
+        private static StockUtilWrapper _wrapper;
         private StockPrice _sp;
+
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        private StockUtilWrapper() { }
+
+        /// <summary>
+        /// インスタンス取得
+        /// </summary>
+        public static StockUtilWrapper GetInstance()
+        {
+            if (_wrapper == null) _wrapper = new StockUtilWrapper();
+            return _wrapper;
+        }
 
         /// <summary>
         /// 返してもらう株価データを登録しておける

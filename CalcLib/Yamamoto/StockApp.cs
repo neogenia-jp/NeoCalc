@@ -84,7 +84,7 @@ namespace CalcLib.Yamamoto
                 return;
             }
 
-            var sp = Util.StockUtilFactory.Create();
+            var sp = Util.StockUtilWrapper.GetInstance();
             Util.StockPrice result;
             try
             {

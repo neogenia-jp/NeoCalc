@@ -21,7 +21,7 @@ namespace CalcLibTest
         {
             svc = Factory.CreateService();
             ctx = svc.CreateContext();
-            suWrapper = StockUtilFactory.Create();
+            suWrapper = StockUtilWrapper.GetInstance();
         }
 
         [TestMethod]
