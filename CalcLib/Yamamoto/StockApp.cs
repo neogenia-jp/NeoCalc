@@ -87,7 +87,7 @@ namespace CalcLib.Yamamoto
             Util.StockPrice sp;
             try
             {
-                sp = Util.StockUtil.GetStockPrice(text);
+                sp = StockUtilWrapper.GetStockPrice(text);
             }
             catch
             {
