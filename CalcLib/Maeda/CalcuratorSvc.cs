@@ -6,6 +6,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using CalcLib.Maeda.Basis;
+using CalcLib.Maeda.Dispatcher;
 
 namespace CalcLib.Maeda
 {
@@ -304,5 +305,6 @@ namespace CalcLib.Maeda
             return true;
         }
 
+        public void OnEnter(ICalcContext ctx, SvcSwichedEventArg svcSwichedEventArg) { }
     }
 }
