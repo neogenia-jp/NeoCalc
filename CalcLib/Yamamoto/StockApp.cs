@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CalcLib.Util;
 
 namespace CalcLib.Yamamoto
 {
@@ -84,8 +85,8 @@ namespace CalcLib.Yamamoto
                 return;
             }
 
-            var sp = Util.StockUtilWrapper.GetInstance();
-            Util.StockPrice result;
+            var sp = StockUtilWrapper.GetInstance();
+            StockPrice result;
             try
             {
                 result = sp.GetStockPrice(text);

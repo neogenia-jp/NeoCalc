@@ -4,11 +4,12 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using CalcLib;
 using CalcLib.Util;
+using CalcLib.Yamamoto;
 
-namespace CalcLibTest
+namespace CalcLibTest.Yamamoto
 {
     [TestClass]
-    public class CalcSvcTestStock
+    public class TestStockApp
     {
         static readonly CalcButton stockBtn = CalcButton.BtnExt3;
 
