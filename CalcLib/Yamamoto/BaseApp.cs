@@ -20,6 +20,11 @@ namespace CalcLib.Yamamoto
         /// </summary>
         internal void ToOmikujiMode() => NextMode = AppMode.Omikuji;
 
+        /// <summary>
+        /// 株価取得モードへ移行
+        /// </summary>
+        internal void ToStockMode() => NextMode = AppMode.Stock;
+
         public abstract void Run(ICalcContext ctx0, CalcButton btn);
     }
 }
