@@ -63,6 +63,7 @@
     <Compile Include="ICalcSvc.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Yamamoto\BaseApp.cs" />
+    <Compile Include="Yamamoto\Common.cs" />
     <Compile Include="Yamamoto\OmikujiApp.cs" />
     <Compile Include="Yamamoto\Calculator.cs" />
     <Compile Include="Yamamoto\DecimalExt.cs" />

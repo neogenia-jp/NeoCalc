@@ -6,31 +6,20 @@ using System.Threading.Tasks;
 
 namespace CalcLib.Yamamoto
 {
-    public class BaseApp
+    public abstract class BaseApp
     {
+        internal AppMode NextMode { get; set; } = AppMode.None;
+
         /// <summary>
         /// 電卓モードへ移行
         /// </summary>
-        /// <param name="ctx"></param>
-        /// <param name="btn"></param>
-        internal void ToCaliculatorMode(CalcSvcYamamoto.CalcContextYamamoto ctx, CalcButton btn)
-        {
-            // 電卓モードへ変更
-            ctx.BeforeMode = ctx.Mode;
-            ctx.Mode = CalcSvcYamamoto.CalcContextYamamoto.AppMode.Calculator;
-        }
+        internal void ToCaliculatorMode() => NextMode = AppMode.Calculator;
 
         /// <summary>
         /// おみくじモードへ移行
         /// </summary>
-        /// <param name="ctx"></param>
-        /// <param name="btn"></param>
-        internal void ToOmikujiMode(CalcSvcYamamoto.CalcContextYamamoto ctx, CalcButton btn)
-        {
-            // おみくじモードへ変更
-            ctx.BeforeMode = ctx.Mode;
-            ctx.Mode = CalcSvcYamamoto.CalcContextYamamoto.AppMode.Omikuji;
-        }
+        internal void ToOmikujiMode() => NextMode = AppMode.Omikuji;
 
+        public abstract void Run(ICalcContext ctx0, CalcButton btn);
     }
 }
