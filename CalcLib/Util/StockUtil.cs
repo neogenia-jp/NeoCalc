@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Net;
 using AngleSharp.Parser.Html;
 
 namespace CalcLib.Util
@@ -50,10 +51,9 @@ namespace CalcLib.Util
                 price = GetPrice(html);
                 date = GetDateTime(html);
             }
-            catch
+            catch(Exception ex)
             {
-                // とりあえずすべての例外はExceptionで返しておく
-                throw new Exception();
+                throw new ApplicationException("株価取得時に異常が発生しました。", ex);
             }
 
             return new StockPrice(code, price, date);
@@ -104,17 +104,16 @@ namespace CalcLib.Util
         {
             if (e == null) e = Encoding.UTF8;
             string html = "";
-            using (var client = new System.Net.WebClient())
+            using (var client = new WebClient())
             {
                 client.Encoding = e;
                 try
                 {
                     html = client.DownloadString(url);
                 }
-                catch
+                catch(Exception ex)
                 {
-                    // とりあえず、WebExceptionを投げておく
-                    throw new System.Net.WebException();
+                    throw new WebException($"HTML文書の取得に失敗しました。指定URL[{url}]", ex);
                 }
             }
             return html;
