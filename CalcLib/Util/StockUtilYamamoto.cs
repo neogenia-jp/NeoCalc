@@ -11,6 +11,16 @@ namespace CalcLib.Util
     public static class StockUtilYamamoto
     {
         /// <summary>
+        /// スクレイピング失敗時の例外クラス
+        /// </summary>
+        public class ScrapingException : Exception
+        {
+            public ScrapingException() { }
+            public ScrapingException(string message) : base(message) { }
+            public ScrapingException(string message, Exception innerException) : base(message, innerException){ }
+        }
+
+        /// <summary>
         /// 日経平均株価
         /// </summary>
         public const string N225_CODE = "998407";
@@ -115,7 +125,14 @@ namespace CalcLib.Util
         public static string GetInnerText(string html, string selector)
         {
             var parser = new HtmlParser().Parse(html);
-            return parser.QuerySelector(selector)?.TextContent;
+            try
+            {
+                return parser.QuerySelector(selector).TextContent;
+            }
+            catch(Exception ex)
+            {
+                throw new ScrapingException($"指定したセレクタが存在するか確認してください。指定セレクタ[{selector}]", ex);
+            }
         }
     }
 }

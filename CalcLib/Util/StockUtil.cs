@@ -30,5 +30,6 @@ namespace CalcLib.Util
             // FIXME
             return new StockPrice(code, 1000m, new DateTime(2017, 11, 1));
         }
+
     }
 }
