@@ -57,6 +57,7 @@
     <Compile Include="Maeda\CalcSvcMaeda.cs" />
     <Compile Include="CalcSvc.cs" />
     <Compile Include="CalcContext.cs" />
+    <Compile Include="Util\StockUtilYamamotoWrapper.cs" />
     <Compile Include="Util\StockUtilYamamoto.cs" />
     <Compile Include="Moriguchi\CalcClass.cs" />
     <Compile Include="Moriguchi\ISubContext.cs" />
