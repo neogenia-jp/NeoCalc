@@ -150,7 +150,7 @@ namespace CalcLibTest
             // 日経平均株価を設定し、日経平均株価を取得する
             wrapper.RegistStockData(new StockPrice(StockUtilYamamoto.N225_CODE, 21355.32m, new DateTime(2017, 11, 13, 12, 00, 01)));
             svc.OnButtonClick(ctx, CalcButton.BtnPlus);
-            Assert.AreEqual("[N225] 21,355.22 JPY", ctx.DisplayText);
+            Assert.AreEqual("[N225] 21,355.32 JPY", ctx.DisplayText);
 
             // 1キー押下
             // 電卓にもどる
@@ -175,7 +175,7 @@ namespace CalcLibTest
 
             // NYダウを設定し、日経平均株価を取得する
             wrapper.RegistStockData(new StockPrice(StockUtilYamamoto.NY_DOW_CODE, 22997.44m, new DateTime(2017, 11, 13, 12, 00, 02)));
-            svc.OnButtonClick(ctx, CalcButton.BtnPlus);
+            svc.OnButtonClick(ctx, CalcButton.BtnMinus);
             Assert.AreEqual("[DJI] 22,997.44 USD", ctx.DisplayText);
 
             // 1キー押下
