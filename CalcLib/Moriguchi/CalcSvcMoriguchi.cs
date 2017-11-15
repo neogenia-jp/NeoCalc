@@ -41,13 +41,13 @@ namespace CalcLib.Moriguchi
             /// </summary>
             public static string Disp;
             public string SubDisp;
-        }
 
-        /// <summary>
-        /// サービスの入れ物
-        /// </summary>
-        static ISubSvc FaSvc;
-        static ISubContext FaCtx;
+            /// <summary>
+            /// サービスの入れ物
+            /// </summary>
+            public ISubSvc FaSvc;
+            public ISubContext FaCtx;
+        }
 
         public virtual ICalcContext CreateContext() => new ContextMoriguchi();
 
@@ -76,7 +76,7 @@ namespace CalcLib.Moriguchi
             Debug.WriteLine($"Button Clicked {btn}, context={ctx}");
 
             //defaultでは電卓モード
-            if (FaSvc == null)
+            if (ctx.FaSvc == null)
             {
                 SvcNo = 99;
                 MakeFactory(ctx);
@@ -90,25 +90,25 @@ namespace CalcLib.Moriguchi
             }
 
             //サービスメソッド実行
-            var ret = FaSvc.OnClick(FaCtx, btn);
+            var ret = ctx.FaSvc.OnClick(ctx.FaCtx, btn);
 
             //サービスインスタンス破棄
             if (!ret)
             {
-                FaSvc = null;
+                ctx.FaSvc = null;
             }
         }
 
         /// <summary>
         /// ファクトリーによるサービス製造
         /// </summary>
-        private void MakeFactory(ICalcContext prevCtx)
+        private void MakeFactory(ContextMoriguchi prevCtx)
         {
             var c = SvcFactory.CreateContext();
             var s = SvcFactory.CreateService();
             s.Init(c, prevCtx);
-            FaCtx = c;
-            FaSvc = s;
+            prevCtx.FaCtx = c;
+            prevCtx.FaSvc = s;
         }
     }
 }
