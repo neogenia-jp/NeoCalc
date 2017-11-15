@@ -56,6 +56,7 @@ namespace CalcLib.Yamamoto
                     break;
                 // "-"
                 case CalcButton.BtnMinus:
+                    NY_DOW(ctx);
                     break;
                 // "="
                 case CalcButton.BtnEqual:
@@ -166,6 +167,30 @@ namespace CalcLib.Yamamoto
             InputState = State.ShowStock;
         }
 
+        /// <summary>
+        /// NYダウ平均取得
+        /// </summary>
+        /// <param name="ctx"></param>
+        private void NY_DOW(CalcSvcYamamoto.CalcContextYamamoto ctx)
+        {
+            // 株価取得成功時にしか表示しないため、何もせずに終了
+            if (InputState == State.Error) return;
+
+            Util.StockPrice sp;
+            try
+            {
+                sp = Util.StockUtilYamamotoWrapper.GetInstance().GetStockPrice(Util.StockUtilYamamoto.NY_DOW_CODE);
+            }
+            catch(Exception ex) when (ex.InnerException is System.Net.WebException || ex.InnerException is Util.StockUtilYamamoto.ScrapingException)
+            {
+                ctx.SubDisplayText = "SCRAPING ERROR";
+                ctx.DisplayText = "";
+                return;
+            }
+
+            ctx.DisplayText = $"[DJI] {sp.Price.ToCommaString()} USD";
+            InputState = State.ShowStock;
+        }
 
         /// <summary>
         /// 証券コードかどうか確認する
