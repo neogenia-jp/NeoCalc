@@ -50,9 +50,28 @@ namespace CalcLib.Util
         public StockPrice GetStockPrice(string code)
         {
             // 例外が設定されている場合は例外を返す
-            if (_ex != null) throw _ex;
+            // 一度例外を使い終わったら初期化
+            if (_ex != null)
+            {
+                var ex = _ex;
+                _ex = null;
+                throw ex;
+            }
 
-            return _sp == null ? StockUtilYamamoto.GetStockPrice(code) : _sp;
+            // 株価が設定されている場合は株価を返す
+            // 一度株価を使ったら初期化
+            StockPrice result;
+            if(_sp == null)
+            {
+                result = StockUtilYamamoto.GetStockPrice(code);
+            }
+            else
+            {
+                result = _sp;
+                _sp = null;
+            }
+
+            return result;
         }
     }
 }
