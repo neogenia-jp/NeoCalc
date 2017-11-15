@@ -80,6 +80,26 @@ namespace CalcLibTest.Moriguchi
         }
 
 
+        [TestMethod]
+        public void Test3_存在しない証券コードを入力した時()
+        {
+            var svc = new StockClass();
+            var ctx = svc.CreateContext();
+
+            var factx = new StockContext();
+
+            //StockUtil2._Uraguchi(1000);
+
+            //４桁以上の数字入力
+            var prevCtx = new TestPecCtx
+            {
+                DisplayText = "9999"
+            };
+            svc.Init(factx, prevCtx);
+
+            Assert.AreEqual("スクレイピングエラー", factx.SubDisplayText);
+        }
+
 
     }
 }
