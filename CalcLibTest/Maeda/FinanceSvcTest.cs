@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using CalcLib;
 using CalcLib.Util;
+using CalcLib.Maeda.Util;
 
 namespace CalcLibTest.Maeda
 {
@@ -28,11 +29,11 @@ namespace CalcLibTest.Maeda
         {
             public static decimal Counter = 0m;
 
-            public StockPrice GetNikkei225() => new StockPrice("", 22000.15m + (Counter++), new DateTime(2016, 1, 10));
+            public StockPrice GetNikkei225() => new StockPrice("", 22000.15m + (Counter++), new DateTime(2016, 1, 10, 15, 0, 0));
 
-            public StockPrice GetNyDow() => new StockPrice("", 19000.55m + (Counter++), new DateTime(2017, 3, 31));
+            public StockPrice GetNyDow() => new StockPrice("", 19000.55m + (Counter++), new DateTime(2017, 3, 31, 10, 30, 0));
 
-            public StockPrice GetStockPrice(string code) => new StockPrice(code, 2509m + (Counter++), new DateTime(2015, 5, 30));
+            public StockPrice GetStockPrice(string code) => new StockPrice(code, 2509m + (Counter++), new DateTime(2015, 5, 30, 9, 0, 0));
         }
 
         FinanceContext ctx;
@@ -52,6 +53,7 @@ namespace CalcLibTest.Maeda
         [TestMethod]
         public void TestFinanceMaeda_証券コード4桁のデータ引継ぎ()
         {
+            TimeCop._CurrentTime = new DateTimeOffset(2000, 1, 1, 14, 59, 59, new TimeSpan(9, 0, 0));  // 日本時間で 2000/01/01 14:59:59
             svc.OnEnter(ctx, new CalcLib.Maeda.Dispatcher.SvcSwichedEventArg(new PrevContext
             {
                 DisplayText = "1,301"
@@ -61,7 +63,7 @@ namespace CalcLibTest.Maeda
             var ret = svc.TryButtonClick(ctx, CalcLib.CalcButton.BtnExt1);
             
             Assert.IsTrue(ret);
-            Assert.AreEqual("", ctx.SubDisplayText);
+            Assert.AreEqual("2015.05.30 09:00", ctx.SubDisplayText);
             Assert.AreEqual("[1301] 2,509 JPY", ctx.DisplayText);
 
             // 4 を押す
@@ -69,7 +71,6 @@ namespace CalcLibTest.Maeda
 
             // false が返される
             Assert.IsFalse(ret);
-            Assert.AreEqual("", ctx.SubDisplayText);
         }
         
         [TestMethod]

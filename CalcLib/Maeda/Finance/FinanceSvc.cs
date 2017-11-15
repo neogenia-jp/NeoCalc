@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using CalcLib.Maeda.Basis;
 using CalcLib.Maeda.Dispatcher;
+using CalcLib.Maeda.Util;
 
 namespace CalcLib.Maeda.Finance
 {
@@ -18,8 +19,44 @@ namespace CalcLib.Maeda.Finance
         public string Currency { get; set; }
 
         public override string ToString() => $"[{Code}] {Price} {Currency}";
+
+        /// <summary>
+        /// 表示用文字列のフォーマット
+        /// </summary>
+        /// <param name="code"></param>
+        /// <returns></returns>
         public string DisplayFormat(string code) => $"[{code}] {string.Format("{0:#,0.##}", Price)} {Currency}";
 
+        static TimeZoneInfo JST = TimeZoneInfo.FindSystemTimeZoneById("Tokyo Standard Time");
+
+        static TimeZoneInfo EST = TimeZoneInfo.FindSystemTimeZoneById("Eastern Standard Time");
+
+        /// <summary>
+        /// 表示用の日付フォーマット
+        /// </summary>
+        /// <returns></returns>
+        public string DisplayDate()
+        {
+            var owarine = false;
+            var now = TimeCop.GetCurrentTime();
+            if (Currency == "JPY" && TimeZoneInfo.ConvertTime(now, JST).Hour >= 15)
+            {
+                // 日本時間の15時以降なら証券取引所の営業終了とみなす
+                owarine = true;
+            }
+            else if (Currency == "USD" && TimeZoneInfo.ConvertTime(now, EST).Hour > 17)
+            {
+                // 日本時間の15時以降なら証券取引所の営業終了とみなす
+                owarine = true;
+            }
+            return Date.ToString($"yyyy.MM.dd {(owarine ? "オワリネ" : "HH:mm")}");
+        }
+
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        /// <param name="stockPrice"></param>
+        /// <param name="currency"></param>
         public FinanceInfo(CalcLib.Util.StockPrice stockPrice, string currency) : base(stockPrice.Code, stockPrice.Price, stockPrice.Date)
         {
             Currency = currency;
@@ -47,7 +84,7 @@ namespace CalcLib.Maeda.Finance
             ? Info?.DisplayFormat(StockCode) ?? ""
             : StockCode;
 
-        public string SubDisplayText => ErrorMessage ?? "";
+        public string SubDisplayText => ErrorMessage ?? Info.DisplayDate();
 
         public SvcState State { get; set; }
 
