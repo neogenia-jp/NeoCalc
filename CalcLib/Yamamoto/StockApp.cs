@@ -15,6 +15,7 @@ namespace CalcLib.Yamamoto
         {
             Init = 0,      // 初期化
             ShowStock,     // 株価表示
+            Error,         // 株価表示失敗
             Fin,           // 証券コード取得アプリ終了
         }
 
@@ -22,6 +23,11 @@ namespace CalcLib.Yamamoto
         /// 入力状態
         /// </summary>
         public State InputState { get; set; } = State.Init;
+
+        /// <summary>
+        /// 最初の証券コードを保持しておく場所
+        /// </summary>
+        private string InitialCode { get; set; } = "";
 
         /// <summary>
         /// アプリ実行
@@ -35,7 +41,10 @@ namespace CalcLib.Yamamoto
             if(InputState == State.Init)
             {
                 Init(ctx);
-                InputState = State.ShowStock;
+                if(InputState != State.Error)
+                {
+                    CompanyStockPrice(ctx, InitialCode);
+                }
                 return;
             }
 
@@ -49,6 +58,7 @@ namespace CalcLib.Yamamoto
                     break;
                 // "="
                 case CalcButton.BtnEqual:
+                    CompanyStockPrice(ctx, InitialCode);
                     break;
 
                 // 数字
@@ -81,21 +91,53 @@ namespace CalcLib.Yamamoto
             if (!IsShokenCode(text))
             {
                 ctx.SubDisplayText = "INPUT ERROR";
+                ctx.DisplayText = "";
+                InputState = State.Error;
                 return;
             }
 
+            InitialCode = text;
+            return;
+        }
+
+        /// <summary>
+        /// 通常の株価取得
+        /// </summary>
+        /// <param name="ctx"></param>
+        private void CompanyStockPrice(CalcSvcYamamoto.CalcContextYamamoto ctx, string code)
+        {
             Util.StockPrice sp;
             try
             {
-                sp = Util.StockUtil.GetStockPrice(text);
+                sp = Util.StockUtilYamamotoWrapper.GetInstance().GetStockPrice(code);
             }
-            catch
+            catch(Exception ex) when (ex.InnerException is System.Net.WebException || ex.InnerException is Util.StockUtilYamamoto.ScrapingException)
             {
                 ctx.SubDisplayText = "SCRAPING ERROR";
+                ctx.DisplayText = "";
+                InputState = State.Error;
                 return;
             }
+            ctx.DisplayText = $"[{code}] {sp.Price.ToCommaString()} JPY";
 
-            ctx.DisplayText = $"[{sp.Code}] {sp.Price.ToCommaString()} JPY";
+            // 終値確認
+            // HACK: 証券取引所の営業時間は9時から15時としている
+            if(sp.Date.Hour < 9 || sp.Date.Hour > 14)
+            {
+                var date = sp.Date;
+                if(sp.Date.Hour < 9)
+                {
+                    // 9時より前は前日
+                    date = date.AddDays(-1);
+                }
+                ctx.SubDisplayText = $"{date.ToString("yyyy.MM.dd")} オワリネ";
+            }
+            else
+            {
+                ctx.SubDisplayText = $"{sp.Date.ToString("yyyy.MM.dd")} {sp.Date.ToString("hh:mm")}";
+            }
+
+            InputState = State.ShowStock;
         }
 
         /// <summary>
