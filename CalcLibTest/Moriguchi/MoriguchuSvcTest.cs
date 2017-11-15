@@ -5,6 +5,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using static CalcLib.Moriguchi.StockClass;
@@ -99,6 +100,34 @@ namespace CalcLibTest.Moriguchi
 
             Assert.AreEqual("スクレイピングエラー", factx.SubDisplayText);
         }
+
+
+        [TestMethod]
+        public void Test4_ネットワーク通信エラーが発生した時()
+        {
+            var svc = new StockClass();
+            var ctx = svc.CreateContext();
+
+            var factx = new StockContext();
+
+            StockUtil2._Uraguchi(1000);
+
+            var webEx = new ApplicationException("エラーが発生しました", new WebException())
+            {
+                Data = { { "エラー種別", "ネットワークエラー" } }
+            };
+            StockUtil2._UraguchiExeption(webEx);
+
+            //４桁以上の数字入力
+            var prevCtx = new TestPecCtx
+            {
+                DisplayText = "1301"
+            };
+            svc.Init(factx, prevCtx);
+
+            Assert.AreEqual("ネットワークエラー", factx.SubDisplayText);
+        }
+
 
 
     }
