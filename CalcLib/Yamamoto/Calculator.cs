@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CalcLib.Yamamoto
 {
-    public class Calculator : BaseApp, IApplication
+    public class Calculator : BaseApp
     {
         /// <summary>
         /// 入力状態
@@ -229,13 +229,19 @@ namespace CalcLib.Yamamoto
         /// </summary>
         /// <param name="ctx0"></param>
         /// <param name="btn"></param>
-        public void Run(ICalcContext ctx0, CalcButton btn)
+        public override void Run(ICalcContext ctx0, CalcButton btn)
         {
             var ctx = ctx0 as CalcSvcYamamoto.CalcContextYamamoto;
 
             if(InputState == State.Init)
             {
                 Init(ctx);
+                if (ctx.ModeHistory.Count >= 2 && ctx.ModeHistory[ctx.ModeHistory.Count - 2] == AppMode.Omikuji && btn == CalcButton.BtnExt2)
+                {
+                    // おみくじモードのときにおみくじモードを押される場合を考慮
+                    DisplayTextClear(ctx, "0");
+                    return;
+                }
             }
 
             switch (btn)
@@ -306,24 +312,19 @@ namespace CalcLib.Yamamoto
 
                 // "おみくじ"
                 case CalcButton.BtnExt2:
-                    if (ctx.BeforeMode == CalcSvcYamamoto.CalcContextYamamoto.AppMode.Omikuji)
-                    {
-                        DisplayTextClear(ctx, "0");
-                    }
-                    else
-                    {
-                        ToOmikujiMode(ctx, btn);
-                        InputState = State.Fin;
-                        return;
-                    }
+                    ToOmikujiMode();
+                    InputState = State.Fin;
+                    break;
+
+                // "株価取得"
+                case CalcButton.BtnExt3:
+                    ToStockMode();
+                    InputState = State.Fin;
                     break;
 
                 default:
                     break;
             }
-
-            ctx.BeforeMode = ctx.Mode;
-            ctx.Mode = CalcSvcYamamoto.CalcContextYamamoto.AppMode.Calculator;
         }
 
         /// <summary>
