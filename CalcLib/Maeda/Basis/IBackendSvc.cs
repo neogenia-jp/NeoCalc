@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using CalcLib.Maeda.Dispatcher;
 
 namespace CalcLib.Maeda.Basis
 {
@@ -16,12 +17,19 @@ namespace CalcLib.Maeda.Basis
         string GetExtButtonText(int num);
 
         /// <summary>
+        /// サービス切り替わったときに呼ばれる
+        /// </summary>
+        /// <param name="svcSwichedEventArg"></param>
+        void OnEnter(ICalcContext ctx, SvcSwichedEventArg svcSwichedEventArg);
+
+        /// <summary>
         /// ICalcSvcと異なり、boolを返す必要がある
         /// </summary>
         /// <param name="ctx"></param>
         /// <param name="btn"></param>
         /// <returns>デフォルトサービスに復帰する場合はfalse</returns>
         bool TryButtonClick(ICalcContext ctx, CalcButton btn);
+
     }
 
     /// <summary>
@@ -69,5 +77,14 @@ namespace CalcLib.Maeda.Basis
             return result;
         }
 
+        /// <summary>
+        /// サービス切り替え時のイベント
+        /// （必要に応じてサブクラスでオーバーライドしてください）
+        /// </summary>
+        /// <param name="ctx"></param>
+        /// <param name="svcSwichedEventArg"></param>
+        public virtual void OnEnter(T ctx, SvcSwichedEventArg svcSwichedEventArg) { }
+
+        public void OnEnter(ICalcContext ctx, SvcSwichedEventArg svcSwichedEventArg) => OnEnter((T)ctx, svcSwichedEventArg);
     }
 }
