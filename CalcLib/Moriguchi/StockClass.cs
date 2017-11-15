@@ -39,7 +39,7 @@ namespace CalcLib.Moriguchi
                     var sPrice = StockUtil2.GetStockPrice(code);
 
                     //株価取得成功時
-                    ctx.DisplayText = $"[{code}] {sPrice.Price.ToString()} JPY";
+                    ctx.DisplayText = $"[{code}] {sPrice.Price.ToString("#,0")} JPY";
                     ctx.SubDisplayText = sPrice.Date.ToString();
                 }
 
