@@ -4,8 +4,9 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using CalcLib;
 using CalcLib.Util;
+using CalcLib.Yamamoto;
 
-namespace CalcLibTest
+namespace CalcLibTest.Yamamoto
 {
     [TestClass]
     public class CalcSvcTestStock
@@ -19,7 +20,7 @@ namespace CalcLibTest
         [TestInitialize]
         public void Setup()
         {
-            svc = Factory.CreateService();
+            svc = new CalcSvcYamamoto();
             ctx = svc.CreateContext();
             wrapper = StockUtilYamamotoWrapper.GetInstance();
         }
