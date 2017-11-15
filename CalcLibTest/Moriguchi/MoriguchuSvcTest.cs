@@ -89,9 +89,6 @@ namespace CalcLibTest.Moriguchi
 
             var factx = new StockContext();
 
-            //StockUtil2._Uraguchi(1000);
-
-            //４桁以上の数字入力
             var prevCtx = new TestPecCtx
             {
                 DisplayText = "9999"
@@ -128,6 +125,56 @@ namespace CalcLibTest.Moriguchi
             Assert.AreEqual("ネットワークエラー", factx.SubDisplayText);
         }
 
+
+        [TestMethod]
+        public void Test5_取引時間による株価取得時の時刻メッセージテスト()
+        {
+            var svc = new StockClass();
+            var ctx = svc.CreateContext();
+
+            var factx = new StockContext();
+
+            //時間内の時（14時59分59秒取得）
+            StockUtil2._UraguchiDate(new DateTime(2017,11,15,14,59,59));
+
+            var prevCtx = new TestPecCtx
+            {
+                DisplayText = "1301"
+            };
+            svc.Init(factx, prevCtx);
+
+            Assert.AreEqual("[1301] 1,000 JPY", factx.DisplayText);
+            Assert.AreEqual("2017.11.15 14:59:59", factx.SubDisplayText);
+
+
+            //時間外の時（15時00分00秒取得）
+            StockUtil2._UraguchiDate(new DateTime(2017, 11, 15, 15, 0, 0));
+
+            prevCtx = new TestPecCtx
+            {
+                DisplayText = "1301"
+            };
+            svc.Init(factx, prevCtx);
+
+            Assert.AreEqual("[1301] 1,000 JPY", factx.DisplayText);
+            Assert.AreEqual("2017.11.15オワリネ", factx.SubDisplayText);
+
+
+            //日曜日に取得した場合()
+            StockUtil2._UraguchiDate(new DateTime(2017, 11, 18, 15, 0, 0));
+
+            prevCtx = new TestPecCtx
+            {
+                DisplayText = "1301"
+            };
+            svc.Init(factx, prevCtx);
+
+            Assert.AreEqual("[1301] 1,000 JPY", factx.DisplayText);
+            Assert.AreEqual("2017.11.17オワリネ", factx.SubDisplayText);
+
+
+            svc.OnClick(factx, CalcLib.CalcButton.Btn0);
+        }
 
 
     }

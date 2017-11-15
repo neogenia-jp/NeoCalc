@@ -40,7 +40,9 @@ namespace CalcLib.Moriguchi
 
                     //株価取得成功時
                     ctx.DisplayText = $"[{code}] {sPrice.Price.ToString("#,0")} JPY";
-                    ctx.SubDisplayText = sPrice.Date.ToString();
+                   
+                    ctx.SubDisplayText = InTradingHours(sPrice);
+                    //ctx.SubDisplayText = sPrice.Date.ToString();
                 }
 
                 catch (ApplicationException e)
@@ -64,18 +66,43 @@ namespace CalcLib.Moriguchi
             return false;
         }
 
-        ///// <summary>
-        ///// 取引時間内での株価取得かどうかの判定
-        ///// </summary>
-        ///// <param name="date"></param>
-        ///// <returns></returns>
-        //public bool InTradingHours(DateTime date)
-        //{
-        //    var OpeningTime = new DateTime();
-        //    var ClosingTime = new DateTime();
+        /// <summary>
+        /// 取引時間内外による株価取得時間メッセ
+        /// </summary>
+        /// <param name="date"></param>
+        /// <returns></returns>
+        public string InTradingHours(StockPrice sPrice)
+        {
+            //TODO:土・日曜や月曜日の9時以前を考慮する
+            var youbi = (int)sPrice.Date.DayOfWeek;
 
-        //    if (date
-        //}
+            
+            int day = -1;
+            if (youbi == 0)
+            { }
+
+            else if (youbi == 1 && sPrice.Date.Hour < 9) day = -3;
+
+
+            //取引時間外の時
+            if (sPrice.Date.Hour < 9)
+            {
+                
+
+                sPrice.Date.AddDays(day);
+                return sPrice.Date.ToString("yyyy.MM.dd") + "オワリネ";
+            }
+            else if (sPrice.Date.Hour >= 15)
+            {
+                //15時以降の取得
+                return sPrice.Date.ToString("yyyy.MM.dd") + "オワリネ";
+            }
+            else
+            {
+                //取引時間内の取得
+                return sPrice.Date.ToString("yyyy.MM.dd HH:mm:ss");
+            }
+        }
 
     }
 }

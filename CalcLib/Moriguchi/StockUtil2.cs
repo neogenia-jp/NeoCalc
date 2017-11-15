@@ -35,9 +35,17 @@ namespace CalcLib.Moriguchi
             sPrice = new StockPrice("1301",v,DateTime.Now);
         }
 
+        //株価取得時例外の設定
         internal static void _UraguchiExeption(Exception e)
         {
             ex = e;
         }
+
+        //株価取得日時の設定
+        internal static void _UraguchiDate(DateTime date)
+        {
+            sPrice = new StockPrice("1301", 1000, date);
+        }
+
     }
 }
