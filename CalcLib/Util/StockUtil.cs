@@ -45,7 +45,9 @@ namespace CalcLib.Util
             }
             catch (Exception e)
             {
-                throw new ApplicationException("ネットワークエラー",e);
+                throw new ApplicationException("エラーが発生しました", e) {
+                    Data = { { "エラー種別", "ネットワークエラー" } }
+                };
             }
 
             try
@@ -62,7 +64,9 @@ namespace CalcLib.Util
             }
             catch (Exception e)
             {
-                throw new ApplicationException("スクレイピングエラー", e);
+                throw new ApplicationException("エラーが発生しました", e) {
+                    Data = { { "エラー種別", "スクレイピングエラー" } }
+                };
             }
         }
     }

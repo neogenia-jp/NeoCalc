@@ -42,13 +42,11 @@ namespace CalcLib.Moriguchi
                     ctx.DisplayText = $"[{code}] {sPrice.Price.ToString()} JPY";
                     ctx.SubDisplayText = sPrice.Date.ToString();
                 }
-                catch (NullReferenceException)
+
+                catch (ApplicationException e)
                 {
-                    ctx.SubDisplayText = "該当する銘柄は見つかりませんでした";
-                }
-                catch (Exception)
-                {
-                    ctx.SubDisplayText = "SCRAPING ERROR";
+                    var ExText = e.Data["エラー種別"].ToString();
+                    ctx.SubDisplayText = ExText;
                 }
             }
             else
