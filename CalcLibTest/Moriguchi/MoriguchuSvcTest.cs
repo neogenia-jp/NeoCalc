@@ -28,7 +28,7 @@ namespace CalcLibTest.Moriguchi
         }
 
         [TestMethod]
-        public void Test1()
+        public void Test1_株価取得基本テスト()
         {
             var svc = new StockClass();
             var ctx = svc.CreateContext();
@@ -48,5 +48,38 @@ namespace CalcLibTest.Moriguchi
 
             svc.OnClick(factx, CalcLib.CalcButton.Btn0);
         }
+
+
+        [TestMethod]
+        public void Test2_4桁以外の数字が入力されている時()
+        {
+            var svc = new StockClass();
+            var ctx = svc.CreateContext();
+
+            var factx = new StockContext();
+            
+            StockUtil2._Uraguchi(1000);
+
+            //４桁以上の数字入力
+            var prevCtx = new TestPecCtx
+            {
+                DisplayText = "13012"
+            };
+            svc.Init(factx, prevCtx);
+
+            Assert.AreEqual("INPUT ERROR", factx.SubDisplayText);
+
+            //４桁未満の数字入力
+            prevCtx = new TestPecCtx
+            {
+                DisplayText = "130"
+            };
+            svc.Init(factx, prevCtx);
+
+            Assert.AreEqual("INPUT ERROR", factx.SubDisplayText);
+        }
+
+
+
     }
 }
