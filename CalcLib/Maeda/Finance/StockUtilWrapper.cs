@@ -20,6 +20,18 @@ namespace CalcLib.Maeda.Finance
         /// <param name="code"></param>
         /// <returns></returns>
         StockPrice GetStockPrice(string code);
+
+        /// <summary>
+        /// 日経平均株価取得
+        /// </summary>
+        /// <returns></returns>
+        StockPrice GetNikkei225();
+
+        /// <summary>
+        /// NYダウ平均取得
+        /// </summary>
+        /// <returns></returns>
+        StockPrice GetNyDow();
     }
 
     /// <summary>
@@ -46,7 +58,9 @@ namespace CalcLib.Maeda.Finance
         /// IStockUtil を実装した StockUtil の純粋なラッパー
         /// </summary>
         internal class StockUtilWrapper : IStockUtil {
-            public StockPrice GetStockPrice(string code) => StockUtil.GetStockPrice(code);
+            public StockPrice GetStockPrice(string code) => StockUtilYamamoto.GetStockPrice(code);
+            public StockPrice GetNikkei225() => StockUtilYamamoto.GetStockPrice(StockUtilYamamoto.N225_CODE);
+            public StockPrice GetNyDow() => StockUtilYamamoto.GetStockPrice(StockUtilYamamoto.NY_DOW_CODE);
         }
 
         /// <summary>
@@ -63,7 +77,7 @@ namespace CalcLib.Maeda.Finance
             /// <typeparam name="R">RはIを実装した型でないといけない</typeparam>
             internal static void Registor<I, R>() where R : I
             {
-                _mapping.Add(typeof(I), typeof(R));
+                _mapping[typeof(I)] = typeof(R);
             }
 
             public static T Get<T>()

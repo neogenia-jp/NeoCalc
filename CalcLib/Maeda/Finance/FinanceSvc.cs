@@ -7,34 +7,36 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using CalcLib.Maeda.Basis;
 using CalcLib.Maeda.Dispatcher;
-using CalcLib.Util;
 
 namespace CalcLib.Maeda.Finance
 {
-    /// <summary>
-    /// ファイナンスサービスのためのコンテキスト
-    /// </summary>
-    internal class FinanceContext : ICalcContext
+    public class FinanceInfo : CalcLib.Util.StockPrice
     {
-        /// <summary>
-        /// 証券コード4桁
-        /// </summary>
-        public string StockCode { get; set; }
-
         /// <summary>
         /// 通貨コード
         /// </summary>
         public string Currency { get; set; }
 
-        /// <summary>
-        /// 株価
-        /// </summary>
-        public decimal Price { get; set; }
+        public override string ToString() => $"[{Code}] {Price} {Currency}";
+        public string DisplayFormat(string code) => $"[{code}] {string.Format("{0:#,0.##}", Price)} {Currency}";
+
+        public FinanceInfo(CalcLib.Util.StockPrice stockPrice, string currency) : base(stockPrice.Code, stockPrice.Price, stockPrice.Date)
+        {
+            Currency = currency;
+        }
+    }
+
+    /// <summary>
+    /// ファイナンスサービスのためのコンテキスト
+    /// </summary>
+    internal class FinanceContext : ICalcContext
+    {
+        public FinanceInfo Info { get; set; }
 
         /// <summary>
-        /// いつ時点の株価か
+        /// 証券コード4桁
         /// </summary>
-        public DateTime Date { get; set; }
+        public string StockCode { get; set; }
 
         /// <summary>
         /// エラーメッセージ
@@ -42,12 +44,14 @@ namespace CalcLib.Maeda.Finance
         public string ErrorMessage { get; set; }
 
         public string DisplayText => ErrorMessage == null
-            ? $"[{StockCode}] {Price} {Currency}"  // TODO カンマ編集
+            ? Info?.DisplayFormat(StockCode) ?? ""
             : StockCode;
 
         public string SubDisplayText => ErrorMessage ?? "";
 
         public SvcState State { get; set; }
+
+        public CalcButton LastBtn { get; set; }
     }
 
     /// <summary>
@@ -69,41 +73,83 @@ namespace CalcLib.Maeda.Finance
         public override void OnEnter(FinanceContext ctx, SvcSwichedEventArg arg)
         {
             ctx.StockCode = arg.PrevCtx.DisplayText;
+            ctx.State = SvcState.Initialized;
+        }
+
+        private bool DoProcess(CalcButton btn, FinanceContext ctx)
+        {
+            switch (btn)
+            {
+                case CalcButton.BtnPlus:
+                    // 日経平均株価
+                    {
+                        var sp = UtilActivator.Get<IStockUtil>().GetNikkei225();  // 日経平均株価取得
+                        ctx.StockCode = "N225";
+                        ctx.Info = new FinanceInfo(sp, "JPY");
+                        ctx.LastBtn = btn;
+                    }
+                    return true;
+                case CalcButton.BtnMinus:
+                    // NYダウ平均
+                    {
+                        var sp = UtilActivator.Get<IStockUtil>().GetNyDow();  // NY平均取得
+                        ctx.StockCode = "DJI";
+                        ctx.Info = new FinanceInfo(sp, "USD");
+                        ctx.LastBtn = btn;
+                    }
+                    return true;
+                case CalcButton.BtnExt1:
+                    // 株価取得
+                    {
+                        ctx.StockCode = CheckInput(ctx.StockCode);        // 入力チェック（エラー時は例外が出る）
+                        var sp = UtilActivator.Get<IStockUtil>().GetStockPrice(ctx.StockCode);  // 株価取得
+                        ctx.Info = new FinanceInfo(sp, "JPY");
+                        ctx.LastBtn = btn;
+                    }
+                    return true;
+                case CalcButton.BtnEqual:
+                    // 再取得
+                    return DoProcess(ctx.LastBtn, ctx);
+                case CalcButton.Btn0:
+                case CalcButton.Btn1:
+                case CalcButton.Btn2:
+                case CalcButton.Btn3:
+                case CalcButton.Btn4:
+                case CalcButton.Btn5:
+                case CalcButton.Btn6:
+                case CalcButton.Btn7:
+                case CalcButton.Btn8:
+                case CalcButton.Btn9:
+                    return false;
+                default:
+                    ctx.Info = null;  // クリア
+                    return true;
+            }
         }
 
         public override bool TryButtonClick(FinanceContext ctx, CalcButton btn)
         {
             ctx.ErrorMessage = null;  // エラークリア
 
-            switch (btn)
+            // 2回目以降のBtn1押下は、サービス終了とする
+            if (ctx.State != SvcState.Initialized && btn == CalcButton.BtnExt1) return false;
+
+            try
             {
-                case CalcButton.BtnExt1:
-                    if (ctx.State != SvcState.Unknown) return false;
-                    // 初回処理
-                    try
-                    {
-                        ctx.StockCode = CheckInput(ctx.StockCode);        // 入力チェック（エラー時は例外が出る）
-                        var sp = UtilActivator.Get<IStockUtil>().GetStockPrice(ctx.StockCode);  // 株価取得
-                        ctx.Price = sp.Price;  // 株価
-                        ctx.Currency = "JPY";  // 通貨は JPY 固定とする
-                        ctx.Date = sp.Date;    // 日時
-                    }
-                    catch (ApplicationException ex)
-                    {
-                        ctx.ErrorMessage = ex.Message;
-                    }
-                    catch (Exception ex)
-                    {
-                        ctx.ErrorMessage = "SCRAPING ERROR";
-                        Debugger.Break();
-                    }
-                    ctx.State = SvcState.Finished;
-                    break;
-                default:
-                    if (ctx.State == SvcState.Finished) return false;
-                    // 2回目以降
-                    // FIXME
-                    break;
+                return DoProcess(btn, ctx);
+            }
+            catch (ApplicationException ex)
+            {
+                ctx.ErrorMessage = ex.Message;
+            }
+            catch (Exception ex)
+            {
+                ctx.ErrorMessage = "SCRAPING ERROR";
+                Debugger.Break();
+            }
+            finally
+            {
+                ctx.State = SvcState.Running;
             }
 
             return true;

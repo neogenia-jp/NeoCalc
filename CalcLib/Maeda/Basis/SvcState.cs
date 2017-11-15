@@ -10,6 +10,7 @@ namespace CalcLib.Maeda.Basis
     {
         Unknown,
         Initialized,
+        Running,
         Finished,
     }
 }
