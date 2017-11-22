@@ -21,6 +21,10 @@ namespace CalcLib.Moriguchi
             /// </summary>
             public string SubDisplayText { get; set; }
 
+            /// <summary>
+            /// 証券コード
+            /// </summary>
+            public string code { get; set; }
         }
 
         public virtual ISubContext CreateContext() => new StockContext();
@@ -69,17 +73,17 @@ namespace CalcLib.Moriguchi
         {
             var ctx = (StockContext)Factx;
 
-            var code = prevCtx.DisplayText; // CalcSvcMoriguchi.ContextMoriguchi.Disp;
+            ctx.code = prevCtx.DisplayText; // CalcSvcMoriguchi.ContextMoriguchi.Disp;
 
             //４桁だったら株価取得へ
-            if (code.Length == 4)
+            if (ctx.code.Length == 4)
             {
                 try
                 {
-                    var sPrice = StockUraguchiUtil.GetStockPrice(code);
+                    var sPrice = StockUraguchiUtil.GetStockPrice(ctx.code);
 
                     //株価取得成功時
-                    ctx.DisplayText = $"[{code}] {sPrice.Price.ToString("#,0")} JPY";
+                    ctx.DisplayText = $"[{ctx.code}] {sPrice.Price.ToString("#,0")} JPY";
 
                     //取引時間外で有れば「オワリネ」を表示
                     ctx.SubDisplayText = StockTimeUtil.isClosingTime(sPrice);
