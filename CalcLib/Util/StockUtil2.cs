@@ -44,7 +44,7 @@ namespace CalcLib.Util
             {
                 throw new ApplicationException("エラーが発生しました", e)
                 {
-                    Data = { { "エラー種別", "ネットワークエラー" } }
+                    Data = { { "エラー種別", "NETWORK ERROR" } }
                 };
             }
 
@@ -73,7 +73,7 @@ namespace CalcLib.Util
             {
                 throw new ApplicationException("エラーが発生しました", e)
                 {
-                    Data = { { "エラー種別", "スクレイピングエラー" } }
+                    Data = { { "エラー種別", "SCRAPING ERROR" } }
                 };
             }
         }

@@ -95,7 +95,7 @@ namespace CalcLibTest.Moriguchi
             };
             svc.Init(factx, prevCtx);
 
-            Assert.AreEqual("スクレイピングエラー", factx.SubDisplayText);
+            Assert.AreEqual("SCRAPING ERROR", factx.SubDisplayText);
         }
 
 
