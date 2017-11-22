@@ -68,7 +68,7 @@ namespace CalcLib.Util
 
                 var GetStockDate = NMethod(Date.InnerText, Time.InnerText);
 
-                return new StockPrice2(code, decimal.Parse(Stock.InnerText), DateTime.Now, GetStockDate);
+                return new StockPrice2(code, decimal.Parse(Stock.InnerText), GetStockDate, DateTime.Now);
             }
             catch (Exception e)
             {
