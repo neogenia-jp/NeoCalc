@@ -134,8 +134,8 @@ namespace CalcLibTest.Moriguchi
 
             var factx = new StockContext();
 
-            //取引時間内の株価取得時
-            StockUraguchiUtil._Uraguchi(1000, new DateTime(2017, 11, 15, 11, 10, 0), new DateTime(2017, 11, 15, 11, 15, 0));
+            //15:00前に更新された株価の取得
+            StockUraguchiUtil._Uraguchi(1000, new DateTime(2017, 11, 15, 14, 59, 59), new DateTime(2017, 11, 15, 11, 15, 0));
 
             var prevCtx = new TestPecCtx
             {
@@ -144,10 +144,10 @@ namespace CalcLibTest.Moriguchi
             svc.Init(factx, prevCtx);
 
             Assert.AreEqual("[1301] 1,000 JPY", factx.DisplayText);
-            Assert.AreEqual("2017.11.15 11:10:00", factx.SubDisplayText);
+            Assert.AreEqual("2017.11.15 14:55:00", factx.SubDisplayText);
 
 
-            //取引時間外の株価取得時
+            //15:00後に更新された株価の取得
             StockUraguchiUtil._Uraguchi(1000, new DateTime(2017, 11, 15, 15, 0, 0), new DateTime(2017, 11, 15, 17, 0, 0));
 
             prevCtx = new TestPecCtx
@@ -158,9 +158,27 @@ namespace CalcLibTest.Moriguchi
 
             Assert.AreEqual("[1301] 1,000 JPY", factx.DisplayText);
             Assert.AreEqual("2017.11.15 オワリネ", factx.SubDisplayText);
-
+            
             svc.OnClick(factx, CalcLib.CalcButton.Btn0);
         }
+
+
+
+        //TODO:以下、実施予定のテスト
+
+
+        [TestMethod]
+        public void Test6_ＮＹダウ平均の取得テスト()
+        {
+
+        }
+
+        [TestMethod]
+        public void Test7_日経平均株価の取得テスト()
+        {
+
+        }
+
 
 
     }
