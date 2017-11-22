@@ -8,7 +8,7 @@ namespace CalcLib.Util
 {
     public static class StockTimeUtil
     {
-        public static string isClosingTime(StockPrice2 sp2)
+        public static string IsClosingTime(StockPrice2 sp2)
         {
             string subText = sp2.Date.ToString("yyyy.MM.dd HH:mm:ss"); ;
 

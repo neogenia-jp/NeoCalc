@@ -30,15 +30,15 @@ namespace CalcLib.Util
             web.Encoding = Encoding.UTF8;
 
             //Yahooファイナンスの株式ページURL
-            string URLText = "https://stocks.finance.yahoo.co.jp/stocks/detail/?code=";
+            string urlText = "https://stocks.finance.yahoo.co.jp/stocks/detail/?code=";
             //証券コードをURLに追加
-            URLText += code;
+            urlText += code;
 
             var html = "";
 
             try
             {
-                html = web.DownloadString(URLText);
+                html = web.DownloadString(urlText);
             }
             catch (Exception e)
             {
@@ -54,21 +54,20 @@ namespace CalcLib.Util
                 doc.LoadHtml(html);
 
                 //株価を示す部分をXPathで指定
-                string XPath = @"//td[@class=""stoksPrice""]";
+                string xPath = @"//td[@class=""stoksPrice""]";
                 //株価取得時間
-                string GetTimeXPath = @"//dd[@class=""yjSb real""]/span";
+                string getTimeXPath = @"//dd[@class=""yjSb real""]/span";
                 //株価取得日付
-                string GetDateXPath = @"//dd[@class=""ymuiEditLink mar0""]/span";
-                var XPathList = new List<string> { XPath, GetTimeXPath, GetDateXPath, };
+                string getDateXPath = @"//dd[@class=""ymuiEditLink mar0""]/span";
+                var xPathList = new List<string> { xPath, getTimeXPath, getDateXPath, };
 
+                var stock = doc.DocumentNode.SelectSingleNode(xPath);
+                var time = doc.DocumentNode.SelectSingleNode(getTimeXPath);
+                var date = doc.DocumentNode.SelectSingleNode(getDateXPath);
 
-                var Stock = doc.DocumentNode.SelectSingleNode(XPath);
-                var Time = doc.DocumentNode.SelectSingleNode(GetTimeXPath);
-                var Date = doc.DocumentNode.SelectSingleNode(GetDateXPath);
+                var GetStockDate = NMethod(date.InnerText, time.InnerText);
 
-                var GetStockDate = NMethod(Date.InnerText, Time.InnerText);
-
-                return new StockPrice2(code, decimal.Parse(Stock.InnerText), GetStockDate, DateTime.Now);
+                return new StockPrice2(code, decimal.Parse(stock.InnerText), GetStockDate, DateTime.Now);
             }
             catch (Exception e)
             {

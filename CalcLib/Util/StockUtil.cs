@@ -56,11 +56,11 @@ namespace CalcLib.Util
                 doc.LoadHtml(html);
 
                 //株価を示す部分をXPathで指定
-                string XPath = @"//td[@class=""stoksPrice""]";
+                string xPath = @"//td[@class=""stoksPrice""]";
 
-                var Stock = doc.DocumentNode.SelectSingleNode(XPath);
+                var stock = doc.DocumentNode.SelectSingleNode(xPath);
 
-                return new StockPrice(code, decimal.Parse(Stock.InnerText), DateTime.Now);
+                return new StockPrice(code, decimal.Parse(stock.InnerText), DateTime.Now);
             }
             catch (Exception e)
             {

@@ -24,14 +24,14 @@ namespace CalcLib.Moriguchi
             /// <summary>
             /// 証券コード
             /// </summary>
-            public string code { get; set; }
+            public string Code { get; set; }
         }
 
         public virtual ISubContext CreateContext() => new StockContext();
 
-        public void Init(ISubContext Factx, ICalcContext prevCtx)
+        public void Init(ISubContext factx, ICalcContext prevCtx)
         {
-            GetStock(Factx, prevCtx.DisplayText);
+            GetStock(factx, prevCtx.DisplayText);
         }
 
         /// <summary>
@@ -40,14 +40,15 @@ namespace CalcLib.Moriguchi
         /// <param name="Factx"></param>
         /// <param name="btn"></param>
         /// <returns></returns>
-        public bool OnClick(ISubContext Factx, CalcButton btn)
+        public bool OnClick(ISubContext factx, CalcButton btn)
         {
-            var ctx = Factx as StockContext;
+            var ctx = factx as StockContext;
 
             switch (btn)
             {
                 //+キーで「日経平均株価」表示
                 case CalcButton.BtnPlus:
+
                     break;
 
                 //-キーで「ＮＹダウ平均」表示
@@ -56,7 +57,7 @@ namespace CalcLib.Moriguchi
 
                 //=キーで「株価再取得」
                 case CalcButton.BtnEqual:
-                    GetStock(Factx, ctx.code);
+                    GetStock(factx, ctx.Code);
                     break;
 
                 //[株価取得]押下時は何もしない
@@ -80,28 +81,28 @@ namespace CalcLib.Moriguchi
         {
             var ctx = (StockContext)Factx;
 
-            ctx.code = inputCode;
+            ctx.Code = inputCode;
 
             //４桁だったら株価取得へ
-            if (ctx.code.Length == 4)
+            if (ctx.Code.Length == 4)
             {
                 try
                 {
-                    var sPrice = StockUraguchiUtil.GetStockPrice(ctx.code);
+                    var sPrice = StockUraguchiUtil.GetStockPrice(ctx.Code);
 
                     //株価取得成功時
-                    ctx.DisplayText = $"[{ctx.code}] {sPrice.Price.ToString("#,0")} JPY";
+                    ctx.DisplayText = $"[{ctx.Code}] {sPrice.Price.ToString("#,0")} JPY";
 
                     //取引時間外で有れば「オワリネ」を表示
-                    ctx.SubDisplayText = StockTimeUtil.isClosingTime(sPrice);
+                    ctx.SubDisplayText = StockTimeUtil.IsClosingTime(sPrice);
                     //ctx.SubDisplayText = sPrice.PriceGetDate.ToString();
 
                 }
 
                 catch (ApplicationException e)
                 {
-                    var ExText = e.Data["エラー種別"].ToString();
-                    ctx.SubDisplayText = ExText;
+                    var exText = e.Data["エラー種別"].ToString();
+                    ctx.SubDisplayText = exText;
                 }
             }
             else
