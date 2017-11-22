@@ -31,6 +31,36 @@ namespace CalcLib.Moriguchi
         }
 
         /// <summary>
+        /// ボタン押下時の動作
+        /// </summary>
+        /// <param name="Factx"></param>
+        /// <param name="btn"></param>
+        /// <returns></returns>
+        public bool OnClick(ISubContext Factx, CalcButton btn)
+        {
+            switch (btn)
+            {
+                //+キーで「日経平均株価」表示
+                case CalcButton.BtnPlus:
+                    break;
+
+                //-キーで「ＮＹダウ平均」表示
+                case CalcButton.BtnMinus:
+                    break;
+
+                //=キーで「株価再取得」
+                case CalcButton.BtnEqual:
+                    break;
+
+                //それ以外で電卓モードで
+                default:
+                    return false;
+            }
+
+            return true;
+        }
+
+        /// <summary>
         /// 株価を取得する
         /// </summary>
         /// <param name="Factx"></param>
@@ -67,12 +97,6 @@ namespace CalcLib.Moriguchi
             {
                 ctx.SubDisplayText = "INPUT ERROR";
             }
-        }
-
-        public bool OnClick(ISubContext Factx, CalcButton btn)
-        {
-            //Initで動作し、OnClickでモード終了する
-            return false;
         }
     }
 }
