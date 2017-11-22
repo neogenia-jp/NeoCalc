@@ -44,9 +44,9 @@ namespace CalcLib.Maeda.Finance
                 // 日本時間の15時以降なら証券取引所の営業終了とみなす
                 owarine = true;
             }
-            else if (Currency == "USD" && TimeZoneInfo.ConvertTime(now, EST).Hour > 17)
+            else if (Currency == "USD" && TimeZoneInfo.ConvertTime(now, EST).Hour >= 17)
             {
-                // 日本時間の15時以降なら証券取引所の営業終了とみなす
+                // 米国東海岸時間の17時以降なら証券取引所の営業終了とみなす
                 owarine = true;
             }
             return Date.ToString($"yyyy.MM.dd {(owarine ? "オワリネ" : "HH:mm")}");
@@ -84,7 +84,7 @@ namespace CalcLib.Maeda.Finance
             ? Info?.DisplayFormat(StockCode) ?? ""
             : StockCode;
 
-        public string SubDisplayText => ErrorMessage ?? Info.DisplayDate();
+        public string SubDisplayText => ErrorMessage ?? Info?.DisplayDate() ?? "";
 
         public SvcState State { get; set; }
 
