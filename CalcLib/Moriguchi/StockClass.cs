@@ -53,6 +53,7 @@ namespace CalcLib.Moriguchi
 
                 //-キーで「ＮＹダウ平均」表示
                 case CalcButton.BtnMinus:
+                    GetDow(factx);
                     break;
 
                 //=キーで「株価再取得」
@@ -108,6 +109,36 @@ namespace CalcLib.Moriguchi
             else
             {
                 ctx.SubDisplayText = "INPUT ERROR";
+            }
+        }
+        
+        /// <summary>
+        /// ＮＹダウ平均を取得する
+        /// </summary>
+        /// <param name="Factx"></param>
+        /// <param name="inputCode"></param>
+        private void GetDow(ISubContext Factx)
+        {
+            var ctx = (StockContext)Factx;
+            try
+            {
+
+                //TODO:テストの為の裏口設定を通れ
+                var sPrice = DowUtil.GetDowPrice();
+
+                //ＮＹダウ平均値取得成功時
+                ctx.DisplayText = $"[DJI] {sPrice.Price.ToString("#,0.00")} JPY";
+
+                //取得日時
+                ctx.SubDisplayText = sPrice.Date.ToString();
+                //TODO:後に取得時間への対応を入れよ
+                //ctx.SubDisplayText = StockTimeUtil.IsClosingTime(sPrice);
+            }
+
+            catch (ApplicationException e)
+            {
+                var exText = e.Data["エラー種別"].ToString();
+                ctx.SubDisplayText = exText;
             }
         }
     }
