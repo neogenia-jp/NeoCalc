@@ -12,8 +12,8 @@ namespace CalcLib.Util
         {
             string subText = sp2.Date.ToString("yyyy.MM.dd HH:mm:ss"); ;
 
-            //株価取得時間が15:00なら「オワリネ」を表示する
-            if (sp2.Date.Hour == 15)
+            //株価取得時間が15:00以降9:00未満なら「オワリネ」を表示する
+            if (sp2.Date.Hour < 9 || sp2.Date.Hour >= 15)
             {
                 subText = sp2.Date.ToString("yyyy.MM.dd");
                 subText += " オワリネ";
