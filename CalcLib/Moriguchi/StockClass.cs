@@ -36,7 +36,7 @@ namespace CalcLib.Moriguchi
             {
                 try
                 {
-                    var sPrice = StockUtil2.GetStockPrice(code);
+                    var sPrice = StockUraguchiUtil.GetStockPrice(code);
 
                     //株価取得成功時
                     ctx.DisplayText = $"[{code}] {sPrice.Price.ToString("#,0")} JPY";

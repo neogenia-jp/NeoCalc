@@ -3,7 +3,7 @@ using System;
 
 namespace CalcLib.Moriguchi
 {
-    public class StockUtil2
+    public class StockUraguchiUtil
     {
         static StockPrice sPrice;
 
