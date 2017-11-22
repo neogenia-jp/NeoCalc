@@ -41,7 +41,7 @@ namespace CalcLib.Moriguchi
                     //株価取得成功時
                     ctx.DisplayText = $"[{code}] {sPrice.Price.ToString("#,0")} JPY";
                    
-                    ctx.SubDisplayText = sPrice.Date.ToString();
+                    ctx.SubDisplayText = sPrice.PriceGetDate.ToString();
                 }
 
                 catch (ApplicationException e)
