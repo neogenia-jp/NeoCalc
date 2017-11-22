@@ -40,8 +40,11 @@ namespace CalcLib.Moriguchi
 
                     //株価取得成功時
                     ctx.DisplayText = $"[{code}] {sPrice.Price.ToString("#,0")} JPY";
-                   
-                    ctx.SubDisplayText = sPrice.PriceGetDate.ToString();
+
+                    //取引時間外で有れば「オワリネ」を表示
+                    ctx.SubDisplayText = StockTimeUtil.isClosingTime(sPrice);
+                    //ctx.SubDisplayText = sPrice.PriceGetDate.ToString();
+
                 }
 
                 catch (ApplicationException e)
