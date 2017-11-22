@@ -41,7 +41,9 @@ namespace CalcLib.Moriguchi
         /// <param name="btn"></param>
         /// <returns></returns>
         public bool OnClick(ISubContext Factx, CalcButton btn)
-        {            
+        {
+            var ctx = Factx as StockContext;
+
             switch (btn)
             {
                 //+キーで「日経平均株価」表示
@@ -54,6 +56,11 @@ namespace CalcLib.Moriguchi
 
                 //=キーで「株価再取得」
                 case CalcButton.BtnEqual:
+                    GetStock(Factx, ctx.code);
+                    break;
+
+                //[株価取得]押下時は何もしない
+                case CalcButton.BtnExt3:
                     break;
 
                 //それ以外で電卓モードで
