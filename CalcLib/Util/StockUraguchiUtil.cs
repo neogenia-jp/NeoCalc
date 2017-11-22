@@ -29,10 +29,10 @@ namespace CalcLib.Moriguchi
             return StockUtil2.GetStockPrice(code);
         }
         
-        internal static void _Uraguchi(int v)
+        internal static void _Uraguchi(int v, DateTime stockTime, DateTime getStockTime)
         {
             // v をどこかに保存する
-            sPrice = new StockPrice2("1301",v,DateTime.Now,new DateTime(2017,11,22,11,22,33));
+            sPrice = new StockPrice2("1301",v, stockTime, getStockTime);
         }
 
         //株価取得時例外の設定
@@ -40,12 +40,5 @@ namespace CalcLib.Moriguchi
         {
             ex = e;
         }
-
-        //株価取得日時の設定
-        internal static void _UraguchiDate(DateTime date)
-        {
-            sPrice = new StockPrice2("1301", 1000, date, new DateTime(2017, 11, 22, 11, 22, 33));
-        }
-
     }
 }
