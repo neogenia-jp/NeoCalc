@@ -62,7 +62,7 @@
     <Compile Include="Moriguchi\ISubSvc.cs" />
     <Compile Include="Moriguchi\OmikujiClass.cs" />
     <Compile Include="Moriguchi\StockClass.cs" />
-    <Compile Include="Moriguchi\StockUraguchiUtil.cs" />
+    <Compile Include="Util\StockUraguchiUtil.cs" />
     <Compile Include="Moriguchi\SvcFactory.cs" />
     <Compile Include="Moriguchi\UtlClass.cs" />
     <Compile Include="Util\StockUtil2.cs" />
