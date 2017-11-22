@@ -27,6 +27,16 @@ namespace CalcLib.Moriguchi
 
         public void Init(ISubContext Factx, ICalcContext prevCtx)
         {
+            GetStock(Factx, prevCtx);
+        }
+
+        /// <summary>
+        /// 株価を取得する
+        /// </summary>
+        /// <param name="Factx"></param>
+        /// <param name="prevCtx"></param>
+        private void GetStock(ISubContext Factx, ICalcContext prevCtx)
+        {
             var ctx = (StockContext)Factx;
 
             var code = prevCtx.DisplayText; // CalcSvcMoriguchi.ContextMoriguchi.Disp;
