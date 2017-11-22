@@ -65,6 +65,7 @@
     <Compile Include="Moriguchi\StockUraguchiUtil.cs" />
     <Compile Include="Moriguchi\SvcFactory.cs" />
     <Compile Include="Moriguchi\UtlClass.cs" />
+    <Compile Include="Util\StockUtil2.cs" />
     <Compile Include="Yamamoto\ApplicationFactory.cs" />
     <Compile Include="Maeda\Util\EnumerableExt.cs" />
     <Compile Include="Maeda\Util\SvcActivator.cs" />
