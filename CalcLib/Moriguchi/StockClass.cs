@@ -31,7 +31,7 @@ namespace CalcLib.Moriguchi
 
         public void Init(ISubContext Factx, ICalcContext prevCtx)
         {
-            GetStock(Factx, prevCtx);
+            GetStock(Factx, prevCtx.DisplayText);
         }
 
         /// <summary>
@@ -41,7 +41,7 @@ namespace CalcLib.Moriguchi
         /// <param name="btn"></param>
         /// <returns></returns>
         public bool OnClick(ISubContext Factx, CalcButton btn)
-        {
+        {            
             switch (btn)
             {
                 //+キーで「日経平均株価」表示
@@ -68,12 +68,12 @@ namespace CalcLib.Moriguchi
         /// 株価を取得する
         /// </summary>
         /// <param name="Factx"></param>
-        /// <param name="prevCtx"></param>
-        private void GetStock(ISubContext Factx, ICalcContext prevCtx)
+        /// <param name="inputCode"></param>
+        private void GetStock(ISubContext Factx, string inputCode)
         {
             var ctx = (StockContext)Factx;
 
-            ctx.code = prevCtx.DisplayText; // CalcSvcMoriguchi.ContextMoriguchi.Disp;
+            ctx.code = inputCode;
 
             //４桁だったら株価取得へ
             if (ctx.code.Length == 4)
