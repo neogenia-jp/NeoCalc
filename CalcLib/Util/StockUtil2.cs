@@ -62,8 +62,8 @@ namespace CalcLib.Util
                 var xPathList = new List<string> { xPath, getTimeXPath, getDateXPath, };
 
                 var stock = doc.DocumentNode.SelectSingleNode(xPath);
-                var time = doc.DocumentNode.SelectSingleNode(getTimeXPath);
                 var date = doc.DocumentNode.SelectSingleNode(getDateXPath);
+                var time = doc.DocumentNode.SelectSingleNode(getTimeXPath);
 
                 var GetStockDate = NMethod(date.InnerText, time.InnerText);
 
@@ -88,10 +88,24 @@ namespace CalcLib.Util
         private static DateTime NMethod(string Date, string Time)
         {
             var year = DateTime.Now.Year;
-            var month = Date.Substring(1, Date.IndexOf('/') - 1);
-            var date = Date.Substring(Date.IndexOf('/') + 1, 2); //現状、かっこも取っている
-            var hour = Time.Substring(0, Time.IndexOf(':'));
-            var minute = Time.Substring(Time.IndexOf(':') + 1, 2);
+            string month;
+            string date;
+            string hour = "0";
+            string minute = "0";
+
+            //取引時間外だと「時間表記」の部分が「日付」になっているようだ
+            if (Time.Substring(3, 1) == ":")
+            {
+                month = Date.Substring(1, Date.IndexOf('/') - 1);
+                date = Date.Substring(Date.IndexOf('/') + 1, 2); //現状、かっこも取っている
+                hour = Time.Substring(0, Time.IndexOf(':'));
+                minute = Time.Substring(Time.IndexOf(':') + 1, 2);
+            }
+            else
+            {
+                month = Time.Substring(0, Time.IndexOf('/'));
+                date = Time.Substring(Time.IndexOf('/') + 1, 2);
+            }
 
             return new DateTime(year, int.Parse(month), int.Parse(date), int.Parse(hour), int.Parse(minute), 0);
         }
