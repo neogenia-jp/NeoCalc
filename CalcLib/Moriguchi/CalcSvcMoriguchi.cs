@@ -24,7 +24,6 @@ namespace CalcLib.Moriguchi
         /// </summary>
         public static int SvcNo;
 
-        //共通部品のみに絞る。各機能の要素は移動する。
         public class ContextMoriguchi : ICalcContext
         {
             /// <summary>
@@ -35,12 +34,6 @@ namespace CalcLib.Moriguchi
             /// サブディスプレイに表示する文字列
             /// </summary>
             public virtual string SubDisplayText => FaCtx?.SubDisplayText;
-
-            /// <summary>
-            /// サービス側から入れる
-            /// </summary>
-            public static string Disp;
-            public string SubDisp;
 
             /// <summary>
             /// サービスの入れ物
@@ -85,7 +78,6 @@ namespace CalcLib.Moriguchi
             {
                 //サービスの切り替え時
                 SvcNo = (int)btn;
-                ContextMoriguchi.Disp = ctx.DisplayText;
                 MakeFactory(ctx);
             }
 
