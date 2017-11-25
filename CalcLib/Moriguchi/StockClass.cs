@@ -95,7 +95,7 @@ namespace CalcLib.Moriguchi
                     ctx.DisplayText = $"[{ctx.Code}] {sPrice.Price.ToString("#,0")} JPY";
 
                     //取引時間外で有れば「オワリネ」を表示
-                    ctx.SubDisplayText = StockTimeUtil.IsClosingTime(sPrice);
+                    ctx.SubDisplayText = StockTimeUtil.CheckDate(sPrice.Date);
                     //ctx.SubDisplayText = sPrice.PriceGetDate.ToString();
 
                 }

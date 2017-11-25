@@ -8,14 +8,17 @@ namespace CalcLib.Util
 {
     public static class StockTimeUtil
     {
-        public static string IsClosingTime(StockPrice2 sp2)
+        public static string CheckDate(DateTime date)
         {
-            string subText = sp2.Date.ToString("yyyy.MM.dd HH:mm:ss"); ;
+            string subText = date.ToString("yyyy.MM.dd HH:mm:ss"); ;
+
+            //TODO:実際の取引時間、平日9:00～11:30・12:30～15:00までを考慮する
+            //上記時間以外や土・日・祝日、年末年始は休み
 
             //株価取得時間が15:00以降9:00未満なら「オワリネ」を表示する
-            if (sp2.Date.Hour < 9 || sp2.Date.Hour >= 15)
+            if (date.Hour < 9 || date.Hour >= 15)
             {
-                subText = sp2.Date.ToString("yyyy.MM.dd");
+                subText = date.ToString("yyyy.MM.dd");
                 subText += " オワリネ";
             }
 
