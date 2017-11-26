@@ -147,11 +147,13 @@ namespace CalcLibTest.Yamamoto
             wrapper.RegistStockData(new StockPrice("1301", 1200m, new DateTime(2017, 11, 13, 12, 00, 00)));
             svc.OnButtonClick(ctx, stockBtn);
             Assert.AreEqual("[1301] 1,200 JPY", ctx.DisplayText);
+            Assert.AreEqual("2017.11.13 12:00", ctx.SubDisplayText);
 
             // 日経平均株価を設定し、日経平均株価を取得する
-            wrapper.RegistStockData(new StockPrice(StockUtilYamamoto.N225_CODE, 21355.32m, new DateTime(2017, 11, 13, 12, 00, 01)));
+            wrapper.RegistStockData(new StockPrice(StockUtilYamamoto.N225_CODE, 21355.32m, new DateTime(2017, 11, 13, 12, 01, 01)));
             svc.OnButtonClick(ctx, CalcButton.BtnPlus);
             Assert.AreEqual("[N225] 21,355.32 JPY", ctx.DisplayText);
+            Assert.AreEqual("2017.11.13 12:01", ctx.SubDisplayText);
 
             // 1キー押下
             // 電卓にもどる
@@ -173,11 +175,13 @@ namespace CalcLibTest.Yamamoto
             wrapper.RegistStockData(new StockPrice("1301", 1200m, new DateTime(2017, 11, 13, 12, 00, 00)));
             svc.OnButtonClick(ctx, stockBtn);
             Assert.AreEqual("[1301] 1,200 JPY", ctx.DisplayText);
+            Assert.AreEqual("2017.11.13 12:00", ctx.SubDisplayText);
 
-            // NYダウを設定し、日経平均株価を取得する
-            wrapper.RegistStockData(new StockPrice(StockUtilYamamoto.NY_DOW_CODE, 22997.44m, new DateTime(2017, 11, 13, 12, 00, 02)));
+            // NYダウを設定し、NYダウを取得する
+            wrapper.RegistStockData(new StockPrice(StockUtilYamamoto.NY_DOW_CODE, 22997.44m, new DateTime(2017, 11, 13, 5, 59, 59)));
             svc.OnButtonClick(ctx, CalcButton.BtnMinus);
             Assert.AreEqual("[DJI] 22,997.44 USD", ctx.DisplayText);
+            Assert.AreEqual("2017.11.12 15:59", ctx.SubDisplayText);
 
             // 1キー押下
             // 電卓にもどる
@@ -210,5 +214,85 @@ namespace CalcLibTest.Yamamoto
             svc.OnButtonClick(ctx, CalcButton.Btn1);
             Assert.AreEqual("1", ctx.DisplayText);
         }
+
+        [TestMethod]
+        public void TestStock_オワリネの表示()
+        {
+            // 1301を入力
+            svc.OnButtonClick(ctx, CalcButton.Btn1);
+            svc.OnButtonClick(ctx, CalcButton.Btn3);
+            svc.OnButtonClick(ctx, CalcButton.Btn0);
+            svc.OnButtonClick(ctx, CalcButton.Btn1);
+            Assert.AreEqual("1,301", ctx.DisplayText);
+
+            // オワリネテスト
+            wrapper.RegistStockData(new StockPrice("1301", 1201m, new DateTime(2017, 11, 13, 15, 00, 00)));
+            svc.OnButtonClick(ctx, stockBtn);
+            Assert.AreEqual("2017.11.13 オワリネ", ctx.SubDisplayText);
+            Assert.AreEqual("[1301] 1,201 JPY", ctx.DisplayText);
+
+            // 1キー押下
+            // 電卓にもどる
+            svc.OnButtonClick(ctx, CalcButton.Btn1);
+            Assert.AreEqual("1", ctx.DisplayText);
+        }
+
+        [TestMethod]
+        public void TestStock_日経平均株価オワリネの表示()
+        {
+            // 1301を入力
+            svc.OnButtonClick(ctx, CalcButton.Btn1);
+            svc.OnButtonClick(ctx, CalcButton.Btn3);
+            svc.OnButtonClick(ctx, CalcButton.Btn0);
+            svc.OnButtonClick(ctx, CalcButton.Btn1);
+            Assert.AreEqual("1,301", ctx.DisplayText);
+
+            // 取得する株価を設定し、株価取得ボタン押下
+            wrapper.RegistStockData(new StockPrice("1301", 1200m, new DateTime(2017, 11, 13, 12, 00, 00)));
+            svc.OnButtonClick(ctx, stockBtn);
+            Assert.AreEqual("[1301] 1,200 JPY", ctx.DisplayText);
+            Assert.AreEqual("2017.11.13 12:00", ctx.SubDisplayText);
+
+            // オワリネの表示を確認
+            wrapper.RegistStockData(new StockPrice(StockUtilYamamoto.N225_CODE, 21355.32m, new DateTime(2017, 11, 13, 15, 00, 00)));
+            svc.OnButtonClick(ctx, CalcButton.BtnPlus);
+            Assert.AreEqual("[N225] 21,355.32 JPY", ctx.DisplayText);
+            Assert.AreEqual("2017.11.13 オワリネ", ctx.SubDisplayText);
+
+            // 1キー押下
+            // 電卓にもどる
+            svc.OnButtonClick(ctx, CalcButton.Btn1);
+            Assert.AreEqual("1", ctx.DisplayText);
+        }
+
+
+        [TestMethod]
+        public void TestStock_NYダウオワリネの表示()
+        {
+            // 1301を入力
+            svc.OnButtonClick(ctx, CalcButton.Btn1);
+            svc.OnButtonClick(ctx, CalcButton.Btn3);
+            svc.OnButtonClick(ctx, CalcButton.Btn0);
+            svc.OnButtonClick(ctx, CalcButton.Btn1);
+            Assert.AreEqual("1,301", ctx.DisplayText);
+
+            // 取得する株価を設定し、株価取得ボタン押下
+            wrapper.RegistStockData(new StockPrice("1301", 1200m, new DateTime(2017, 11, 13, 12, 00, 00)));
+            svc.OnButtonClick(ctx, stockBtn);
+            Assert.AreEqual("[1301] 1,200 JPY", ctx.DisplayText);
+
+            // NYダウを設定し、日経平均株価を取得する
+            // 日本時間6時のときにNYは前日の16時
+            wrapper.RegistStockData(new StockPrice(StockUtilYamamoto.NY_DOW_CODE, 22997.44m, new DateTime(2017, 11, 13, 6, 00, 00)));
+            svc.OnButtonClick(ctx, CalcButton.BtnMinus);
+            Assert.AreEqual("[DJI] 22,997.44 USD", ctx.DisplayText);
+            Assert.AreEqual("2017.11.12 オワリネ", ctx.SubDisplayText);
+
+            // 1キー押下
+            // 電卓にもどる
+            svc.OnButtonClick(ctx, CalcButton.Btn1);
+            Assert.AreEqual("1", ctx.DisplayText);
+        }
+
     }
 }
