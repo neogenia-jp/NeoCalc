@@ -120,24 +120,15 @@ namespace CalcLib.Yamamoto
                 InputState = State.Error;
                 return;
             }
-            ctx.DisplayText = $"[{code}] {sp.Price.ToCommaString()} JPY";
 
-            // 終値確認
-            // HACK: 証券取引所の営業時間は9時から15時としている
-            if(sp.Date.Hour < 9 || sp.Date.Hour > 14)
-            {
-                var date = sp.Date;
-                if(sp.Date.Hour < 9)
-                {
-                    // 9時より前は前日
-                    date = date.AddDays(-1);
-                }
-                ctx.SubDisplayText = $"{date.ToString("yyyy.MM.dd")} オワリネ";
-            }
-            else
-            {
-                ctx.SubDisplayText = $"{sp.Date.ToString("yyyy.MM.dd")} {sp.Date.ToString("hh:mm")}";
-            }
+            // 時刻変換
+            var date = ConvertDateTime(sp.Date, "JPY");
+
+            // 表示
+            ctx.DisplayText = $"[{code}] {sp.Price.ToCommaString()} JPY";
+            ctx.SubDisplayText = string.Format("{0} {1}", 
+                date.ToString("yyyy.MM.dd"),
+                IsOwarine(date, "JPY") ? "オワリネ" : date.ToString("HH:mm"));
 
             InputState = State.ShowStock;
         }
@@ -163,7 +154,15 @@ namespace CalcLib.Yamamoto
                 return;
             }
 
+            // 時刻変換
+            var date = ConvertDateTime(sp.Date, "JPY");
+
+            // 表示
             ctx.DisplayText = $"[N225] {sp.Price.ToCommaString()} JPY";
+            ctx.SubDisplayText = string.Format("{0} {1}", 
+                date.ToString("yyyy.MM.dd"),
+                IsOwarine(date, "JPY") ? "オワリネ" : date.ToString("HH:mm"));
+
             InputState = State.ShowStock;
         }
 
@@ -188,7 +187,15 @@ namespace CalcLib.Yamamoto
                 return;
             }
 
+            // 時刻変換
+            var date = ConvertDateTime(sp.Date, "USD");
+
+            // 表示
             ctx.DisplayText = $"[DJI] {sp.Price.ToCommaString()} USD";
+            ctx.SubDisplayText = string.Format("{0} {1}", 
+                date.ToString("yyyy.MM.dd"),
+                IsOwarine(date, "USD") ? "オワリネ" : date.DateTime.ToString("HH:mm"));
+
             InputState = State.ShowStock;
         }
 
@@ -201,6 +208,41 @@ namespace CalcLib.Yamamoto
         {
             int x;
             return int.TryParse(shokenCd, out x) && x.ToString().Length == 4;
+        }
+
+        /// <summary>
+        /// 通貨と時刻から終値かどうかを判定する
+        /// </summary>
+        /// <param name="time"></param>
+        /// <param name="currency"></param>
+        /// <returns></returns>
+        private bool IsOwarine(DateTimeOffset time, string currency)
+        {
+            if(currency == "JPY")
+            {
+                return time.Hour >= 15 ? true : false;
+            }
+            if(currency == "USD")
+            {
+                return time.Hour >= 16 ? true : false;
+            }
+            throw new ArgumentException("不正な通貨が渡されました。");
+        }
+
+        /// <summary>
+        /// UTCからの時刻に変換
+        /// </summary>
+        /// <param name="time"></param>
+        /// <param name="currency"></param>
+        /// <returns></returns>
+        private DateTimeOffset ConvertDateTime(DateTime time, string currency)
+        {
+            DateTimeOffset dto = time;
+            if(currency == "USD")
+            {
+                return TimeZoneInfo.ConvertTimeBySystemTimeZoneId(dto, "Eastern Standard Time");
+            }
+            return TimeZoneInfo.ConvertTimeBySystemTimeZoneId(dto, "Tokyo Standard Time");
         }
 
     }
