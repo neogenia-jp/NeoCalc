@@ -126,58 +126,58 @@ namespace CalcLibTest.Moriguchi
         }
 
 
-        [TestMethod]
-        public void Test5_取引時間による株価取得時の時刻メッセージテスト()
-        {
-            var svc = new StockClass();
-            var ctx = svc.CreateContext();
+    //    [TestMethod]
+    //    public void Test5_取引時間による株価取得時の時刻メッセージテスト()
+    //    {
+    //        var svc = new StockClass();
+    //        var ctx = svc.CreateContext();
 
-            var factx = new StockContext();
+    //        var factx = new StockContext();
 
-            //15:00前に更新された株価の取得
-            StockUraguchiUtil._Uraguchi(1000, new DateTime(2017, 11, 15, 14, 59, 59), new DateTime(2017, 11, 15, 11, 15, 0));
+    //        //15:00前に更新された株価の取得
+    //        StockUraguchiUtil._Uraguchi(1000, new DateTime(2017, 11, 15, 14, 59, 59), new DateTime(2017, 11, 15, 11, 15, 0));
 
-            var prevCtx = new TestPecCtx
-            {
-                DisplayText = "1301"
-            };
-            svc.Init(factx, prevCtx);
+    //        var prevCtx = new TestPecCtx
+    //        {
+    //            DisplayText = "1301"
+    //        };
+    //        svc.Init(factx, prevCtx);
 
-            Assert.AreEqual("[1301] 1,000 JPY", factx.DisplayText);
-            Assert.AreEqual("2017.11.15 14:55:00", factx.SubDisplayText);
+    //        Assert.AreEqual("[1301] 1,000 JPY", factx.DisplayText);
+    //        Assert.AreEqual("2017.11.15 14:55:00", factx.SubDisplayText);
 
 
-            //15:00後に更新された株価の取得
-            StockUraguchiUtil._Uraguchi(1000, new DateTime(2017, 11, 15, 15, 0, 0), new DateTime(2017, 11, 15, 17, 0, 0));
+    //        //15:00後に更新された株価の取得
+    //        StockUraguchiUtil._Uraguchi(1000, new DateTime(2017, 11, 15, 15, 0, 0), new DateTime(2017, 11, 15, 17, 0, 0));
 
-            prevCtx = new TestPecCtx
-            {
-                DisplayText = "1301"
-            };
-            svc.Init(factx, prevCtx);
+    //        prevCtx = new TestPecCtx
+    //        {
+    //            DisplayText = "1301"
+    //        };
+    //        svc.Init(factx, prevCtx);
 
-            Assert.AreEqual("[1301] 1,000 JPY", factx.DisplayText);
-            Assert.AreEqual("2017.11.15 オワリネ", factx.SubDisplayText);
+    //        Assert.AreEqual("[1301] 1,000 JPY", factx.DisplayText);
+    //        Assert.AreEqual("2017.11.15 オワリネ", factx.SubDisplayText);
             
-            svc.OnClick(factx, CalcLib.CalcButton.Btn0);
-        }
+    //        svc.OnClick(factx, CalcLib.CalcButton.Btn0);
+    //    }
 
 
 
-        //TODO:以下、実施予定のテスト
+    //    //TODO:以下、実施予定のテスト
 
 
-        [TestMethod]
-        public void Test6_ＮＹダウ平均の取得テスト()
-        {
+    //    [TestMethod]
+    //    public void Test6_ＮＹダウ平均の取得テスト()
+    //    {
 
-        }
+    //    }
 
-        [TestMethod]
-        public void Test7_日経平均株価の取得テスト()
-        {
+    //    [TestMethod]
+    //    public void Test7_日経平均株価の取得テスト()
+    //    {
 
-        }
+    //    }
 
 
 
