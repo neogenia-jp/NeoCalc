@@ -8,6 +8,6 @@ namespace CalcLib.Moriguchi
 
         bool OnClick(ISubContext ctx, CalcButton btn);
 
-        void Init(ISubContext ctx);
+        void Init(ISubContext ctx, ICalcContext prevSvc);
     }
 }

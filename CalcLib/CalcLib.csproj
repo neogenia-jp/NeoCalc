@@ -30,6 +30,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="HtmlAgilityPack, Version=1.6.3.0, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
+      <HintPath>..\packages\HtmlAgilityPack.1.6.3\lib\Net45\HtmlAgilityPack.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="AngleSharp, Version=0.9.9.0, Culture=neutral, PublicKeyToken=e83494dcdc6d31ea, processorArchitecture=MSIL">
       <HintPath>..\packages\AngleSharp.0.9.9\lib\net45\AngleSharp.dll</HintPath>
       <Private>True</Private>
@@ -63,8 +67,13 @@
     <Compile Include="Moriguchi\ISubContext.cs" />
     <Compile Include="Moriguchi\ISubSvc.cs" />
     <Compile Include="Moriguchi\OmikujiClass.cs" />
+    <Compile Include="Moriguchi\StockClass.cs" />
+    <Compile Include="Util\DowUtil.cs" />
+    <Compile Include="Util\StockTimeUtil.cs" />
+    <Compile Include="Util\StockUraguchiUtil.cs" />
     <Compile Include="Moriguchi\SvcFactory.cs" />
     <Compile Include="Moriguchi\UtlClass.cs" />
+    <Compile Include="Util\StockUtil2.cs" />
     <Compile Include="Yamamoto\ApplicationFactory.cs" />
     <Compile Include="Maeda\Util\EnumerableExt.cs" />
     <Compile Include="Maeda\Util\SvcActivator.cs" />

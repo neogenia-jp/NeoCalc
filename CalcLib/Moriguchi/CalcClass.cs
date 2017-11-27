@@ -85,10 +85,10 @@ namespace CalcLib.Moriguchi
         /// 初期動作
         /// </summary>
         /// <param name="ctx0"></param>
-        public void Init(ISubContext Factx)
+        public void Init(ISubContext Factx, ICalcContext prevCtx)
         {
-            var ctx = Factx as CalcContext;
-            ctx.Clear();
+            var factx = Factx as CalcContext;
+            factx.Clear();
         }
 
         /// <summary>

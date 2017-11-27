@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using HtmlAgilityPack;
 
 namespace CalcLib.Util
 {
@@ -27,9 +28,46 @@ namespace CalcLib.Util
         /// <returns>株価情報</returns>
         public static StockPrice GetStockPrice(string code)
         {
-            // FIXME
-            return new StockPrice(code, 1000m, new DateTime(2017, 11, 1));
-        }
+            //HTMLのコードを文書として保存
+            var doc = new HtmlAgilityPack.HtmlDocument();
+            var web = new System.Net.WebClient();
 
+            //Yahooファイナンスの株式ページURL
+            string URLText = "https://stocks.finance.yahoo.co.jp/stocks/detail/?code=";
+            //証券コードをURLに追加
+            URLText += code;
+
+            var html = "";
+
+            try
+            {
+                html = web.DownloadString(URLText);
+            }
+            catch (Exception e)
+            {
+                throw new ApplicationException("エラーが発生しました", e) {
+                    Data = { { "エラー種別", "NETWORK ERROR" } }
+                };
+            }
+
+            try
+            {
+                //webを通してHTMLのコード取得
+                doc.LoadHtml(html);
+
+                //株価を示す部分をXPathで指定
+                string xPath = @"//td[@class=""stoksPrice""]";
+
+                var stock = doc.DocumentNode.SelectSingleNode(xPath);
+
+                return new StockPrice(code, decimal.Parse(stock.InnerText), DateTime.Now);
+            }
+            catch (Exception e)
+            {
+                throw new ApplicationException("エラーが発生しました", e) {
+                    Data = { { "エラー種別", "SCRAPING ERROR" } }
+                };
+            }
+        }
     }
 }

@@ -33,7 +33,7 @@ namespace CalcLib.Moriguchi
         /// 初期動作
         /// </summary>
         /// <param name="Factx"></param>
-        public void Init(ISubContext Factx)
+        public void Init(ISubContext Factx, ICalcContext prevCtx)
         {
             //おみくじモードボタン押下時
             Factx.SubDisplayText = "おみくじを選択して下さい";

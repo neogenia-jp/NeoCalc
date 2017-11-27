@@ -16,6 +16,7 @@ namespace CalcLib.Moriguchi
             {
                 { 99,"CalcClass"},
                 { 21,"OmikujiClass"},
+                { 22,"StockClass"},
             };
 
         /// <summary>
@@ -23,30 +24,23 @@ namespace CalcLib.Moriguchi
         /// </summary>
         public static int SvcNo;
 
-        //共通部品のみに絞る。各機能の要素は移動する。
         public class ContextMoriguchi : ICalcContext
         {
             /// <summary>
             /// メインディスプレイに表示する文字列
             /// </summary>
-            public string DisplayText => FaCtx.DisplayText;
+            public string DisplayText => FaCtx?.DisplayText;
             /// <summary>
             /// サブディスプレイに表示する文字列
             /// </summary>
-            public virtual string SubDisplayText => FaCtx.SubDisplayText;
+            public virtual string SubDisplayText => FaCtx?.SubDisplayText;
 
             /// <summary>
-            /// サービス側から入れる
+            /// サービスの入れ物
             /// </summary>
-            public string Disp;
-            public string SubDisp;
+            public ISubSvc FaSvc;
+            public ISubContext FaCtx;
         }
-
-        /// <summary>
-        /// サービスの入れ物
-        /// </summary>
-        static ISubSvc FaSvc;
-        static ISubContext FaCtx;
 
         public virtual ICalcContext CreateContext() => new ContextMoriguchi();
 
@@ -59,6 +53,7 @@ namespace CalcLib.Moriguchi
         {
             if (num == 1) return "%";
             else if (num == 2) return "おみくじ";
+            else if (num == 3) return "株価取得";
             return null;
         }
 
@@ -74,36 +69,38 @@ namespace CalcLib.Moriguchi
             Debug.WriteLine($"Button Clicked {btn}, context={ctx}");
 
             //defaultでは電卓モード
-            if (FaSvc == null)
+            if (ctx.FaSvc == null)
             {
                 SvcNo = 99;
-                MakeFactory();
+                MakeFactory(ctx);
             }
             else if ((int)btn >= 21)
             {
                 //サービスの切り替え時
                 SvcNo = (int)btn;
-                MakeFactory();
+                MakeFactory(ctx);
             }
 
             //サービスメソッド実行
-            var ret = FaSvc.OnClick(FaCtx, btn);
+            var ret = ctx.FaSvc.OnClick(ctx.FaCtx, btn);
 
             //サービスインスタンス破棄
             if (!ret)
             {
-                FaSvc = null;
+                ctx.FaSvc = null;
             }
         }
 
         /// <summary>
         /// ファクトリーによるサービス製造
         /// </summary>
-        private static void MakeFactory()
+        private void MakeFactory(ContextMoriguchi prevCtx)
         {
-            FaCtx = SvcFactory.CreateContext();
-            FaSvc = SvcFactory.CreateService();
-            FaSvc.Init(FaCtx);
+            var c = SvcFactory.CreateContext();
+            var s = SvcFactory.CreateService();
+            s.Init(c, prevCtx);
+            prevCtx.FaCtx = c;
+            prevCtx.FaSvc = s;
         }
     }
 }

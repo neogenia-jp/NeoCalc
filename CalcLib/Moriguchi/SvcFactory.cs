@@ -21,8 +21,10 @@ namespace CalcLib.Moriguchi
                 case 21:
                     o = new OmikujiClass();
                     break;
+                case 22:
+                    o = new StockClass();
+                    break;
                 default:
-                    o = new CalcClass();
                     break;
             }
 
