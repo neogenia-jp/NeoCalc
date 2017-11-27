@@ -120,8 +120,10 @@ namespace CalcLib.Maeda.Dispatcher
             if (s != null)
             {
                 // 割り込みがあれば、現在のサービスと差し替える。コンテキストも切り替える。
+                var evt = new SvcSwichedEventArg(ctx.Get());
                 CurrentSvc = s;
                 ctx.Switch(CurrentSvc.Id);
+                s.Svc.OnEnter(ctx.Get(), evt);
             }
 
             // 現在のサービスに対して処理を実行させる
@@ -129,8 +131,11 @@ namespace CalcLib.Maeda.Dispatcher
             if (!ret)
             {
                 // デフォルトサービスに復帰する。コンテキストも切り替える。
+                var evt = new SvcSwichedEventArg(ctx.Get());
                 CurrentSvc = DefaultSvc;
                 ctx.Switch(CurrentSvc.Id);
+                // イベント発行
+                DefaultSvc.Svc.OnEnter(ctx.Get(), evt);
                 // サービスを呼ぶ
                 CurrentSvc.Svc.TryButtonClick(ctx.Get(), btn);
             }

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using CalcLib.Maeda.Dispatcher;
 
 namespace CalcLib.Maeda.Basis
 {
@@ -45,5 +46,7 @@ namespace CalcLib.Maeda.Basis
         public bool TryButtonClick(ICalcContext ctx, CalcButton btn) => WrappedSvc.TryButtonClick(ctx, Convert(btn));
 
         public IEnumerator GetEnumerator() => ((IEnumerable)Mapping).GetEnumerator();
+
+        public void OnEnter(ICalcContext ctx, SvcSwichedEventArg svcSwichedEventArg) => WrappedSvc.OnEnter(ctx, svcSwichedEventArg);
     }
 }
