@@ -12,24 +12,9 @@ namespace CalcLib.Yamamoto
         internal class CalcContextYamamoto : CalcContext
         {
             /// <summary>
-            /// 電卓のモード
+            /// モード履歴
             /// </summary>
-            public enum AppMode
-            {
-                Calculator = 0,  // 電卓
-                Omikuji,         // おみくじ
-                None,            // なし
-            }
-
-            /// <summary>
-            /// 前回のモード
-            /// </summary>
-            public AppMode BeforeMode { get; set; } = AppMode.None;
-
-            /// <summary>
-            /// 現在のモード
-            /// </summary>
-            public AppMode Mode { get; set; } = AppMode.Calculator;
+            public List<AppMode> ModeHistory { get; set; } = new List<AppMode>() { AppMode.Calculator };
 
             public CalcContextYamamoto()
             {
@@ -49,18 +34,22 @@ namespace CalcLib.Yamamoto
             var ctx = ctx0 as CalcContextYamamoto;
             Debug.WriteLine($"Button Clicked {btn}, context={ctx}");
 
-            // モードに応じたアプリを作成
-            var app = ApplicationFactory.CreateApp(ctx.Mode);
-
-            // アプリを実行
-            app.Run(ctx, btn);
-
-            if(ctx.BeforeMode != ctx.Mode)
+            while(true)
             {
-                app = ApplicationFactory.CreateApp(ctx.Mode);
-                app.Run(ctx, btn);
-            }
+                // モードに応じたアプリを作成
+                var app = ApplicationFactory.CreateApp(ctx.ModeHistory.Last());
 
+                // アプリを実行
+                app.Run(ctx, btn);
+
+                // モードが変わっていればもう一度実行
+                if(app.NextMode != AppMode.None)
+                {
+                    ctx.ModeHistory.Add(app.NextMode);
+                    continue;
+                }
+                break;
+            }
         }
 
         /// <summary>
@@ -72,6 +61,7 @@ namespace CalcLib.Yamamoto
         {
             if (num == 1) return "%";
             if (num == 2) return "おみくじ";
+            if (num == 3) return "株価取得";
             return null;
         }
 
