@@ -30,17 +30,22 @@ namespace CalcLib.Moriguchi
             /// <summary>
             /// サブディスプレイに表示する文字列
             /// </summary>
-            public string SubDisplayText
-            {
-                get
-                {
-                    return Operation == null ? "" : Value + UtlClass.OpeNameHelper.Get(Operation);
-                }
-                set
-                {
+            //public string SubDisplayText
+            //{
+            //    get
+            //    {
+            //        //sub += Buffer;
+            //        //sub += Operation == null ? "" : UtlClass.OpeNameHelper.Get(Operation);
 
-                }
-            }
+            //        return sub;
+
+            //        //return Operation == null ? "" : $"{ Buffer } {UtlClass.OpeNameHelper.Get(Operation)}";
+            //    }
+            //    set
+            //    {
+
+            //    }
+            //}
             //TODO:ゆくゆくはコッチを使う↓
 
             ///// <summary>
@@ -48,10 +53,10 @@ namespace CalcLib.Moriguchi
             ///// </summary>
             //public string DisplayText { get; set; }
 
-            ///// <summary>
-            ///// サブディスプレイに表示する文字列
-            ///// </summary>
-            //public string SubDisplayText { get; set; }
+            /// <summary>
+            /// サブディスプレイに表示する文字列
+            /// </summary>
+            public string SubDisplayText { get; set; }
 
             /// <summary>
             /// 左辺の値
@@ -70,6 +75,8 @@ namespace CalcLib.Moriguchi
 
             //電卓にしか使ってない！邪魔
             public bool Reset { get; set; }
+
+            public string sub { get; set; }
 
             public void Clear()
             {
@@ -119,22 +126,25 @@ namespace CalcLib.Moriguchi
                         ctx.Buffer = ctx.Buffer.TrimEnd(dot);
                     }
                     OnOpeButtonClick(ctx, btn);   // 演算子ボタン押下時の処理
+                    //ctx.SubDisplayText += $" {UtlClass.OpeNameHelper.Get(btn)}";
                     break;
 
                 //クリア
                 case CalcButton.BtnClear:
-                    ctx.Buffer = null;
+                    ctx.Buffer = "0";
                     ctx.Value = null;
                     ctx.Operation = null;
-                    //ctx.SubDisplayText = null;
+                    ctx.SubDisplayText = null;
                     break;
                 case CalcButton.BtnClearEnd:
+                    ctx.Buffer = "0";
                     break;
                 //バックスペース
                 case CalcButton.BtnBS:
                     if (!string.IsNullOrEmpty(ctx.Buffer))
                     {
-                        UtlClass.Chomp(ctx);
+
+                        ctx.Buffer = UtlClass.Chomp(ctx);
                     }
                     break;
 
@@ -153,6 +163,7 @@ namespace CalcLib.Moriguchi
                 //小数点押下時
                 case CalcButton.BtnDot:
                     if (!ctx.Buffer?.EndsWith(".") == true) ctx.Buffer += ".";
+                    else if (ctx.Buffer == null) ctx.Buffer = "0.";
                     break;
 
                 //計算
@@ -161,7 +172,7 @@ namespace CalcLib.Moriguchi
                     {
                         ExecCalcuration(ctx, ctx.Operation.Value);
                         ctx.Operation = null;
-                        //ctx.SubDisplayText = null;
+                        ctx.SubDisplayText = null;
                     }
                     break;
 
@@ -172,7 +183,7 @@ namespace CalcLib.Moriguchi
                         ctx.Buffer = null;
                         ctx.Reset = false;
                     }
-                    if (ctx.Buffer?.StartsWith("0") == true) ctx.Buffer = "";
+                    if (ctx.Buffer == "0") ctx.Buffer = "";
                     ctx.Buffer += (int)btn;
                     break;
             }
@@ -191,19 +202,21 @@ namespace CalcLib.Moriguchi
             {
                 // 左辺が未入力の時、Bufferの値を左辺とする
                 ctx.Value = ctx.Buffer;
+                ctx.SubDisplayText += $"{ctx.Buffer} {UtlClass.OpeNameHelper.Get(btn)}";
                 ctx.Buffer = null;
-                //ctx.SubDisplayText += ctx.Buffer + OpeNameHelper.Get(btn);
             }
             else if (!string.IsNullOrEmpty(ctx.Buffer))
             {
+                ctx.SubDisplayText += $" {ctx.Buffer} {UtlClass.OpeNameHelper.Get(btn)}";
                 // 左辺が入力済みで、Bufferが入力済みの時、計算処理を実行する
                 var x = ExecCalcuration(ctx, btn);
 
                 // 続けて計算できるよう実行結果を左辺にセットする。
                 ctx.Value = x;
                 ctx.Buffer = null;
-                //ctx.SubDisplayText += OpeNameHelper.Get(btn);
+                
             }
+
         }
 
         /// <summary>

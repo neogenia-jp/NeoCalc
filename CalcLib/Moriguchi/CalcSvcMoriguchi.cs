@@ -24,6 +24,8 @@ namespace CalcLib.Moriguchi
         /// </summary>
         public static int SvcNo;
 
+        public static int NowSvc;
+
         public class ContextMoriguchi : ICalcContext
         {
             /// <summary>
@@ -68,17 +70,16 @@ namespace CalcLib.Moriguchi
             var ctx = ctx0 as ContextMoriguchi;
             Debug.WriteLine($"Button Clicked {btn}, context={ctx}");
 
-            //defaultでは電卓モード
-            if (ctx.FaSvc == null)
+            //拡張ボタンを押されたらサービスNo切替
+            if ((int)btn >= 21) SvcNo = (int)btn;
+
+            //サービスNoが変わった時
+            if (SvcNo != NowSvc || ctx.FaSvc == null)
             {
-                SvcNo = 99;
-                MakeFactory(ctx);
-            }
-            else if ((int)btn >= 21)
-            {
-                //サービスの切り替え時
-                SvcNo = (int)btn;
-                MakeFactory(ctx);
+                //サービス・コンテキストを作る
+                ctx.FaCtx = SvcFactory.CreateContext();
+                ctx.FaSvc = SvcFactory.CreateService();
+                ctx.FaSvc.Init(ctx.FaCtx, ctx);
             }
 
             //サービスメソッド実行
@@ -88,19 +89,8 @@ namespace CalcLib.Moriguchi
             if (!ret)
             {
                 ctx.FaSvc = null;
+                SvcNo = 0;
             }
-        }
-
-        /// <summary>
-        /// ファクトリーによるサービス製造
-        /// </summary>
-        private void MakeFactory(ContextMoriguchi prevCtx)
-        {
-            var c = SvcFactory.CreateContext();
-            var s = SvcFactory.CreateService();
-            s.Init(c, prevCtx);
-            prevCtx.FaCtx = c;
-            prevCtx.FaSvc = s;
         }
     }
 }

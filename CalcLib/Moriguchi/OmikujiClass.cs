@@ -68,6 +68,8 @@ namespace CalcLib.Moriguchi
                 //電卓モードへ戻る時
                 case CalcButton.BtnClear:
                 case CalcButton.BtnClearEnd:
+                    ctx.DisplayText = "0";
+                    ctx.SubDisplayText = "";
                     return false;
             }
             return true;

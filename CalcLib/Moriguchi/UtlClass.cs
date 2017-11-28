@@ -9,7 +9,7 @@ namespace CalcLib.Moriguchi
     class UtlClass
     {
         //TODO:もっと汎用的に使える様に作ろう
-        public static void Chomp(ISubContext ctx)
+        public static string Chomp(ISubContext ctx)
           => ctx.DisplayText = ctx.DisplayText.Remove(ctx.DisplayText.Length - 1);
 
         public class OpeNameHelper

@@ -156,7 +156,7 @@ namespace CalcLibTest
             // 1
             svc.OnButtonClick(ctx, CalcLib.CalcButton.Btn1);
 
-            Assert.AreEqual("", $"{ctx.SubDisplayText}");
+            //Assert.AreEqual("", $"{ctx.SubDisplayText}");
             Assert.AreEqual("1", ctx.DisplayText);
 
             // +
