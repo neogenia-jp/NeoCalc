@@ -14,22 +14,14 @@ namespace CalcLib.Maeda.Janken
     public struct Kuji
     {
         /// <summary>
-        /// 名称。"大吉" など。
+        /// ジャンケンの種類
         /// </summary>
-        public string Name { get; }
-
-        /// <summary>
-        /// くじの価値。大吉が価値が高く、凶は価値が低い。
-        /// </summary>
-        public int Worth { get; }
-
-        /// <summary>
-        /// コンストラクタ
-        /// </summary>
-        /// <returns></returns>
-        public Kuji(int worth, string name) { Name = name; Worth = worth; }
-
-        public override string ToString() => (Name+"　").Substring(0, 2);
+        public enum jankenhand
+        {
+            グー,
+            チョキ,
+            パー
+        }
     }
 
     /// <summary>
@@ -38,16 +30,26 @@ namespace CalcLib.Maeda.Janken
     [Serializable]
     public abstract class JankenBase
     {
-        public string DisplayText { get; set; }
+        public string DisplayText => $"{Enemy} VS {Player}";
 
         public string SubDisplayText { get; set; }
 
         public SvcState State { get; set; }
 
         /// <summary>
-        /// くじの内容
+        /// プレイヤーの手
         /// </summary>
-        public IList<Kuji> Items { get; protected set; }
+        public string Player { get; set; }
+
+        /// <summary>
+        /// 相手の手
+        /// </summary>
+        public string Enemy { get; set; }
+
+        /// <summary>
+        /// ジャンケンの内容
+        /// </summary>
+        public Kuji Items { get; protected set; }
 
         /// <summary>
         /// 選択したインデックス
@@ -60,14 +62,11 @@ namespace CalcLib.Maeda.Janken
         /// <param name="initList">くじの中身</param>
         public virtual void Init()
         {
-            DisplayText = "[1 ] [2 ] [3 ] [4 ]";
-            SubDisplayText = "おみくじを選択して下さい";
-            Items = InitKuji().ToList();
-            SelctedIdx = -1;
+            Player = "???";
+            Enemy = "???";
+            SubDisplayText = "ジャンケン...";
             State = SvcState.Initialized;
         }
-
-        protected abstract IEnumerable<Kuji> InitKuji();
 
         /// <summary>
         /// 選択を試みる
@@ -76,18 +75,25 @@ namespace CalcLib.Maeda.Janken
         /// <returns>選択不可であればfalse</returns>
         public virtual bool TryChoise(int num)
         {
-            if (State == SvcState.Initialized && 0 <= num && num < Items.Count)
+
+            //初期化後、自分の手を決める番
+            if (State == SvcState.Initialized && 0 <= num && num < 3)
             {
-                SelctedIdx = num;
-                DisplayText = string.Join(" ", Items);
-                SubDisplayText = ResultText;
-                State = SvcState.Finished;
+                Player = Enum.GetName(typeof(Kuji.jankenhand), num);
+                //State = SvcState.Running;
+                return true;
+            }
+            //相手の手を決める番
+            else if (Player != null && num == 10)
+            {
+                Random rnd = new Random();
+                Enemy = Enum.GetName(typeof(Kuji.jankenhand), rnd.Next(3));
+
+                //TODO:勝敗を決める 別関数「Judgement」
                 return true;
             }
             return false;
         }
-
-        public string ResultText => $"本日の運勢は「{Items[SelctedIdx]}」です";
     }
 
     /// <summary>
@@ -96,16 +102,16 @@ namespace CalcLib.Maeda.Janken
     [Serializable]
     public class JankeniImpl : JankenBase
     {
-        /// <summary>
-        /// くじの初期化を行う。
-        /// </summary>
-        protected override IEnumerable<Kuji> InitKuji()
-            => new List<Kuji>
-            {
-                new Kuji(-10, "凶"),
-                new Kuji(  3, "小吉"),
-                new Kuji(  6, "中吉"),
-                new Kuji( 10, "大吉"),
-            }.Shuffle();
+        ///// <summary>
+        ///// くじの初期化を行う。
+        ///// </summary>
+        //protected override IEnumerable<Kuji> InitKuji()
+        //    => new List<Kuji>
+        //    {
+        //        new Kuji(-10, "凶"),
+        //        new Kuji(  3, "小吉"),
+        //        new Kuji(  6, "中吉"),
+        //        new Kuji( 10, "大吉"),
+        //    }.Shuffle();
     }
 }
