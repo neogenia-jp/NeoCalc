@@ -80,9 +80,6 @@ namespace CalcLib.Maeda.Janken
         /// <returns>選択不可であればfalse</returns>
         public virtual bool TryChoise(int num)
         {
-            //TODO:C,CEで電卓に戻る
-
-
             //初期化後、自分の手を決める番
             if ((State == SvcState.Initialized || State == SvcState.Running) && 0 <= num && num < 3)
             {
@@ -142,14 +139,11 @@ namespace CalcLib.Maeda.Janken
         /// <returns></returns>
         public string JudgeMesseage(int judge)
         {
-            switch (judge)
+            if (judge == 1)
             {
-                case 1:
-                    return "アナタノカチ！";
-                case -1:
-                    return "アナタノマケ！";
+                return "アナタノカチ！";
             }
-            return "アイコデショ...";
+            return "アナタノマケ！";
         }
 
         /// <summary>
