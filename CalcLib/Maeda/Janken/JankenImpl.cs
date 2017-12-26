@@ -16,7 +16,7 @@ namespace CalcLib.Maeda.Janken
         /// <summary>
         /// ジャンケンの種類
         /// </summary>
-        public enum jankenhand
+        public enum JankenHand
         {
             unknown,
             グー,
@@ -31,26 +31,26 @@ namespace CalcLib.Maeda.Janken
     [Serializable]
     public abstract class JankenBase
     {
-        public string DisplayText => $"{JyankenHandConverter(Enemy)} VS {JyankenHandConverter(Player)}";
+        public string DisplayText => $"{ConvertJankenHand(Enemy)} VS {ConvertJankenHand(Player)}";
 
-        public string SubDisplayText => ForSubDisplay(State);
+        public string SubDisplayText => GetMessageForState(State);
 
         public SvcState State { get; set; }
 
         /// <summary>
         /// プレイヤーの手
         /// </summary>
-        public Kuji.jankenhand Player { get; set; }
+        public Kuji.JankenHand Player { get; set; }
 
         /// <summary>
         /// 相手の手
         /// </summary>
-        public Kuji.jankenhand Enemy { get; set; }
+        public Kuji.JankenHand Enemy { get; set; }
 
         /// <summary>
         /// 勝敗を表す数値
         /// </summary>
-        public int judge { get; set; }
+        public int JudgeResult { get; set; }
 
         /// <summary>
         /// ジャンケンの内容
@@ -68,8 +68,8 @@ namespace CalcLib.Maeda.Janken
         /// <param name="initList">くじの中身</param>
         public virtual void Init()
         {
-            Player = Kuji.jankenhand.unknown;
-            Enemy = Kuji.jankenhand.unknown;
+            Player = Kuji.JankenHand.unknown;
+            Enemy = Kuji.JankenHand.unknown;
             State = SvcState.Initialized;
         }
 
@@ -83,34 +83,27 @@ namespace CalcLib.Maeda.Janken
             //初期化後、自分の手を決める番
             if ((State == SvcState.Initialized || State == SvcState.Running) && 0 <= num && num < 3)
             {
-                Player = (Kuji.jankenhand)num + 1;
-                Enemy = Kuji.jankenhand.unknown;
+                Player = (Kuji.JankenHand)num + 1;
+                Enemy = Kuji.JankenHand.unknown;
                 return true;
             }
             //相手の手を決める番
-            else if (Player != Kuji.jankenhand.unknown && num == 10)
+            else if (Player != Kuji.JankenHand.unknown && num == 10)
             {
                 Random rnd = new Random();
-                Enemy = (Kuji.jankenhand)rnd.Next(3) + 1 ;
+                Enemy = (Kuji.JankenHand)rnd.Next(3) + 1 ;
                 //ジャンケンの勝敗を決める
-                judge = Judgement(Player, Enemy);
+                JudgeResult = Judge(Player, Enemy);
                 //勝敗によるStateの変更
-                StateChange(judge);
+                ChangeState(JudgeResult);
                 return true;
             }
             return false;
         }
 
-        public void StateChange(int judge)
+        public void ChangeState(int judge)
         {
-            if (judge == 0)
-            {
-                State = SvcState.Running;
-            }
-            else
-            {
-                State = SvcState.Finished;
-            }
+            State = (judge == 0) ? SvcState.Running : State = SvcState.Finished;
         }
 
         /// <summary>
@@ -118,18 +111,12 @@ namespace CalcLib.Maeda.Janken
         /// </summary>
         /// <param name="state"></param>
         /// <returns></returns>
-        public string ForSubDisplay(SvcState state)
+        public string GetMessageForState(SvcState state)
         {
-            if (state == SvcState.Initialized)
-            {
-                return "ジャンケン...";
-            }
-            else if (state == SvcState.Running)
-            {
-                return "アイコデショ...";
-            }
+            if (state == SvcState.Initialized) return "ジャンケン...";
+            if (state == SvcState.Running) return "アイコデショ...";           
             //勝敗メッセージを表示する関数
-            return JudgeMesseage(judge);
+            return GetJudgeMesseage(JudgeResult);
         }
 
         /// <summary>
@@ -137,33 +124,29 @@ namespace CalcLib.Maeda.Janken
         /// </summary>
         /// <param name="judge"></param>
         /// <returns></returns>
-        public string JudgeMesseage(int judge)
+        public string GetJudgeMesseage(int judge)
         {
-            if (judge == 1)
-            {
-                return "アナタノカチ！";
-            }
-            return "アナタノマケ！";
+            return (judge == 1) ? "アナタノカチ！" : "アナタノマケ！";
         }
 
         /// <summary>
         /// ジャンケンの勝敗を決める
         /// </summary>
-        /// <param name="Player"></param>
+        /// <param name="player"></param>
         /// <param name="enemy"></param>
-        public int Judgement(Kuji.jankenhand player, Kuji.jankenhand enemy)
+        public int Judge(Kuji.JankenHand player, Kuji.JankenHand enemy)
         {
             //勝ちパターン
-            if    (player == Kuji.jankenhand.グー   && enemy == Kuji.jankenhand.チョキ
-                || player == Kuji.jankenhand.チョキ && enemy == Kuji.jankenhand.パー
-                || player == Kuji.jankenhand.パー   && enemy == Kuji.jankenhand.グー)
+            if    (player == Kuji.JankenHand.グー   && enemy == Kuji.JankenHand.チョキ
+                || player == Kuji.JankenHand.チョキ && enemy == Kuji.JankenHand.パー
+                || player == Kuji.JankenHand.パー   && enemy == Kuji.JankenHand.グー)
             {
                 return 1;
             }
             //負けパターン
-            else if   (player == Kuji.jankenhand.グー   && enemy == Kuji.jankenhand.パー
-                    || player == Kuji.jankenhand.チョキ && enemy == Kuji.jankenhand.グー
-                    || player == Kuji.jankenhand.パー   && enemy == Kuji.jankenhand.チョキ)
+            if   (player == Kuji.JankenHand.グー   && enemy == Kuji.JankenHand.パー
+               || player == Kuji.JankenHand.チョキ && enemy == Kuji.JankenHand.グー
+               || player == Kuji.JankenHand.パー   && enemy == Kuji.JankenHand.チョキ)
             {
                 return -1;
             }
@@ -175,13 +158,9 @@ namespace CalcLib.Maeda.Janken
         /// 手がunknownの場合に"???"を返す関数
         /// </summary>
         /// <returns></returns>
-        public string JyankenHandConverter(Kuji.jankenhand hand)
+        public string ConvertJankenHand(Kuji.JankenHand hand)
         {
-            if (hand == Kuji.jankenhand.unknown)
-            {
-                return "???";
-            }
-            return hand.ToString();
+            return (hand == Kuji.JankenHand.unknown) ? "???" : hand.ToString();
         }
     }
 
