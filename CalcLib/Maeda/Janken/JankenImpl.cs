@@ -84,6 +84,7 @@ namespace CalcLib.Maeda.Janken
             if ((State == SvcState.Initialized || State == SvcState.Running) && 0 <= num && num < 3)
             {
                 Player = (Kuji.jankenhand)num + 1;
+                Enemy = Kuji.jankenhand.unknown;
                 return true;
             }
             //相手の手を決める番
@@ -104,7 +105,6 @@ namespace CalcLib.Maeda.Janken
         {
             if (judge == 0)
             {
-                Init();
                 State = SvcState.Running;
             }
             else
