@@ -50,6 +50,9 @@ textarea {
     background-color: #c0c0c0;
     text-align: center;
     font-size: 180%;
+    line-height: 1em;
+    white-space: nowrap;    
+    overflow: hidden;
 }
 
 .num-button {
