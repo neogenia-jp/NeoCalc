@@ -1,0 +1,84 @@
+﻿@{
+    ViewBag.Title = $"ネオ電卓Web版 ({ViewBag.SvcClassName})";
+}
+
+
+<div class="row">
+    <div class="col-xs-12">
+
+        <div class="calc-container">
+
+            <div class="sub-display-text"></div>
+            <div class="display-text"></div>
+
+            <table>
+                <tr>
+                    @for (int i = 0; i < ViewBag.ExtButtonText?.Length ?? 0; i++)
+                    {
+                        <td>
+                            @if (!string.IsNullOrWhiteSpace(ViewBag.ExtButtonText[i]))
+                            {
+                                <button class="calc-button" data-content="Ext@(i+1)">@ViewBag.ExtButtonText[i]</button>
+
+                            }
+                        </td>
+                    }
+                </tr>
+                <tr>
+                    <td><button class="calc-button" data-content="ClearEnd">CE</button></td>
+                    <td><button class="calc-button" data-content="Clear">C</button></td>
+                    <td><button class="calc-button">BS</button></td>
+                    <td><button class="calc-button" data-content="Divide">÷</button></td>
+                </tr>
+                <tr>
+                    <td><button class="calc-button num-button">7</button></td>
+                    <td><button class="calc-button num-button">8</button></td>
+                    <td><button class="calc-button num-button">9</button></td>
+                    <td><button class="calc-button" data-content="Multiple">×</button></td>
+                </tr>
+                <tr>
+                    <td><button class="calc-button num-button">4</button></td>
+                    <td><button class="calc-button num-button">5</button></td>
+                    <td><button class="calc-button num-button">6</button></td>
+                    <td><button class="calc-button" data-content="Minus">－</button></td>
+                </tr>
+                <tr>
+                    <td><button class="calc-button num-button">1</button></td>
+                    <td><button class="calc-button num-button">2</button></td>
+                    <td><button class="calc-button num-button">3</button></td>
+                    <td><button class="calc-button" data-content="Plus">＋</button></td>
+                </tr>
+                <tr>
+                    <td><button class="calc-button" data-content="PlusMinus">±</button></td>
+                    <td><button class="calc-button num-button">0</button></td>
+                    <td><button class="calc-button num-button" data-content="Dot">.</button></td>
+                    <td><button class="calc-button" data-content="Equal">＝</button></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script type="text/javascript">$(function () {
+        function onAjaxSuccess(json) {
+            $(".display-text").text(json.displayText || '');
+            $(".sub-display-text").text(json.subDisplayText || '');
+        }
+
+        $(".calc-button").click(function (evt) {
+            var content = $(this).data('content');
+            if (!content) content = this.innerText;
+
+            $.ajax({
+                type: "POST",
+                url: '/',
+                data: {
+                    btn: content
+                },
+                success: onAjaxSuccess,
+                dataType: 'json'
+            });
+        });
+    });</script>
+}
