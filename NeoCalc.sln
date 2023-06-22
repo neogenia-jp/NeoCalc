@@ -17,6 +17,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CalcLibCoreTest", "CalcLibC
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebCalcCore", "WebCalcCore\WebCalcCore.csproj", "{C49147B3-F7DB-497C-8DFA-9EA0E4C42E17}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MauiCalc", "MauiCalc\MauiCalc.csproj", "{9B755C5C-11FF-4E4D-956F-9452C682B25B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +53,10 @@ Global
 		{C49147B3-F7DB-497C-8DFA-9EA0E4C42E17}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C49147B3-F7DB-497C-8DFA-9EA0E4C42E17}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C49147B3-F7DB-497C-8DFA-9EA0E4C42E17}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9B755C5C-11FF-4E4D-956F-9452C682B25B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9B755C5C-11FF-4E4D-956F-9452C682B25B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9B755C5C-11FF-4E4D-956F-9452C682B25B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9B755C5C-11FF-4E4D-956F-9452C682B25B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

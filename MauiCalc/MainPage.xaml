@@ -1,0 +1,77 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:MauiCalc"
+             x:Class="MauiCalc.MainPage"
+             Loaded="MauiCalc_Loaded"
+             Title="{Binding Title}"
+             >
+    
+    <ContentPage.BindingContext>
+        <local:MainPageVM/>
+    </ContentPage.BindingContext>
+
+    <ContentPage.Resources>
+        <Style TargetType="Button" x:Name="Calc">
+            <Setter Property="Margin" Value="10"/>
+            <Setter Property="HeightRequest" Value="100"/>
+            <Setter Property="WidthRequest" Value="100"/>
+            <Setter Property="FontSize" Value="30"/>
+            <Setter Property="TextColor" Value="Black"/>
+        </Style>
+    </ContentPage.Resources>
+
+    <ScrollView>
+        <VerticalStackLayout
+            BackgroundColor="LightGray">
+            <Label
+                Margin="20"
+                TextColor="Black"
+                Text="{Binding SubDisplayText}"
+                FontSize="30"
+                HeightRequest="50"
+                HorizontalOptions="End"
+                />
+            <Label
+                Margin="20"
+                TextColor="Black"
+                Text="{Binding Title}"
+                FontSize="60"
+                HeightRequest="100"
+                HorizontalOptions="End"
+                />
+            <HorizontalStackLayout HorizontalOptions="Center">
+                <Button Text="CE" Style="{StaticResource Key=Calc}" Clicked="Button_Clicked"/>
+                <Button Text="C" Style="{StaticResource Key=Calc}" Clicked="Button_Clicked"/>
+                <Button Text="BS" Style="{StaticResource Key=Calc}" Clicked="Button_Clicked"/>
+                <Button Text="÷" Style="{StaticResource Key=Calc}" Clicked="Button_Clicked"/>
+            </HorizontalStackLayout>
+            <HorizontalStackLayout HorizontalOptions="Center">
+                <Button Text="7" Style="{StaticResource Key=Calc}" Clicked="Button_Clicked"/>
+                <Button Text="8" Style="{StaticResource Key=Calc}" Clicked="Button_Clicked"/>
+                <Button Text="9" Style="{StaticResource Key=Calc}" Clicked="Button_Clicked"/>
+                <Button Text="×" Style="{StaticResource Key=Calc}" Clicked="Button_Clicked"/>
+            </HorizontalStackLayout>
+            <HorizontalStackLayout HorizontalOptions="Center">
+                <Button Text="4" Style="{StaticResource Key=Calc}" Clicked="Button_Clicked"/>
+                <Button Text="5" Style="{StaticResource Key=Calc}" Clicked="Button_Clicked"/>
+                <Button Text="6" Style="{StaticResource Key=Calc}" Clicked="Button_Clicked"/>
+                <Button Text="-" Style="{StaticResource Key=Calc}" Clicked="Button_Clicked"/>
+            </HorizontalStackLayout>
+            <HorizontalStackLayout HorizontalOptions="Center">
+                <Button Text="1" Style="{StaticResource Key=Calc}" Clicked="Button_Clicked"/>
+                <Button Text="2" Style="{StaticResource Key=Calc}" Clicked="Button_Clicked"/>
+                <Button Text="3" Style="{StaticResource Key=Calc}" Clicked="Button_Clicked"/>
+                <Button Text="+" Style="{StaticResource Key=Calc}" Clicked="Button_Clicked"/>
+            </HorizontalStackLayout>
+            <HorizontalStackLayout HorizontalOptions="Center">
+                <Button Text="±" Style="{StaticResource Key=Calc}" Clicked="Button_Clicked"/>
+                <Button Text="0" Style="{StaticResource Key=Calc}" Clicked="Button_Clicked"/>
+                <Button Text="." Style="{StaticResource Key=Calc}" Clicked="Button_Clicked"/>
+                <Button Text="=" Style="{StaticResource Key=Calc}" Clicked="Button_Clicked"/>
+            </HorizontalStackLayout>
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>
+
