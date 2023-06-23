@@ -41,6 +41,12 @@
                 HorizontalOptions="End"
                 />
             <HorizontalStackLayout HorizontalOptions="Center">
+                <Button Text="{Binding ButtonExt1}" IsEnabled="{Binding IsEnabledButtonExt1}" Style="{StaticResource Key=Calc}" Clicked="Button_Clicked"/>
+                <Button Text="{Binding ButtonExt2}" IsEnabled="{Binding IsEnabledButtonExt2}" Style="{StaticResource Key=Calc}" Clicked="Button_Clicked"/>
+                <Button Text="{Binding ButtonExt3}" IsEnabled="{Binding IsEnabledButtonExt3}" Style="{StaticResource Key=Calc}" Clicked="Button_Clicked"/>
+                <Button Text="{Binding ButtonExt4}" IsEnabled="{Binding IsEnabledButtonExt4}" Style="{StaticResource Key=Calc}" Clicked="Button_Clicked"/>
+            </HorizontalStackLayout>
+            <HorizontalStackLayout HorizontalOptions="Center">
                 <Button Text="CE" Style="{StaticResource Key=Calc}" Clicked="Button_Clicked"/>
                 <Button Text="C" Style="{StaticResource Key=Calc}" Clicked="Button_Clicked"/>
                 <Button Text="BS" Style="{StaticResource Key=Calc}" Clicked="Button_Clicked"/>

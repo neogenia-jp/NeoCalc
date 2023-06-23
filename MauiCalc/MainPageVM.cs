@@ -28,10 +28,6 @@ namespace MauiCalc
             {"÷", CalcButton.BtnDivide},
             {".", CalcButton.BtnDot},
             {"=", CalcButton.BtnEqual},
-            {"Ext1", CalcButton.BtnExt1},
-            {"Ext2", CalcButton.BtnExt2},
-            {"Ext3", CalcButton.BtnExt3},
-            {"Ext4", CalcButton.BtnExt4},
             {"-", CalcButton.BtnMinus},
             {"×", CalcButton.BtnMultiple},
             {"+", CalcButton.BtnPlus},
@@ -53,7 +49,13 @@ namespace MauiCalc
         /// <param name="svc"></param>
         private void SetupExtButtons(ICalcSvcEx svc)
         {
-            //TODO:拡張ボタンの処理を追加
+            foreach (var i in Enumerable.Range(1, 4))
+            {
+                var text = svc?.GetExtButtonText(i);
+                this.GetType().GetProperty("ButtonExt" + i).SetValue(this, text);
+                this.GetType().GetProperty("IsEnabledButtonExt" + i).SetValue(this, text is not null);
+                if (text is not null) btnDic.Add(text, (CalcButton)Enum.Parse(typeof(CalcButton), "BtnExt" + i));
+            }
         }
 
         /// <summary>
@@ -83,12 +85,28 @@ namespace MauiCalc
 
         private string title;
         public string Title { get => title; set => SetProperty(ref title, value); }
-
         private string displayText;
         public string DisplayText { get => displayText; set => SetProperty(ref displayText, value); }
-
         private string subDisplayText;
         public string SubDisplayText { get => subDisplayText; set => SetProperty(ref subDisplayText, value); }
+
+        private string buttonExt1;
+        public string ButtonExt1 { get => buttonExt1; set => SetProperty(ref buttonExt1, value); }
+        private string buttonExt2;
+        public string ButtonExt2 { get => buttonExt2; set => SetProperty(ref buttonExt2, value); }
+        private string buttonExt3;
+        public string ButtonExt3 { get => buttonExt3; set => SetProperty(ref buttonExt3, value); }
+        private string buttonExt4;
+        public string ButtonExt4 { get => buttonExt4; set => SetProperty(ref buttonExt4, value); }
+
+        private bool isEnabledButtonExt1;
+        public bool IsEnabledButtonExt1 { get => isEnabledButtonExt1; set => SetProperty(ref isEnabledButtonExt1, value); }
+        private bool isEnabledButtonExt2;
+        public bool IsEnabledButtonExt2 { get => isEnabledButtonExt2; set => SetProperty(ref isEnabledButtonExt2, value); }
+        private bool isEnabledButtonExt3;
+        public bool IsEnabledButtonExt3 { get => isEnabledButtonExt3; set => SetProperty(ref isEnabledButtonExt3, value); }
+        private bool isEnabledButtonExt4;
+        public bool IsEnabledButtonExt4 { get => isEnabledButtonExt4; set => SetProperty(ref isEnabledButtonExt4, value); }
     }
 }
 
