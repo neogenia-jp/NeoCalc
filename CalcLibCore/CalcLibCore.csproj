@@ -19,4 +19,10 @@
     <PackageReference Include="HtmlAgilityPack" Version="1.11.48" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Remove="Tomida\Domain\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Tomida\Domain\" />
+  </ItemGroup>
 </Project>

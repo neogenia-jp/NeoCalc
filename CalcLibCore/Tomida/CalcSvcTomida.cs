@@ -5,6 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CalcLibCore.Tomida;
+using CalcLibCore.Tomida.Domain;
+using CalcLibCore.Tomida.Operators;
 
 namespace CalcLib.Tomida
 {
@@ -35,11 +37,13 @@ namespace CalcLib.Tomida
                     command.Calclate(ctx);
                     ctx.oper = btn;
                 }
-                ctx.buffer = string.Empty;
+                ctx.buffer = CalcNumber.Empty;
             }
             else if (CalcConstants.numbers.Contains(btn))
             {
-                ctx.buffer += CalcConstants.DisplayStringDic[btn];
+                var command = ButtonCommandFactory.Create(btn);
+                //ctx.buffer = ctx.buffer.Append(CalcConstants.DisplayStringDic[btn]);
+                command.Execute(ctx);
             }
             else
             {

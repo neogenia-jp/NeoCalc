@@ -1,14 +1,15 @@
 ﻿using System;
 using CalcLib;
+using CalcLibCore.Tomida.Domain;
 
 namespace CalcLibCore.Tomida
 {
     public class CalcContextTomida : ICalcContext
     {
-        public Stack<string> OperandStack { get; set; } = new Stack<string>();
+        public Stack<CalcNumber> OperandStack { get; set; } = new Stack<CalcNumber>();
         public CalcButton? oper { get; set; } = null;
 
-        public string buffer = string.Empty;
+        public CalcNumber buffer = CalcNumber.Empty;
 
         public string calcratedExpression = string.Empty;
 
@@ -18,7 +19,7 @@ namespace CalcLibCore.Tomida
 
         public void Clear()
         {
-            buffer = string.Empty;
+            buffer = CalcNumber.Empty;
             calcratedExpression = string.Empty;
             OperandStack.Clear();
             oper = null;
@@ -30,11 +31,10 @@ namespace CalcLibCore.Tomida
             switch (GetState())
             {
                 case CalcConstants.State.InputEqual:
-                    var d = Decimal.Parse($"{OperandStack.ElementAt(0)}");
-                    result = d.ToString("0.#############");
+                    result = OperandStack.ElementAt(0).ToString();
                     break;
                 default:
-                    result = buffer;
+                    result = buffer.ToString();
                     break;
             }
             return result;
@@ -45,7 +45,7 @@ namespace CalcLibCore.Tomida
             switch (GetState())
             {
                 case CalcConstants.State.InputLeft:
-                    result = buffer;
+                    result = buffer.ToString();
                     break;
                 case CalcConstants.State.InputOperator:
                     result = $"{OperandStack.ElementAt(0)} {CalcConstants.DisplayStringDic[oper.Value]}";
