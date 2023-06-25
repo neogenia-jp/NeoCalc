@@ -7,7 +7,17 @@ namespace CalcLibCore.Tomida.Operators
 	{
 		public static ButtonCommandBase Create(CalcButton btn)
 		{
-			return new NumericCommand(btn);
+			if (CalcConstants.numbers.Contains(btn))
+			{
+				return new NumericCommand(btn);
+			}else if (CalcConstants.operators.Contains(btn))
+			{
+				return new OperatorCommand(btn);
+			}
+			else
+			{
+				throw new ArgumentException("ファクトリーに登録されていないボタンです");
+			}
 		}
     }
 }

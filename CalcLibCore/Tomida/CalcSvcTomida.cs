@@ -25,6 +25,10 @@ namespace CalcLib.Tomida
                 ctx.Clear();
             }
 
+            var command = ButtonCommandFactory.Create(btn);
+            command.Execute(ctx);
+
+            /*
             if (CalcConstants.operators.Contains(btn))
             {
                 ctx.OperandStack.Push(ctx.buffer);
@@ -49,7 +53,7 @@ namespace CalcLib.Tomida
             {
                 throw new InvalidOperationException("不正なボタンです");
             }
-
+            */
         }
     }
 }
