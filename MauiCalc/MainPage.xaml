@@ -5,6 +5,7 @@
              x:Class="MauiCalc.MainPage"
              Loaded="MauiCalc_Loaded"
              Title="{Binding Title}"
+             HeightRequest="512"
              >
     
     <ContentPage.BindingContext>
