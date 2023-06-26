@@ -12,17 +12,26 @@ namespace CalcLibCore.Tomida.Operators
 
         public override void Execute(CalcContextTomida ctx)
         {
-            ctx.OperandStack.Push(ctx.buffer);
-            if (ctx.GetState() == CalcConstants.State.InputOperator)
+            if(ctx.GetState() == CalcConstants.State.InputLeft)
             {
+                // オペランドを入れる
+                ctx.OperandStack.Push(ctx.buffer);
+                ctx.SubDisplayQueue.Enqueue(ctx.buffer.ToDisplayString());
+                // TODO:演算子の交換の実装
+                // 演算子をサブディスプレイキューとオペレーター変数に入れる
+                ctx.SubDisplayQueue.Enqueue(CalcConstants.DisplayStringDic[Btn]);
                 ctx.oper = Btn;
             }
-            else if (ctx.GetState() == CalcConstants.State.InputComplete)
+            else if(ctx.GetState() == CalcConstants.State.InputRight)
             {
+                ctx.OperandStack.Push(ctx.buffer);
+                ctx.SubDisplayQueue.Enqueue(ctx.buffer.ToDisplayString());
+                ctx.SubDisplayQueue.Enqueue(CalcConstants.DisplayStringDic[Btn]);
                 var command = CalcConstants.OperatorCommandDic[ctx.oper.Value];
                 command.Calclate(ctx);
                 ctx.oper = Btn;
             }
+
             ctx.buffer = CalcNumber.Empty;
 
         }

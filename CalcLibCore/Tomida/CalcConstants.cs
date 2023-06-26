@@ -15,6 +15,13 @@ namespace CalcLibCore.Tomida
             InputEqual
         }
 
+        public static List<CalcButton> systemButtons = new List<CalcButton>
+        {
+            CalcButton.BtnBS,
+            CalcButton.BtnClear,
+            CalcButton.BtnClearEnd,
+        };
+
         public static List<CalcButton> operators = new List<CalcButton>
         {
             CalcButton.BtnPlus,
@@ -49,7 +56,11 @@ namespace CalcLibCore.Tomida
             { CalcButton.Btn8, "8" },
             { CalcButton.Btn9, "9" },
             { CalcButton.BtnDot, "." },
-            { CalcButton.BtnPlus, "+" }
+            { CalcButton.BtnPlus, "+" },
+            { CalcButton.BtnMinus, "-" },
+            { CalcButton.BtnMultiple, "*" },
+            { CalcButton.BtnDivide, "/" },
+            { CalcButton.BtnEqual, "=" },
         };
 
         public static Dictionary<CalcButton, ICalcOperator> OperatorCommandDic = new Dictionary<CalcButton, ICalcOperator>

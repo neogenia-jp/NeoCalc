@@ -25,35 +25,10 @@ namespace CalcLib.Tomida
                 ctx.Clear();
             }
 
+            // 押されたボタンに対応するコマンドオブジェクトをファクトリーで生成
+            // Executeする
             var command = ButtonCommandFactory.Create(btn);
             command.Execute(ctx);
-
-            /*
-            if (CalcConstants.operators.Contains(btn))
-            {
-                ctx.OperandStack.Push(ctx.buffer);
-                if(ctx.GetState() == CalcConstants.State.InputOperator)
-                {
-                    ctx.oper = btn;
-                }else if(ctx.GetState() == CalcConstants.State.InputComplete)
-                {
-                    var command = CalcConstants.OperatorCommandDic[ctx.oper.Value];
-                    command.Calclate(ctx);
-                    ctx.oper = btn;
-                }
-                ctx.buffer = CalcNumber.Empty;
-            }
-            else if (CalcConstants.numbers.Contains(btn))
-            {
-                var command = ButtonCommandFactory.Create(btn);
-                //ctx.buffer = ctx.buffer.Append(CalcConstants.DisplayStringDic[btn]);
-                command.Execute(ctx);
-            }
-            else
-            {
-                throw new InvalidOperationException("不正なボタンです");
-            }
-            */
         }
     }
 }

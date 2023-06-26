@@ -11,6 +11,7 @@ namespace CalcLibCore.Tomida.Operators
         {
             var command = CalcConstants.OperatorCommandDic[ctx.oper.Value];
             command.Calclate(ctx);
+            ctx.SubDisplayQueue.Clear();
         }
     }
 }

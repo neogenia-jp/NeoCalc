@@ -8,6 +8,7 @@ namespace CalcLibCore.Tomida
     {
         public Stack<CalcNumber> OperandStack { get; set; } = new Stack<CalcNumber>();
         public CalcButton? oper { get; set; } = null;
+        public Queue<string> SubDisplayQueue { get; set; } = new Queue<string>();
 
         public CalcNumber buffer = CalcNumber.Empty;
 
@@ -17,11 +18,15 @@ namespace CalcLibCore.Tomida
 
         public string SubDisplayText => SubDisplayTextImpl();
 
+        /// <summary>
+        /// コンテキストの内容を全て消去して初期状態に戻します。
+        /// </summary>
         public void Clear()
         {
             buffer = CalcNumber.Empty;
             calcratedExpression = string.Empty;
             OperandStack.Clear();
+            SubDisplayQueue.Clear();
             oper = null;
         }
 
@@ -31,30 +36,38 @@ namespace CalcLibCore.Tomida
             switch (GetState())
             {
                 case CalcConstants.State.InputEqual:
-                    result = OperandStack.ElementAt(0).ToString();
+                    result = OperandStack.ElementAt(0).ToDisplayString();
+                    break;
+                case CalcConstants.State.InputOperator:
+                    result = OperandStack.ElementAt(0).ToDisplayString();
                     break;
                 default:
-                    result = buffer.ToString();
+                    result = buffer.ToDisplayString();
                     break;
             }
             return result;
         }
+
+        private string DisplayQuere()
+        {
+            return String.Join(" ", SubDisplayQueue.ToArray());
+        }
+
         private string SubDisplayTextImpl()
         {
             string result = string.Empty;
             switch (GetState())
             {
                 case CalcConstants.State.InputLeft:
-                    result = buffer.ToString();
+                    //result = buffer.ToString();
+                    result = String.Empty;
                     break;
                 case CalcConstants.State.InputOperator:
-                    result = $"{OperandStack.ElementAt(0)} {CalcConstants.DisplayStringDic[oper.Value]}";
-                    break;
                 case CalcConstants.State.InputRight:
-                    result = $"{OperandStack.ElementAt(0)} {CalcConstants.DisplayStringDic[oper.Value]} {buffer}";
+                    result = $"{DisplayQuere()}";
                     break;
                 case CalcConstants.State.InputEqual:
-                    result = $"{calcratedExpression}";
+                    result = string.Empty;
                     break;
                 default:
                     throw new NotImplementedException();
@@ -71,11 +84,11 @@ namespace CalcLibCore.Tomida
             {
                 return CalcConstants.State.InputLeft;
             }
-            else if (OperandStack.Count == 1 && oper == null)
+            else if (OperandStack.Count == 1 && oper != null && buffer == CalcNumber.Empty)
             {
                 return CalcConstants.State.InputOperator;
             }
-            else if (OperandStack.Count == 1 && oper != null)
+            else if (OperandStack.Count == 1 && oper != null && buffer != CalcNumber.Empty)
             {
                 return CalcConstants.State.InputRight;
             }
