@@ -8,7 +8,7 @@ namespace CalcLibCore.Tomida
     {
         public Stack<CalcNumber> OperandStack { get; set; } = new Stack<CalcNumber>();
         public CalcButton? oper { get; set; } = null;
-        public Queue<string> SubDisplayQueue { get; set; } = new Queue<string>();
+        public List<string> SubDisplayQueue { get; set; } = new List<string>();
 
         public CalcNumber buffer = CalcNumber.Empty;
 
@@ -17,6 +17,13 @@ namespace CalcLibCore.Tomida
         public string DisplayText => DisplayTextImpl();
 
         public string SubDisplayText => SubDisplayTextImpl();
+
+        public CalcConstants.State State => GetState();
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public bool isInputed = false;
 
         /// <summary>
         /// コンテキストの内容を全て消去して初期状態に戻します。
@@ -28,6 +35,7 @@ namespace CalcLibCore.Tomida
             OperandStack.Clear();
             SubDisplayQueue.Clear();
             oper = null;
+            isInputed = false;
         }
 
         private string DisplayTextImpl()
@@ -37,6 +45,11 @@ namespace CalcLibCore.Tomida
             {
                 case CalcConstants.State.InputEqual:
                     result = OperandStack.ElementAt(0).ToDisplayString();
+                    // Equalを押した際に結果が実質ゼロの場合は"0"表記とする
+                    if(Decimal.Parse(result) == Decimal.Zero)
+                    {
+                        result = "0";
+                    }
                     break;
                 case CalcConstants.State.InputOperator:
                     result = OperandStack.ElementAt(0).ToDisplayString();
@@ -80,17 +93,17 @@ namespace CalcLibCore.Tomida
             {
                 return CalcConstants.State.InputEqual;
             }
-            else if (OperandStack.Count == 0)
+            else if (OperandStack.Count == 1 && oper != null && (buffer != CalcNumber.Empty || isInputed ))
             {
-                return CalcConstants.State.InputLeft;
+                return CalcConstants.State.InputRight;
             }
             else if (OperandStack.Count == 1 && oper != null && buffer == CalcNumber.Empty)
             {
                 return CalcConstants.State.InputOperator;
             }
-            else if (OperandStack.Count == 1 && oper != null && buffer != CalcNumber.Empty)
+            else if (OperandStack.Count == 0)
             {
-                return CalcConstants.State.InputRight;
+                return CalcConstants.State.InputLeft;
             }
             else if (OperandStack.Count == 2 && oper != null)
             {

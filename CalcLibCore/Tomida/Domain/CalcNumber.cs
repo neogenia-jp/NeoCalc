@@ -98,7 +98,6 @@ namespace CalcLibCore.Tomida.Domain
 				// 小数点もある
 				result = $"{Decimal.Parse(splits[0]).ToString("##,0")}.{splits[1]}";
 			}
-
             return result;
 		}
 
@@ -107,9 +106,10 @@ namespace CalcLibCore.Tomida.Domain
 		{
 			try
 			{
-				return Parse(ToDecimal()).ToString();
-			}
-			catch (Exception ex)
+				return ToDecimal().ToString();
+                //return Parse(ToDecimal()).ToString();
+            }
+            catch (Exception ex)
 			{
 				return string.Empty;
 			}

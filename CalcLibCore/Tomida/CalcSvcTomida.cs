@@ -19,12 +19,6 @@ namespace CalcLib.Tomida
             var ctx = ctx0 as CalcContextTomida;
             Debug.WriteLine($"Button Clicked {btn}, context={ctx}");
 
-            // operがEqualの場合、クリア処理を行う
-            if(ctx.oper == CalcButton.BtnEqual)
-            {
-                ctx.Clear();
-            }
-
             // 押されたボタンに対応するコマンドオブジェクトをファクトリーで生成
             // Executeする
             var command = ButtonCommandFactory.Create(btn);

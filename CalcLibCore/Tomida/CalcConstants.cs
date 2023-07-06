@@ -58,8 +58,8 @@ namespace CalcLibCore.Tomida
             { CalcButton.BtnDot, "." },
             { CalcButton.BtnPlus, "+" },
             { CalcButton.BtnMinus, "-" },
-            { CalcButton.BtnMultiple, "*" },
-            { CalcButton.BtnDivide, "/" },
+            { CalcButton.BtnMultiple, "×" },
+            { CalcButton.BtnDivide, "÷" },
             { CalcButton.BtnEqual, "=" },
         };
 

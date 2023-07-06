@@ -11,6 +11,7 @@ namespace CalcLibCore.Tomida.Operators
 
         public override void Execute(CalcContextTomida ctx)
         {
+            ctx.isInputed = true;
             ctx.buffer = Domain.CalcNumber.Empty;
         }
     }
