@@ -9,18 +9,25 @@ namespace CalcLib.Yamamoto2
 {
     internal class CalcSvcYamamoto2 : ICalcSvc
     {
-        class CalcContextYamamoto2 : CalcContext
-        {
-        }
-
         public virtual ICalcContext CreateContext() => new CalcContextYamamoto2();
 
         public virtual void OnButtonClick(ICalcContext ctx0, CalcButton btn)
         {
-            var ctx = ctx0 as CalcContext;
+            var ctx = ctx0 as CalcContextYamamoto2;
             Debug.WriteLine($"Button Clicked {btn}, context={ctx}");
 
-            ctx.DisplayText = "Yamamoto2";
+            // ボタンを押されたボタンでコンテキストを更新
+
+
+            // コンテキストをもとに計算
+            var executor = Executors.ExecutorFactory.Create(ctx, btn);
+            executor.Execute();
+            // / * + - は一つ目の値をサブディスプレイに持っていく
+            // / * + - は一つ目の値をサブディスプレイに持っていく
+            // =は
+            //ctx.DisplayText = "Yamamoto2";
+
+            System.Diagnostics.Debug.WriteLine(ctx.ToString());
         }
     }
 }
