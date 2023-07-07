@@ -26,7 +26,8 @@ namespace CalcLib.Yamamoto2.Executors
 				case CalcButton.BtnPlus:
 					return new PlusButtonExecutor(ctx, btn);
 				case CalcButton.BtnMinus:
-				case CalcButton.BtnMultiple:
+                    return new MinusButtonExecutor(ctx, btn);
+                case CalcButton.BtnMultiple:
 				case CalcButton.BtnDivide:
 					throw new NotImplementedException();
                 case CalcButton.BtnEqual:
