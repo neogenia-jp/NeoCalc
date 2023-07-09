@@ -15,9 +15,9 @@
     <ContentPage.Resources>
         <Style TargetType="Button" x:Name="Calc">
             <Setter Property="Margin" Value="10"/>
-            <Setter Property="HeightRequest" Value="100"/>
-            <Setter Property="WidthRequest" Value="100"/>
-            <Setter Property="FontSize" Value="30"/>
+            <Setter Property="HeightRequest" Value="70"/>
+            <Setter Property="WidthRequest" Value="70"/>
+            <Setter Property="FontSize" Value="20"/>
             <Setter Property="TextColor" Value="Black"/>
         </Style>
     </ContentPage.Resources>
