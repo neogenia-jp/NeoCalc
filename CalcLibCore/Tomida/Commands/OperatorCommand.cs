@@ -18,7 +18,6 @@ namespace CalcLibCore.Tomida.Commands
                 // オペランドを入れる
                 ctx.OperandStack.Push(ctx.buffer);
                 ctx.SubDisplayQueue.Add(ctx.buffer.ToDisplayString());
-                // TODO:演算子の交換の実装
                 // 演算子をサブディスプレイキューとオペレーター変数に入れる
                 ctx.SubDisplayQueue.Add(CalcConstants.DisplayStringDic[Btn]);
                 ctx.oper = Btn;
