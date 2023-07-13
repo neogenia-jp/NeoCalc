@@ -22,9 +22,11 @@
   <ItemGroup>
     <None Remove="Tomida\Domain\" />
     <None Remove="Tomida\Extensions\" />
+    <None Remove="Tomida\Commands\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Tomida\Domain\" />
     <Folder Include="Tomida\Extensions\" />
+    <Folder Include="Tomida\Commands\" />
   </ItemGroup>
 </Project>
