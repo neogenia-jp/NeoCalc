@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using CalcLibCore.Tomida;
 using CalcLibCore.Tomida.Domain;
-using CalcLibCore.Tomida.Operators;
+using CalcLibCore.Tomida.Commands;
 
 namespace CalcLib.Tomida
 {

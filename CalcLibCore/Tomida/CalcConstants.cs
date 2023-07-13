@@ -1,6 +1,6 @@
 ﻿using System;
 using CalcLib;
-using CalcLibCore.Tomida.Operators;
+using CalcLibCore.Tomida.Commands;
 
 namespace CalcLibCore.Tomida
 {

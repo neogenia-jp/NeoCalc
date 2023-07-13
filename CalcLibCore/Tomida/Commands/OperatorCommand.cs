@@ -3,7 +3,7 @@ using CalcLib;
 using CalcLibCore.Tomida.Domain;
 using CalcLibCore.Tomida.Extensions;
 
-namespace CalcLibCore.Tomida.Operators
+namespace CalcLibCore.Tomida.Commands
 {
 	public class OperatorCommand : ButtonCommandBase
 	{

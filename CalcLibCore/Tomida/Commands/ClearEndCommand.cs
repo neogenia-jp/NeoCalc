@@ -1,7 +1,7 @@
 ﻿using System;
 using CalcLib;
 
-namespace CalcLibCore.Tomida.Operators
+namespace CalcLibCore.Tomida.Commands
 {
 	public class ClearEndCommand : ButtonCommandBase
 	{

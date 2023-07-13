@@ -1,5 +1,5 @@
 ﻿using System;
-namespace CalcLibCore.Tomida.Operators
+namespace CalcLibCore.Tomida.Commands
 {
 	public interface ICalcCommand
 	{

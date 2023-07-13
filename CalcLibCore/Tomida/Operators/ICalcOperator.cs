@@ -1,5 +1,5 @@
 ﻿using System;
-namespace CalcLibCore.Tomida.Operators
+namespace CalcLibCore.Tomida.Commands
 {
 	/// <summary>
 	/// 演算子のコマンドインターフェース

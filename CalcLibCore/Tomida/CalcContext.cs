@@ -21,7 +21,7 @@ namespace CalcLibCore.Tomida
         public CalcConstants.State State => GetState();
 
         /// <summary>
-        /// 
+        /// 現在入力中の辺（右辺、左辺）が一度でも入力状態になったかどうかを判別する
         /// </summary>
         public bool isInputed = false;
 

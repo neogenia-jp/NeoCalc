@@ -1,6 +1,9 @@
 ﻿using System;
 namespace CalcLibCore.Tomida.Domain
 {
+	/// <summary>
+	/// 電卓で保持する数字を表すドメイン
+	/// </summary>
 	public class CalcNumber
 	{
 		const int DECIMAL_PLACES = 13;

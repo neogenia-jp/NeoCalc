@@ -1,7 +1,7 @@
 ﻿using System;
 using CalcLibCore.Tomida.Domain;
 
-namespace CalcLibCore.Tomida.Operators
+namespace CalcLibCore.Tomida.Commands
 {
 	public class DivideOperator : ICalcOperator
 	{
