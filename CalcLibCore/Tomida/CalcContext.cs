@@ -61,7 +61,7 @@ namespace CalcLibCore.Tomida
             return result;
         }
 
-        private string DisplayQuere()
+        private string DisplayQueue()
         {
             return String.Join(" ", SubDisplayQueue.ToArray());
         }
@@ -77,7 +77,7 @@ namespace CalcLibCore.Tomida
                     break;
                 case CalcConstants.State.InputOperator:
                 case CalcConstants.State.InputRight:
-                    result = $"{DisplayQuere()}";
+                    result = $"{DisplayQueue()}";
                     break;
                 case CalcConstants.State.InputEqual:
                     result = string.Empty;
