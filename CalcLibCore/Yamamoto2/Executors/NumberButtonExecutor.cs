@@ -4,14 +4,13 @@ namespace CalcLib.Yamamoto2.Executors
 	public class NumberButtonExecutor : ButtonExecutor
 	{
         private string _text;
+        private CalcButton _btn;
+
 		internal NumberButtonExecutor(CalcContextYamamoto2 ctx, CalcButton btn) : base(ctx, btn)
 		{
-            if (!int.TryParse(Consts.CalcButtonText[btn], out int result))
-            {
-                throw new ArgumentException($"数字以外のボタンには使えません btn: {btn}");
-            }
             _text = Consts.CalcButtonText[btn];
-		}
+            _btn = btn;
+        }
 
         public override void Execute()
         {
@@ -21,6 +20,12 @@ namespace CalcLib.Yamamoto2.Executors
                 // オペレータ、= が入力された直後に数字が押された場合は、
                 // 次の値の入力になるため、ディスプレイをクリアする
                 _ctx.DisplayText = "";
+            }
+
+            if(_btn == CalcButton.BtnDot && _ctx.DisplayText.Last().ToString() == Consts.CalcButtonText[_btn])
+            {
+                // ドットが押された場合、ドットを2個続けないように処理を終える
+                return;
             }
             _ctx.DisplayText += _text;
             _ctx.State = CalcContextYamamoto2.StateEnum.InputedNumber;

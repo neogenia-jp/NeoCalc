@@ -9,7 +9,7 @@ namespace CalcLib.Yamamoto2.Executors
 
         public override decimal Calculate(decimal left, decimal right)
 		{
-			return Math.Round(left / right, 13);
+			return left / right;
 		}
     }
 }

@@ -33,6 +33,8 @@ namespace CalcLib.Yamamoto2.Executors
                     return new DivideButtonExecutor(ctx, btn);
                 case CalcButton.BtnEqual:
 					return new EqualButtonExecutor(ctx, btn);
+				case CalcButton.BtnDot:
+					return new NumberButtonExecutor(ctx, btn);
             }
 
             throw new NotImplementedException();

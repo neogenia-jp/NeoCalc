@@ -10,10 +10,10 @@ namespace CalcLib.Yamamoto2
         }
         public StateEnum State { get; set; }
 
-		public decimal? w1;
-		public CalcButton ope;
+		public decimal? w1;     // 左辺を入れておく
+		public CalcButton ope;  // オペレータを入れておく
 
-		public CalcContextYamamoto2()
+        public CalcContextYamamoto2()
 		{
 		}
 	}

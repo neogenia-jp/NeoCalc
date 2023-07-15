@@ -20,6 +20,7 @@ namespace CalcLib.Yamamoto2.Executors
             {
                 // 左辺が入っていれば、左辺とディスプレイに表示されている値をもとに計算する
                 _ctx.w1 = Calculate((decimal)_ctx.w1, decimal.Parse(_ctx.DisplayText));
+                _ctx.w1 = Math.Round(_ctx.w1.Value, 13);
                 _ctx.DisplayText = ((decimal)_ctx.w1).ToString();
 		    }
             else
