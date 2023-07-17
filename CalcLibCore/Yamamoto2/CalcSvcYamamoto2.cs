@@ -16,10 +16,6 @@ namespace CalcLib.Yamamoto2
             var ctx = ctx0 as CalcContextYamamoto2;
             Debug.WriteLine($"Button Clicked {btn}, context={ctx}");
 
-            // ボタンを押されたボタンでコンテキストを更新
-
-
-            // コンテキストをもとに計算
             var executor = Executors.ExecutorFactory.Create(ctx, btn);
             executor.Execute();
             // / * + - は一つ目の値をサブディスプレイに持っていく

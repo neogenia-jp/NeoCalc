@@ -4,12 +4,10 @@ namespace CalcLib.Yamamoto2.Executors
 	public class NumberButtonExecutor : ButtonExecutor
 	{
         private string _text;
-        private CalcButton _btn;
 
 		internal NumberButtonExecutor(CalcContextYamamoto2 ctx, CalcButton btn) : base(ctx, btn)
 		{
             _text = Consts.CalcButtonText[btn];
-            _btn = btn;
         }
 
         public override void Execute()
