@@ -11,8 +11,8 @@ namespace CalcLib.Takao
     {
         CalclatorSvc svc = new();
 
-        public virtual ICalcContext CreateContext() => new CalcContextTakao();
+        public virtual ICalcContext CreateContext() => new CalcContext();
 
-        public virtual void OnButtonClick(ICalcContext ctx, CalcButton btn) => svc.Exec(ctx, btn); 
+        public virtual void OnButtonClick(ICalcContext ctx, CalcButton btn) => svc.HandleInput(ctx as CalcContext, btn);
     }
 }
