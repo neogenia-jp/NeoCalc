@@ -29,17 +29,12 @@ namespace CalcLib.Yamamoto2
         /// <param name="value"></param>
         public void SetDisplayText(decimal value)
         {
-            var s = value.ToString();
-            if (s.IndexOf('.') > -1)
-            {
-                // 小数点がある場合は末尾の0を削除する
-                s = s.TrimEnd('0');
-                if(s.Last() == '.')
-                {
-                    // 最後が点だった場合はそれも削除する
-                    s = s.Remove(s.Length - 1, 1);
-                }
-            }
+            // [NOTE]
+            // ToStringするだけだと、少数部分の末尾の0が出てしまうため、フォーマットを指定する
+            // https://dobon.net/vb/dotnet/string/inttostring.html#section3
+            // 0: ゼロプレースホルダー 対応する数字で0を置き換える。対応する数字がない場合は0が表示される
+            // #: 桁プレースホルダー 対応する数字で#を置き換える。対応する数字がない場合は表示されない
+            var s = value.ToString("0.#############");
             DisplayText = s;
         }
     }
