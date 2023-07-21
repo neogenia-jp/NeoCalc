@@ -6,6 +6,7 @@ namespace CalcLib.Yamamoto2
 	internal class CalcContextYamamoto2 : CalcContext
 	{
 		public enum StateEnum {
+            Init,
             InputedNumber,
             InputedOperator,
             InputedEqual,
@@ -14,7 +15,7 @@ namespace CalcLib.Yamamoto2
 
 		public decimal? left;     // 左辺を入れておく
         public List<string> subDisplayItems;  // サブディスプレイの項目を保持する
-		public OperatorButtonExecutor ope;  // オペレータを入れておく
+		public OperatorButtonExecutor? ope;  // オペレータを入れておく
 
         public override string SubDisplayText
         {
@@ -26,6 +27,7 @@ namespace CalcLib.Yamamoto2
 
         public CalcContextYamamoto2()
 		{
+            State = StateEnum.Init;
             subDisplayItems = new List<string>();
 		}
 
@@ -46,6 +48,15 @@ namespace CalcLib.Yamamoto2
             // #: 桁プレースホルダー 対応する数字で#を置き換える。対応する数字がない場合は表示されない
             var s = value.ToString("0.#############");
             DisplayText = s;
+        }
+
+        public void Reset()
+        {
+            SetDisplayText(0);
+            subDisplayItems = new List<string>();
+            left = null;
+            ope = null;
+            State = StateEnum.Init;
         }
     }
 }
