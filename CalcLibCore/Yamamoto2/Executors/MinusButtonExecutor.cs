@@ -1,15 +1,15 @@
 ﻿using System;
 namespace CalcLib.Yamamoto2.Executors
 {
-	public class PlusButtonExecutor : OperatorButtonExecutor
+	public class MinusButtonExecutor : OperatorButtonExecutor
 	{
-		internal PlusButtonExecutor(CalcContextYamamoto2 ctx, CalcButton btn) : base(ctx, btn)
+		internal MinusButtonExecutor(CalcContextYamamoto2 ctx, CalcButton btn) : base(ctx, btn)
 		{
 		}
 
         public override decimal Calculate(decimal left, decimal right)
 		{
-			return left + right;
+			return left - right;
 		}
     }
 }
