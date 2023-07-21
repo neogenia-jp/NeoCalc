@@ -12,7 +12,7 @@ namespace CalcLib.Yamamoto2
         }
         public StateEnum State { get; set; }
 
-		public decimal? w1;     // 左辺を入れておく
+		public decimal? left;     // 左辺を入れておく
 		public OperatorButtonExecutor ope;  // オペレータを入れておく
 
         public CalcContextYamamoto2()

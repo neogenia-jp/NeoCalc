@@ -16,17 +16,17 @@ namespace CalcLib.Yamamoto2.Executors
             //    return;
             //    }
 
-            if(_ctx.w1.HasValue)
+            if(_ctx.left.HasValue)
             {
                 // 左辺が入っていれば、左辺とディスプレイに表示されている値をもとに計算する
-                _ctx.w1 = _ctx.ope.Calculate((decimal)_ctx.w1, decimal.Parse(_ctx.DisplayText));
-                _ctx.w1 = Math.Round(_ctx.w1.Value, 13);
-                _ctx.SetDisplayText((decimal)_ctx.w1);
+                _ctx.left = _ctx.ope.Calculate((decimal)_ctx.left, decimal.Parse(_ctx.DisplayText));
+                _ctx.left = Math.Round(_ctx.left.Value, 13);
+                _ctx.SetDisplayText((decimal)_ctx.left);
 		    }
             else
             {
                 // 左辺がなければ、ディスプレイに表示されている値を左辺として保持しておく
-			    _ctx.w1 = decimal.Parse(_ctx.DisplayText);
+			    _ctx.left = decimal.Parse(_ctx.DisplayText);
             }
             _ctx.ope = this;
             _ctx.State = CalcContextYamamoto2.StateEnum.InputedOperator;
