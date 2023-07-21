@@ -13,6 +13,7 @@ namespace CalcLib.Yamamoto2.Executors
             _ctx.ope.Execute();
             _ctx.State = CalcContextYamamoto2.StateEnum.InputedEqual;
             _ctx.left = null;
+            _ctx.subDisplayItems.Clear();
         }
     }
 }

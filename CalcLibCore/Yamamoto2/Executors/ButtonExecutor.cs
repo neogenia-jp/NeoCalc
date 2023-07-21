@@ -15,6 +15,11 @@ namespace CalcLib.Yamamoto2.Executors
 		}
 
         public abstract void Execute();
+
+        public override string ToString()
+        {
+            return Consts.CalcButtonText[_btn];
+        }
     }
 }
 

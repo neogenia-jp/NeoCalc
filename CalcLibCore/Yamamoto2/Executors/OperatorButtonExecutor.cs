@@ -16,8 +16,11 @@ namespace CalcLib.Yamamoto2.Executors
             //    return;
             //    }
 
-            if(_ctx.left.HasValue)
+            if (_ctx.left.HasValue)
             {
+                // ディスプレイに表示されている値をサブディスプレイに表示する
+                _ctx.subDisplayItems.Add(decimal.Parse(_ctx.DisplayText).ToString());
+
                 // 左辺が入っていれば、左辺とディスプレイに表示されている値をもとに計算する
                 _ctx.left = _ctx.ope.Calculate((decimal)_ctx.left, decimal.Parse(_ctx.DisplayText));
                 _ctx.left = Math.Round(_ctx.left.Value, 13);
@@ -27,8 +30,10 @@ namespace CalcLib.Yamamoto2.Executors
             {
                 // 左辺がなければ、ディスプレイに表示されている値を左辺として保持しておく
 			    _ctx.left = decimal.Parse(_ctx.DisplayText);
+                _ctx.subDisplayItems.Add(((decimal)_ctx.left).ToString());
             }
             _ctx.ope = this;
+            _ctx.subDisplayItems.Add(this.ToString());
             _ctx.State = CalcContextYamamoto2.StateEnum.InputedOperator;
         }
 

@@ -13,10 +13,20 @@ namespace CalcLib.Yamamoto2
         public StateEnum State { get; set; }
 
 		public decimal? left;     // 左辺を入れておく
+        public List<string> subDisplayItems;  // サブディスプレイの項目を保持する
 		public OperatorButtonExecutor ope;  // オペレータを入れておく
+
+        public override string SubDisplayText
+        {
+            get
+            {
+                return string.Join(" ", subDisplayItems);
+            }
+        }
 
         public CalcContextYamamoto2()
 		{
+            subDisplayItems = new List<string>();
 		}
 
         /// <summary>

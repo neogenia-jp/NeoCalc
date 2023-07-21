@@ -3,11 +3,8 @@ namespace CalcLib.Yamamoto2.Executors
 {
 	public class NumberButtonExecutor : ButtonExecutor
 	{
-        private string _text;
-
 		internal NumberButtonExecutor(CalcContextYamamoto2 ctx, CalcButton btn) : base(ctx, btn)
 		{
-            _text = Consts.CalcButtonText[btn];
         }
 
         public override void Execute()
@@ -25,7 +22,7 @@ namespace CalcLib.Yamamoto2.Executors
                 // ドットが押された場合、ドットを2個続けないように処理を終える
                 return;
             }
-            _ctx.DisplayText += _text;
+            _ctx.DisplayText += this.ToString();
             _ctx.State = CalcContextYamamoto2.StateEnum.InputedNumber;
         }
     }
