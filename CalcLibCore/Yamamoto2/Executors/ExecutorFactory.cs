@@ -37,6 +37,8 @@ namespace CalcLib.Yamamoto2.Executors
 					return new NumberButtonExecutor(ctx, btn);
 				case CalcButton.BtnBS:
 					return new BSButtonExecutor(ctx, btn);
+                case CalcButton.BtnClearEnd:
+                    return new ClearEndButtonExecutor(ctx, btn);
             }
 
             throw new NotImplementedException();
