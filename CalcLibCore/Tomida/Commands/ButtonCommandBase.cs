@@ -15,6 +15,7 @@ namespace CalcLibCore.Tomida.Commands
 		}
 
         public abstract void Execute(CalcContextTomida ctx);
+
     }
 }
 

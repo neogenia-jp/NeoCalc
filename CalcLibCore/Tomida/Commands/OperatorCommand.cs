@@ -5,7 +5,12 @@ using CalcLibCore.Tomida.Extensions;
 
 namespace CalcLibCore.Tomida.Commands
 {
-	public class OperatorCommand : ButtonCommandBase
+    [ButtonCommand(CalcButton.BtnPlus)]
+    [ButtonCommand(CalcButton.BtnMinus)]
+    [ButtonCommand(CalcButton.BtnMultiple)]
+    [ButtonCommand(CalcButton.BtnDivide)]
+    [ButtonCommand(CalcButton.BtnEqual)]
+    public class OperatorCommand : ButtonCommandBase
 	{
         public OperatorCommand(CalcButton btn) : base(btn)
         {
