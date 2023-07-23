@@ -25,12 +25,14 @@ namespace CalcLibCore.Tomida.Commands
                     .Where(c => c.GetInterfaces()
                         .Any(t => t == typeof(ICalcCommand))
                     ).ToArray();
-
+                // 対象のbtnをattributeに持つクラスを特定する
+                // attributeは各command同士で重複指定されていないことが前提
                 var targetClass =
                     commandClasses
                     .Where(c => c.GetCustomAttributes<ButtonCommandAttribute>()
                         .Any(attr => attr.DependencyButton == btn)
                     ).First();
+                // 特定したクラスのTypeからインスタンスを生成して返す
                 var args = new Object[1] { btn };
                 return Activator.CreateInstance(targetClass, args) as ButtonCommandBase;
             }
