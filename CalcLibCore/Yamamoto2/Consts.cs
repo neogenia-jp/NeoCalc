@@ -25,8 +25,8 @@ namespace CalcLib.Yamamoto2
 
 			{ CalcButton.BtnPlus, "+" },
 			{ CalcButton.BtnMinus, "-" },
-			{ CalcButton.BtnDivide, "*" },
-			{ CalcButton.BtnMultiple, "/" },
+			{ CalcButton.BtnDivide, "/" },
+			{ CalcButton.BtnMultiple, "×" },
 
 			{ CalcButton.BtnClear, "" },
 			{ CalcButton.BtnClearEnd, "" },

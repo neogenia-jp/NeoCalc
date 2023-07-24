@@ -9,12 +9,13 @@ namespace CalcLib.Yamamoto2.Executors
 
         public override void Execute()
         {
-            //if(_ctx.State == CalcContextYamamoto2.StateEnum.InputedOperator) {
-            //    // おぺれーたが 入力 された直後 はオペレータ の切り替えになる
-            //    _ctx.SubDisplayStack.pop();
-            //    _ctx.SubDisplayStack.push(TextReader);
-            //    return;
-            //    }
+            if (_ctx.State == CalcContextYamamoto2.StateEnum.InputedOperator)
+            {
+                // オペレータが入力された直後はオペレータの切り替えになる
+                _ctx.subDisplayItems[_ctx.subDisplayItems.Count - 1] = this.ToString();
+                _ctx.ope = this;
+                return;
+            }
 
             if (_ctx.left.HasValue)
             {
