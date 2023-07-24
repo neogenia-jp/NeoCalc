@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Linq;
+
 namespace CalcLib.Yamamoto2.Executors
 {
 	public class NumberButtonExecutor : ButtonExecutor
@@ -17,10 +19,18 @@ namespace CalcLib.Yamamoto2.Executors
                 _ctx.DisplayText = "";
             }
 
-            if(_btn == CalcButton.BtnDot && _ctx.DisplayText.Last().ToString() == Consts.CalcButtonText[_btn])
+            if(_btn == CalcButton.BtnDot)
             {
-                // ドットが押された場合、ドットを2個続けないように処理を終える
-                return;
+                if (string.IsNullOrWhiteSpace(_ctx.DisplayText))
+                {
+                    // 何も入力されていない場合は0を先頭に入れておく
+                    _ctx.DisplayText += "0";
+                }
+                else if (_ctx.DisplayText.Contains(Consts.CalcButtonText[_btn]))
+                {
+                    // ドットがすでに入っている場合は何もしない
+                    return;
+                }
             }
             _ctx.DisplayText += this.ToString();
             _ctx.State = CalcContextYamamoto2.StateEnum.InputedNumber;
