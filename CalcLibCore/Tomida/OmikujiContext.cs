@@ -12,6 +12,8 @@ namespace CalcLibCore.Tomida
 
         private string[] _suits;
 
+        private int? selectedIndex;
+
 		public OmikujiContext()
 		{
             Factory = new OmikujiCommandFactory();
@@ -22,24 +24,60 @@ namespace CalcLibCore.Tomida
 
         private string DisplayTextImpl()
         {
-            throw new NotImplementedException();
+            string str = string.Empty;
+            switch (GetState())
+            {
+                case OmikujiState.BeforeLotted:
+                    str = "[1 ] [2 ] [3 ] [4 ]";
+                    break;
+                case OmikujiState.AfterLotted:
+                    // TODO: おみくじ引いたあとのディスプレイ
+                    break;
+            }
+            return str;
         }
 
         public string SubDisplayText => SubDisplayTextImpl();
 
         private string SubDisplayTextImpl()
         {
-            throw new NotImplementedException();
+            string str = string.Empty;
+            switch (GetState())
+            {
+                case OmikujiState.BeforeLotted:
+                    str = "おみくじを選択して下さい";
+                    break;
+                case OmikujiState.AfterLotted:
+                    // TODO: おみくじ引いたあとのディスプレイ
+                    break;
+            }
+            return str;
         }
 
-        public CalcConstants.State State => GetState();
+        public OmikujiState State => GetState();
 
         public IFactory Factory { get; }
 
-        private CalcConstants.State GetState()
+        private OmikujiState GetState()
         {
-            throw new NotImplementedException();
+            // selectedIndexに値が入っているかどうかで状態を決める
+            OmikujiState state;
+            if (selectedIndex.HasValue)
+            {
+                state = OmikujiState.AfterLotted;
+            }
+            else
+            {
+                state = OmikujiState.BeforeLotted;
+            }
+            return state;
         }
+    }
+
+    public enum OmikujiState
+    {
+        BeforeLotted,
+        AfterLotted
     }
 }
 

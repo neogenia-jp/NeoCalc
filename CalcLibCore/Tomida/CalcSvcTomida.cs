@@ -23,6 +23,7 @@ namespace CalcLib.Tomida
 
             // 拡張ボタンの処理
             // おみくじボタンを押された場合、現在のコンテキストを変更する処理を行う
+            // TODO: 拡張ボタン等でコンテキストが変更するような処理はCalcContextTomidaのFactoryにやらせたい
             if(btn == CalcButton.BtnExt2)
             {
                 if(ctx.GetType() == typeof(OmikujiContext)){
