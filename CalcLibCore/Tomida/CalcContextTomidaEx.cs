@@ -1,5 +1,6 @@
 ﻿using System;
 using CalcLib;
+using CalcLibCore.Tomida.Commands;
 
 namespace CalcLibCore.Tomida
 {
@@ -7,9 +8,9 @@ namespace CalcLibCore.Tomida
 	/// コンテキストをスタックできるメディエーターコンテキスト
 	/// 現在のコンテキストは Current プロパティで呼び出す。
 	/// </summary>
-	public class CalcContextTomidaEx: ICalcContext
+	public class CalcContextTomidaEx: ICalcContextEx
 	{
-		private List<ICalcContext> _contextStack = new();
+		private List<ICalcContextEx> _contextStack = new();
 
 		public CalcContextTomidaEx()
 		{
@@ -19,13 +20,13 @@ namespace CalcLibCore.Tomida
 		/// <summary>
 		/// 現在スタック上で一番上に存在するコンテキストを取得する
 		/// </summary>
-		public ICalcContext Current => _contextStack.Last();
+		public ICalcContextEx Current => _contextStack.Last();
 
 		/// <summary>
 		/// 新しいコンテキストスタックを積む
 		/// </summary>
 		/// <param name="ctx"></param>
-		public void StackContext(ICalcContext ctx) => _contextStack.Add(ctx);
+		public void StackContext(ICalcContextEx ctx) => _contextStack.Add(ctx);
 
 		/// <summary>
 		/// Currentコンテキストを除去する
@@ -41,6 +42,8 @@ namespace CalcLibCore.Tomida
 		/// SubDisplayTextはCurrentコンテキストに委譲する
 		/// </summary>
 		public string SubDisplayText => Current.SubDisplayText;
+
+        public IFactory Factory => throw new NotImplementedException();
     }
 }
 

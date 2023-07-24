@@ -18,14 +18,30 @@ namespace CalcLib.Tomida
         {
             var ctxEx = ctx0 as CalcContextTomidaEx;
             if (ctxEx is null) return;  // コンテキストがnullだったら何もしない
+
             var ctx = ctxEx.Current;
+
+            // 拡張ボタンの処理
+            // おみくじボタンを押された場合、現在のコンテキストを変更する処理を行う
+            if(btn == CalcButton.BtnExt2)
+            {
+                if(ctx.GetType() == typeof(OmikujiContext)){
+                    ctxEx.UnstackContext();
+                }
+                else
+                {
+                    ctxEx.StackContext(new OmikujiContext());
+                }
+                return;
+            }
+
             if (ctx is null) return;    // コンテキストがnullだったら何もしない
             Debug.WriteLine($"Button Clicked {btn}, context={ctx}");
             if(ctx.GetType() == typeof(CalcContextTomida))
             {
                 // 押されたボタンに対応するコマンドオブジェクトをファクトリーで生成
                 // Executeする
-                var command = ButtonCommandFactory.Create(btn);
+                var command = ctx.Factory.Create(btn);
                 if (command is null) return;    // ファクトリのcommand生成に失敗したら何もしない
                 command.Execute((CalcContextTomida)ctx);
             }

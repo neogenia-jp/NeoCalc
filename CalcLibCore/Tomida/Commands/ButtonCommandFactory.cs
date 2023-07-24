@@ -6,7 +6,7 @@ using System.Diagnostics;
 
 namespace CalcLibCore.Tomida.Commands
 {
-    public class ButtonCommandFactory
+    public class ButtonCommandFactory : IFactory
     {
         /// <summary>
         /// 引数のbtnに対応するCommandインスタンスを返します。
@@ -14,7 +14,7 @@ namespace CalcLibCore.Tomida.Commands
         /// <param name="btn">クリックされたボタン</param>
         /// <returns>ボタンに対応するCommandインスタンス</returns>
         /// <exception cref="ArgumentException">対応するボタンがない場合</exception>
-        public static ButtonCommandBase? Create(CalcButton btn)
+        public ButtonCommandBase? Create(CalcButton btn)
         {
             try
             {

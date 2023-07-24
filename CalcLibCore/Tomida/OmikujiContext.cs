@@ -1,10 +1,12 @@
 ﻿using System;
 using CalcLib;
+using CalcLibCore.Tomida.Commands;
+using CalcLibCore.Tomida.Commands.Omikuji;
 using CalcLibCore.Tomida.Extensions;
 
 namespace CalcLibCore.Tomida
 {
-	public class OmikujiContext: ICalcContext
+	public class OmikujiContext: ICalcContextEx
 	{
         private static string[] _SUITS_DEFAULT = new string[] { "大吉", "中吉", "小吉", "凶" };
 
@@ -12,6 +14,7 @@ namespace CalcLibCore.Tomida
 
 		public OmikujiContext()
 		{
+            Factory = new OmikujiCommandFactory();
             _suits = _SUITS_DEFAULT.Shuffle();
 		}
 
@@ -30,6 +33,8 @@ namespace CalcLibCore.Tomida
         }
 
         public CalcConstants.State State => GetState();
+
+        public IFactory Factory { get; }
 
         private CalcConstants.State GetState()
         {

@@ -1,10 +1,11 @@
 ﻿using System;
 using CalcLib;
+using CalcLibCore.Tomida.Commands;
 using CalcLibCore.Tomida.Domain;
 
 namespace CalcLibCore.Tomida
 {
-    public class CalcContextTomida : ICalcContext
+    public class CalcContextTomida : ICalcContextEx
     {
         public Stack<CalcNumber> OperandStack { get; set; } = new Stack<CalcNumber>();
         public CalcButton? oper { get; set; } = null;
@@ -24,6 +25,13 @@ namespace CalcLibCore.Tomida
         /// 現在入力中の辺（右辺、左辺）が一度でも入力状態になったかどうかを判別する
         /// </summary>
         public bool isInputed = false;
+
+        public IFactory Factory { get; }
+
+        public CalcContextTomida()
+        {
+            Factory = new ButtonCommandFactory();
+        }
 
         /// <summary>
         /// コンテキストの内容を全て消去して初期状態に戻します。
