@@ -25,6 +25,27 @@ namespace CalcLib.Yamamoto2
             }
         }
 
+        public override string DisplayText
+        {
+            get
+            {
+                if(string.IsNullOrWhiteSpace(base.DisplayText))
+                {
+                    // DisplayTextが空かもしれないことを考慮
+                    return base.DisplayText;
+                }
+
+                // 整数部分のカンマ編集
+                var splitResult = base.DisplayText.Split(".");
+                var result = decimal.Parse(splitResult[0]).ToString("#,0");
+                if(splitResult.Length > 1)
+                {
+                    return $"{result}.{splitResult[1]}";
+                }
+                return $"{result}";
+            }
+        }
+
         public CalcContextYamamoto2()
 		{
             State = StateEnum.Init;
