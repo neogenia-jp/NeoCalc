@@ -9,8 +9,15 @@ namespace CalcLib.Yamamoto2.Executors
 
         public override void Execute()
         {
-            //_ctx.SubDisplayText = (_ctx.DisplayText + _text);
-            _ctx.ope.Execute();
+            if(_ctx.ope == null)
+            {
+                // 0.0100とか入力されていたときに0.01にしたいため、一度decimalにしてセットしなおす
+                _ctx.SetDisplayText(decimal.Parse(_ctx.DisplayText));
+            }
+            else
+            {
+                _ctx.ope.Execute();
+            }
             _ctx.State = CalcContextYamamoto2.StateEnum.InputedEqual;
             _ctx.left = null;
             _ctx.subDisplayItems.Clear();
