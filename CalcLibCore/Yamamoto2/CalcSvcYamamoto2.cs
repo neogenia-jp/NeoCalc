@@ -18,10 +18,6 @@ namespace CalcLib.Yamamoto2
 
             var executor = Executors.ExecutorFactory.Create(ctx, btn);
             executor.Execute();
-            // / * + - は一つ目の値をサブディスプレイに持っていく
-            // / * + - は一つ目の値をサブディスプレイに持っていく
-            // =は
-            //ctx.DisplayText = "Yamamoto2";
 
             System.Diagnostics.Debug.WriteLine(ctx.ToString());
         }
