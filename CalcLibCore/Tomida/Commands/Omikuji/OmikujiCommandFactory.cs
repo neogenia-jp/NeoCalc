@@ -1,11 +1,12 @@
 ﻿using System;
+using CalcLib;
+using CalcLibCore.Tomida.Commands.Switch;
+
 namespace CalcLibCore.Tomida.Commands.Omikuji
 {
-	public class OmikujiCommandFactory : ButtonCommandFactory
+	public class OmikujiCommandFactory : ButtonCommandFactoryBase
 	{
-		public OmikujiCommandFactory()
-		{
-		}
-	}
+        public override ButtonCommandBase? Create(CalcButton btn) => base.Create<IOmikujiCommand>(btn);
+    }
 }
 

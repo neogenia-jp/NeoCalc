@@ -6,15 +6,17 @@ using System.Diagnostics;
 
 namespace CalcLibCore.Tomida.Commands
 {
-    public class ButtonCommandFactory : IFactory
+    public abstract class ButtonCommandFactoryBase : IFactory
     {
+        public abstract ButtonCommandBase? Create(CalcButton btn);
+
         /// <summary>
         /// 引数のbtnに対応するCommandインスタンスを返します。
         /// </summary>
         /// <param name="btn">クリックされたボタン</param>
         /// <returns>ボタンに対応するCommandインスタンス</returns>
         /// <exception cref="ArgumentException">対応するボタンがない場合</exception>
-        public ButtonCommandBase? Create(CalcButton btn)
+        public ButtonCommandBase? Create<I>(CalcButton btn)
         {
             try
             {
@@ -23,7 +25,7 @@ namespace CalcLibCore.Tomida.Commands
                     Assembly.GetExecutingAssembly()
                     .GetTypes()
                     .Where(c => c.GetInterfaces()
-                        .Any(t => t == typeof(ICalcCommand))
+                        .Any(t => t == typeof(I))
                     ).ToArray();
                 // 対象のbtnをattributeに持つクラスを特定する
                 // attributeは各command同士で重複指定されていないことが前提
@@ -31,10 +33,17 @@ namespace CalcLibCore.Tomida.Commands
                     commandClasses
                     .Where(c => c.GetCustomAttributes<ButtonCommandAttribute>()
                         .Any(attr => attr.DependencyButton == btn)
-                    ).First();
+                    ).FirstOrDefault();
                 // 特定したクラスのTypeからインスタンスを生成して返す
-                var args = new Object[] { btn };
-                return Activator.CreateInstance(targetClass, args) as ButtonCommandBase;
+                if(targetClass == null)
+                {
+                    return null;
+                }
+                else
+                {
+                    var args = new Object[] { btn };
+                    return Activator.CreateInstance(targetClass, args) as ButtonCommandBase;
+                }
             }
             catch (Exception ex)
             {

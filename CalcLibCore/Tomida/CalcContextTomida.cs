@@ -30,7 +30,7 @@ namespace CalcLibCore.Tomida
 
         public CalcContextTomida()
         {
-            Factory = new ButtonCommandFactory();
+            Factory = new CalcButtonCommandFactory();
         }
 
         /// <summary>
