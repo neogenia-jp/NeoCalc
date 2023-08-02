@@ -19,34 +19,25 @@ namespace CalcLib.Tomida
             var ctxEx = ctx0 as CalcContextTomidaEx;
             if (ctxEx is null) return;  // コンテキストがnullだったら何もしない
 
-            var ctx = ctxEx.Current;
-
-            // 拡張ボタンの処理
-            // おみくじボタンを押された場合、現在のコンテキストを変更する処理を行う
-            // TODO: 拡張ボタン等でコンテキストが変更するような処理はCalcContextTomidaのFactoryにやらせたい
-            if(btn == CalcButton.BtnExt2)
+            // 親コンテキストからコマンドを生成
+            // コマンドがnullだったら現在コンテキストの処理へ移行
+            // そうでないなら生成されたコマンドを実行して終了
+            var switchCommand = ctxEx.Factory.Create(btn);
+            if(switchCommand != null)
             {
-                if(ctx is OmikujiContext){
-                    ctxEx.UnstackContext();
-                }
-                else
-                {
-                    ctxEx.StackContext(new OmikujiContext());
-                }
+                switchCommand.Execute(ctxEx);
                 return;
             }
 
+            // 現在コンテキストのコマンド生成と実行
+            var ctx = ctxEx.Current;
             if (ctx is null) return;    // コンテキストがnullだったら何もしない
             Debug.WriteLine($"Button Clicked {btn}, context={ctx}");
-            if(ctx is CalcContextTomida)
             {
-                // 押されたボタンに対応するコマンドオブジェクトをファクトリーで生成
-                // Executeする
                 var command = ctx.Factory.Create(btn);
                 if (command is null) return;    // ファクトリのcommand生成に失敗したら何もしない
-                command.Execute((CalcContextTomida)ctx);
+                command.Execute(ctx);
             }
-
         }
     }
 }

@@ -12,7 +12,15 @@ namespace CalcLibCore.Tomida.Commands.Switch
 
         public override void Execute(CalcContextTomidaEx ctx)
         {
-
+            // 現在のコンテキストがおみくじだったらおみくじから抜け、そうでないならおみくじコンテキストをスタックする
+            if(ctx.Current is OmikujiContext)
+            {
+                ctx.UnstackContext();
+            }
+            else
+            {
+                ctx.StackContext(new OmikujiContext());
+            }
         }
     }
 }

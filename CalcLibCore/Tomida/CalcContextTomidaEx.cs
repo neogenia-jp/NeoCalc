@@ -1,6 +1,7 @@
 ﻿using System;
 using CalcLib;
 using CalcLibCore.Tomida.Commands;
+using CalcLibCore.Tomida.Commands.Switch;
 
 namespace CalcLibCore.Tomida
 {
@@ -12,9 +13,12 @@ namespace CalcLibCore.Tomida
 	{
 		private List<ICalcContextEx> _contextStack = new();
 
+        public IFactory Factory { get; }
+
 		public CalcContextTomidaEx()
 		{
 			_contextStack.Add(new CalcContextTomida());
+            Factory = new SwitchCommandFactory();
 		}
 
 		/// <summary>
@@ -43,7 +47,6 @@ namespace CalcLibCore.Tomida
 		/// </summary>
 		public string SubDisplayText => Current.SubDisplayText;
 
-        public IFactory Factory => throw new NotImplementedException();
     }
 }
 
