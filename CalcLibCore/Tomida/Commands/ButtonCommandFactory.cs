@@ -33,7 +33,7 @@ namespace CalcLibCore.Tomida.Commands
                         .Any(attr => attr.DependencyButton == btn)
                     ).First();
                 // 特定したクラスのTypeからインスタンスを生成して返す
-                var args = new Object[1] { btn };
+                var args = new Object[] { btn };
                 return Activator.CreateInstance(targetClass, args) as ButtonCommandBase;
             }
             catch (Exception ex)

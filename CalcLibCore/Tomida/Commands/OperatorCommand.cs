@@ -10,7 +10,7 @@ namespace CalcLibCore.Tomida.Commands
     [ButtonCommand(CalcButton.BtnMultiple)]
     [ButtonCommand(CalcButton.BtnDivide)]
     [ButtonCommand(CalcButton.BtnEqual)]
-    public class OperatorCommand : ButtonCommandBase
+    public class OperatorCommand : CalcButtonCommandBase
 	{
         public OperatorCommand(CalcButton btn) : base(btn)
         {

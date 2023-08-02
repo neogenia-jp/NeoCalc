@@ -26,7 +26,7 @@ namespace CalcLib.Tomida
             // TODO: 拡張ボタン等でコンテキストが変更するような処理はCalcContextTomidaのFactoryにやらせたい
             if(btn == CalcButton.BtnExt2)
             {
-                if(ctx.GetType() == typeof(OmikujiContext)){
+                if(ctx is OmikujiContext){
                     ctxEx.UnstackContext();
                 }
                 else
@@ -38,7 +38,7 @@ namespace CalcLib.Tomida
 
             if (ctx is null) return;    // コンテキストがnullだったら何もしない
             Debug.WriteLine($"Button Clicked {btn}, context={ctx}");
-            if(ctx.GetType() == typeof(CalcContextTomida))
+            if(ctx is CalcContextTomida)
             {
                 // 押されたボタンに対応するコマンドオブジェクトをファクトリーで生成
                 // Executeする

@@ -4,8 +4,8 @@ using CalcLib;
 namespace CalcLibCore.Tomida.Commands
 {
     [ButtonCommand(CalcButton.BtnClearEnd)]
-	public class ClearEndCommand : ButtonCommandBase
-	{
+	public class ClearEndCommand : CalcButtonCommandBase
+    {
         public ClearEndCommand(CalcButton btn) : base(btn)
         {
         }

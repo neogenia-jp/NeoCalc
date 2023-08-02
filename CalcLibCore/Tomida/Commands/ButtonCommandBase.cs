@@ -14,7 +14,7 @@ namespace CalcLibCore.Tomida.Commands
 			Btn = btn;
 		}
 
-        public abstract void Execute(CalcContextTomida ctx);
+        public abstract void Execute(ICalcContextEx ctx);
 
     }
 }

@@ -4,7 +4,7 @@ using CalcLib;
 namespace CalcLibCore.Tomida.Commands
 {
     [ButtonCommand(CalcButton.BtnBS)]
-    public class BackspaceCommand : ButtonCommandBase
+    public class BackspaceCommand : CalcButtonCommandBase
 	{
         public BackspaceCommand(CalcButton btn) : base(btn)
         {

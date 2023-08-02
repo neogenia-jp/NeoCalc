@@ -14,7 +14,7 @@ namespace CalcLibCore.Tomida.Commands
     [ButtonCommand(CalcButton.Btn8)]
     [ButtonCommand(CalcButton.Btn9)]
     [ButtonCommand(CalcButton.BtnDot)]
-    public class NumericCommand : ButtonCommandBase
+    public class NumericCommand : CalcButtonCommandBase
     {
         public NumericCommand(CalcButton btn) : base(btn)
         {

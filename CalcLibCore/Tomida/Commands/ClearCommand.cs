@@ -5,7 +5,7 @@ using CalcLib;
 namespace CalcLibCore.Tomida.Commands
 {
     [ButtonCommand(CalcButton.BtnClear)]
-    public class ClearCommand : ButtonCommandBase
+    public class ClearCommand : CalcButtonCommandBase
     {
         public ClearCommand(CalcButton btn) : base(btn)
         {
