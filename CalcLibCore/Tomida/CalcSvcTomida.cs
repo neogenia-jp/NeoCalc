@@ -16,8 +16,11 @@ namespace CalcLib.Tomida
 
         public virtual void OnButtonClick(ICalcContext ctx0, CalcButton btn)
         {
+
             var ctxEx = ctx0 as CalcContextTomidaEx;
             if (ctxEx is null) return;  // コンテキストがnullだったら何もしない
+
+            Debug.WriteLine($"Button Clicked {btn}, context={ctxEx.Current}");
 
             // 親コンテキストからコマンドを生成
             // コマンドがnullだったら現在コンテキストの処理へ移行
@@ -32,7 +35,6 @@ namespace CalcLib.Tomida
             // 現在コンテキストのコマンド生成と実行
             var ctx = ctxEx.Current;
             if (ctx is null) return;    // コンテキストがnullだったら何もしない
-            Debug.WriteLine($"Button Clicked {btn}, context={ctx}");
             {
                 var command = ctx.Factory.Create(btn);
                 if (command is null) return;    // ファクトリのcommand生成に失敗したら何もしない

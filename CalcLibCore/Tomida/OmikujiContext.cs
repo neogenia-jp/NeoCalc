@@ -8,11 +8,11 @@ namespace CalcLibCore.Tomida
 {
 	public class OmikujiContext: ICalcContextEx
 	{
-        private static string[] _SUITS_DEFAULT = new string[] { "大吉", "中吉", "小吉", "凶" };
+        private static string[] _SUITS_DEFAULT = new string[] { "大吉", "中吉", "小吉", "凶　" };
 
         private string[] _suits;
 
-        private int? selectedIndex;
+        public int? SelectedIndex { get; set; }
 
 		public OmikujiContext()
 		{
@@ -31,7 +31,7 @@ namespace CalcLibCore.Tomida
                     str = "[1 ] [2 ] [3 ] [4 ]";
                     break;
                 case OmikujiState.AfterLotted:
-                    // TODO: おみくじ引いたあとのディスプレイ
+                    str = string.Join(" ", _suits);
                     break;
             }
             return str;
@@ -49,6 +49,7 @@ namespace CalcLibCore.Tomida
                     break;
                 case OmikujiState.AfterLotted:
                     // TODO: おみくじ引いたあとのディスプレイ
+                    str = $"本日の運勢は「{_suits[SelectedIndex.Value]}」です";
                     break;
             }
             return str;
@@ -62,7 +63,7 @@ namespace CalcLibCore.Tomida
         {
             // selectedIndexに値が入っているかどうかで状態を決める
             OmikujiState state;
-            if (selectedIndex.HasValue)
+            if (SelectedIndex.HasValue)
             {
                 state = OmikujiState.AfterLotted;
             }

@@ -1,10 +1,11 @@
 ﻿using System;
 using CalcLib;
+using CalcLibCore.Tomida.Commands.Switch;
 
 namespace CalcLibCore.Tomida.Commands
 {
-	public abstract class SwitchButtonCommandBase : ButtonCommandBase
-	{
+	public abstract class SwitchButtonCommandBase : ButtonCommandBase, ISwitchCommand
+    {
         protected SwitchButtonCommandBase(CalcButton btn) : base(btn)
         {
         }
