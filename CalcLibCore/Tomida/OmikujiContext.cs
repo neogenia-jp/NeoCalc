@@ -14,8 +14,11 @@ namespace CalcLibCore.Tomida
 
         public int? SelectedIndex { get; set; }
 
-		public OmikujiContext()
+        public ICalcContext Parent { get; }
+
+        public OmikujiContext(ICalcContextEx parent)
 		{
+            Parent = parent;
             Factory = new OmikujiCommandFactory();
             _suits = _SUITS_DEFAULT.Shuffle();
 		}

@@ -19,7 +19,7 @@ namespace CalcLibCore.Tomida.Commands.Switch
             }
             else
             {
-                ctx.StackContext(new OmikujiContext());
+                ctx.StackContext(new OmikujiContext(ctx));
             }
         }
     }

@@ -10,6 +10,10 @@ namespace CalcLibCore.Tomida
         /// このコンテキストが持つFactoryインスタンス
         /// </summary>
         IFactory Factory { get; }
+        /// <summary>
+        /// 親コンテキスト
+        /// </summary>
+        ICalcContext Parent { get;}
     }
 }
 

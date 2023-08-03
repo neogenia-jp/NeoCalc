@@ -28,8 +28,11 @@ namespace CalcLibCore.Tomida
 
         public IFactory Factory { get; }
 
-        public CalcContextTomida()
+        public ICalcContext? Parent { get; }
+
+        public CalcContextTomida(ICalcContextEx parent)
         {
+            Parent = parent;
             Factory = new CalcButtonCommandFactory();
         }
 

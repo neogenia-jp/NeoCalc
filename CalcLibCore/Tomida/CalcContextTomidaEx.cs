@@ -17,8 +17,9 @@ namespace CalcLibCore.Tomida
 
 		public CalcContextTomidaEx()
 		{
-			_contextStack.Add(new CalcContextTomida());
+			_contextStack.Add(new CalcContextTomida(this));
             Factory = new SwitchCommandFactory();
+			
 		}
 
 		/// <summary>
@@ -47,6 +48,7 @@ namespace CalcLibCore.Tomida
 		/// </summary>
 		public string SubDisplayText => Current.SubDisplayText;
 
+		public ICalcContext Parent => this;
     }
 }
 
