@@ -63,18 +63,19 @@ class AppContext{
   +Factory: AppCommandFactory
 }
 
-ICommand <|-- IAppCommand
-AppCommandBase <|-- CommandBase
+ICommand <.. IAppCommand
+CommandBase <|-- AppCommandBase
 IAppCommand <.. AppCommandBase
-AppCommandImpl <|-- AppCommandBase
+AppCommandBase  <|-- AppCommandImpl
 
-CommandFactoryBase <.. IFactory
-AppCommandFactory <|-- CommandFactoryBase
+IFactory <.. CommandFactoryBase
+CommandFactoryBase <|-- AppCommandFactory
 
 AppCommandFactory --> AppCommandImpl : 生成
 
-ICalcContextEx <.. ICalcContext
-ContextBase <.. ICalcContextEx
-AppContext <|-- ContextBase
+ICalcContext <.. ICalcContextEx
+ICalcContextEx <.. ContextBase
+ContextBase <|--  AppContext
+
 AppContext --> AppCommandFactory : コンストラクタで生成
 ```
