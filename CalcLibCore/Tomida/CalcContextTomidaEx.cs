@@ -11,6 +11,12 @@ namespace CalcLibCore.Tomida
 	/// </summary>
 	public class CalcContextTomidaEx: ICalcContextEx
 	{
+		/// <summary>
+		/// ボタンのキュー
+		/// サービスは先頭から順番にボタン処理を行います。
+		/// </summary>
+		public Queue<CalcButton> ButtonQueue { get; set; } = new();
+
 		private List<ICalcContextEx> _contextStack = new();
 
         public IFactory Factory { get; }

@@ -16,9 +16,30 @@ namespace CalcLib.Tomida
 
         public virtual void OnButtonClick(ICalcContext ctx0, CalcButton btn)
         {
-
             var ctxEx = ctx0 as CalcContextTomidaEx;
             if (ctxEx is null) return;  // コンテキストがnullだったら何もしない
+
+            Debug.WriteLine($"Button Clicked {btn}, context={ctxEx.Current}");
+            ctxEx.ButtonQueue.Enqueue(btn);
+            _QueueButton(ctxEx);
+
+        }
+
+        private void _QueueButton(CalcContextTomidaEx ctx0)
+        {
+            // デキューできたらボタン処理する
+            if(ctx0.ButtonQueue.Count != 0)
+            {
+                var button = ctx0.ButtonQueue.Dequeue();
+                _OnButtonClickImpl(ctx0, button);
+            }
+        }
+        private void _OnButtonClickImpl(CalcContextTomidaEx ctx0, CalcButton btn)
+        {
+            var ctxEx = ctx0;
+            if (ctxEx is null) return;  // コンテキストがnullだったら何もしない
+
+
 
             Debug.WriteLine($"Button Clicked {btn}, context={ctxEx.Current}");
 
@@ -40,6 +61,8 @@ namespace CalcLib.Tomida
                 if (command is null) return;    // ファクトリのcommand生成に失敗したら何もしない
                 command.Execute(ctx);
             }
+            // 最後に再起的にデキューを呼び出す
+            _QueueButton(ctx0);
         }
     }
 }
