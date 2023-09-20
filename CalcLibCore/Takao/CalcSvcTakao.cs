@@ -13,6 +13,6 @@ namespace CalcLib.Takao
 
         public virtual ICalcContext CreateContext() => new CalcContext();
 
-        public virtual void OnButtonClick(ICalcContext ctx, CalcButton btn) => svc.HandleInput(ctx as CalcContext, btn);
+        public virtual void OnButtonClick(ICalcContext ctx, CalcButton btn) => svc.HandleInput(ctx as CalcContext, btn); 
     }
 }

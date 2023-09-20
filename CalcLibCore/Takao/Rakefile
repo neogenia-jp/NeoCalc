@@ -1,0 +1,41 @@
+# webcalcを開発する用のタスク
+
+task default: [:hello]
+
+task :hello do
+  puts 'hello'
+end
+
+namespace :web do
+  desc 'webcalcをwatch'
+  task :watch do
+    sh 'dotnet watch run --project ../../WebCalcCore/'
+  end
+end
+
+namespace :test do
+  desc 'テストをwatch'
+  task :all do
+    exec 'dotnet watch test --filter CalcLibTest.CalcSvcTest --project ../../CalcLibCoreTest'
+  end
+
+  desc '足し算のテストをwatch'
+  task :plus do
+    exec 'dotnet watch test --filter CalcLibTest.CalcSvcTest.TestPlus --project ../../CalcLibCoreTest'
+  end
+
+  desc '引き算のテストをwatch'
+  task :minus do
+    exec 'dotnet watch test --filter CalcLibTest.CalcSvcTest.TestMinus --project ../../CalcLibCoreTest'
+  end
+
+  desc '掛け算のテストをwatch'
+  task :multiple do
+    exec 'dotnet watch test --filter CalcLibTest.CalcSvcTest.TestMultiple --project ../../CalcLibCoreTest'
+  end
+
+  desc '割り算のテストをwatch'
+  task :divide do
+    exec 'dotnet watch test --filter CalcLibTest.CalcSvcTest.TestDivide --project ../../CalcLibCoreTest'
+  end
+end

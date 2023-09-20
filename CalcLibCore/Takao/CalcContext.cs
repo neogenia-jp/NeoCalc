@@ -1,83 +1,53 @@
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace CalcLib.Takao
 {
     internal class CalcContext : ICalcContext
     {
-        public string DisplayText { get; set; } = "0";
-        public string SubDisplayText { get; set; } = "0";
-        public string left = "0";
-        public string right = "0";
-        public string right_memo = "0";
+        public CalcContext()
+        {
+            digits.Push("0");
+        }
 
+        // 入力数字を管理
+        public Stack<string> digits = new Stack<string>();
+
+        // 計算するクラスを保持
+        // operatorはStrategyパターン
         public ICalcStrategy? operatorMode;
 
-        public override string ToString() => $"display: {DisplayText} subdispplay: {SubDisplayText}";
-
-        // mainの操作
-        public void ApplyDisplayText()
+        // 入力状態の一覧
+        public enum State
         {
-            FormatOperand();
-            DisplayText = (right == "0") ? left : right;
-            debugContext();
+            First,
+            Second,
+            Equal,
         }
 
-        public void FormatOperand()
-        {
-            right = Decimal.Parse(right).ToString();
-            left = Decimal.Parse(left).ToString();
-        }
+        // 入力状態の管理
+        public State state { get; set; } = State.First;
 
-        public (decimal, decimal) ParseOperand()
+        // Displayに表示する文字
+        public string DisplayText
         {
-            return (Decimal.Parse(left), Decimal.Parse(right));
-        }
-
-        public void SetOperator(ICalcStrategy mode)
-        {
-            operatorMode = mode;
-
-            // 1+1+1+=3のために実行する。
-            if (operatorMode != null)
+            get
             {
-                right_memo = right;
-                operatorMode.Execute(this);
-            }
-            else
-            {
-                left = right;
-                right = "0";
+                Console.WriteLine(digits.Count());
+                Console.WriteLine(digits.Peek());
+                return FormatDisplayText(digits.Peek());
             }
         }
 
-        public void debugContext()
+        public string FormatDisplayText(string text)
         {
-            Console.WriteLine(ToString());
-            Console.WriteLine($"left: {left}, right: {right}, right_memo: {right_memo}, operator: {operatorMode?.ToString()}");
+            return Decimal.Parse(text).ToString("0.#############");
         }
 
-        // subの操作
-        // public void ApplySubDisplayText(CalclatorSvc svc)
-        // {
-        //     SubDisplayText = "";
-        //     // ButtonHistory.ForEach(btn => svc.ExecuteSub(btn));
-        // }
-
-        // display 初期化
-        public void Clear()
+        // subDisplayに表示する文字
+        public string SubDisplayText
         {
-            left = "0";
-            right = "0";
-            DisplayText = "0";
-            SubDisplayText = "0";
-            operatorMode = null;
+            get
+            {
+                return state.ToString();
+            }
         }
     }
 }
-
-

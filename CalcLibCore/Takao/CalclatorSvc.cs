@@ -1,32 +1,20 @@
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace CalcLib.Takao
 {
     internal class CalclatorSvc
     {
-        public CalclatorSvc()
-        {
-        }
 
+        /// <summary>
+        /// ボタンごとの振り分け担当
+        /// </summary>
         public void HandleInput(CalcContext ctx, CalcButton btn)
         {
-            // 数字っぽいボタンが押された場合
-            // Operatorが押された場合
-            // Equalが押された場合
-            // 拡張機能ボタンが押された場合
             if (CalcButtonMap.NumberMap.ContainsKey(btn))
             {
-                EnterNubmer(ctx, CalcButtonMap.Map[btn]);
+                HandleNumber(ctx, CalcButtonMap.Map[btn]);
             }
             else if (CalcButtonMap.OperatorMap.ContainsKey(btn))
             {
-                ctx.SetOperator(CalcStrategyMap.OperatorMap[btn]);
-                Console.WriteLine(ctx.operatorMode);
+                HandleOperator(ctx, CalcButtonMap.Map[btn]);
             }
             else if (CalcButtonMap.Map[btn].Equals("="))
             {
@@ -34,29 +22,69 @@ namespace CalcLib.Takao
             }
             else if (CalcButtonMap.Map[btn].Equals("clear"))
             {
-                Clear(ctx);
+                HandleClear(ctx);
             }
             else
             {
-                // 何もしない
+            }
+        }
+
+        // 数字が入力されたときの処理
+        public void HandleNumber(CalcContext ctx, string num)
+        {
+            // Equalを押した後は計算を１から行うため初期化
+            if (ctx.state == CalcContext.State.Equal)
+            {
+                HandleClear(ctx);
             }
 
-            ctx.ApplyDisplayText();
+            // operatorが入力された後は２つ目のoperandを入力したいため0をpush
+            if (ctx.operatorMode != null && ctx.digits.Count < 2)
+            {
+                ctx.state = CalcContext.State.Second;
+                ctx.digits.Push("0");
+            }
+
+            ctx.digits.Push(ctx.digits.Pop() + num);
         }
 
-        public void EnterNubmer(CalcContext ctx, string num)
+        // operatorが入力されたときの処理
+        public void HandleOperator(CalcContext ctx, string op)
         {
-            ctx.right += num;
+            ctx.operatorMode = StrategyFactory.Create(op.ToString());
+            if (ctx.digits.Count > 1)
+            {
+                Execute(ctx);
+            }
         }
 
-        public void Clear(CalcContext ctx)
+        // クリアが入力されたときの処理
+        public void HandleClear(CalcContext ctx)
         {
-            ctx.Clear();
+            ctx.digits.Clear();
+            ctx.digits.Push("0");
+            ctx.operatorMode = null;
+            ctx.state = CalcContext.State.First;
         }
 
+        // =が入力されたときの処理
         public void HandleEqual(CalcContext ctx)
         {
-            ctx.operatorMode?.Execute(ctx);
+            ctx.state = CalcContext.State.Equal;
+            Execute(ctx);
+        }
+
+        // 計算の実行
+        public void Execute(CalcContext ctx)
+        {
+            string? result = ctx.operatorMode?.Execute(ctx);
+
+            if (result == null)
+            {
+                return;
+            }
+
+            ctx.digits.Push(result);
         }
     }
 }
