@@ -20,6 +20,8 @@ namespace CalcLib.Tomida
             if (ctxEx is null) return;  // コンテキストがnullだったら何もしない
 
             Debug.WriteLine($"Button Clicked {btn}, context={ctxEx.Current}");
+
+            // 一旦ボタンをキューに入れて、キュー処理を呼び出す
             ctxEx.ButtonQueue.Enqueue(btn);
             _QueueButton(ctxEx);
 
@@ -38,8 +40,6 @@ namespace CalcLib.Tomida
         {
             var ctxEx = ctx0;
             if (ctxEx is null) return;  // コンテキストがnullだったら何もしない
-
-
 
             Debug.WriteLine($"Button Clicked {btn}, context={ctxEx.Current}");
 

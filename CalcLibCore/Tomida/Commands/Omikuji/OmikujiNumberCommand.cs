@@ -18,6 +18,7 @@ namespace CalcLibCore.Tomida.Commands.Omikuji
         {
             switch (ctx.State)
             {
+                // おみくじを引く前であれば、おみくじを引く動作をする
                 case OmikujiState.BeforeLotted:
                     int idx = 0;
                     switch (Btn)
@@ -39,6 +40,7 @@ namespace CalcLibCore.Tomida.Commands.Omikuji
                     ctx.SelectedIndex = idx;
                     break;
                 case OmikujiState.AfterLotted:
+                    //おみくじを引いたあとであれば、押されたキーと同じキーをキューイングする
                     var ctxEx = ctx.Parent as CalcContextTomidaEx;
                     ctxEx?.UnstackContext();
                     ctxEx?.ButtonQueue.Enqueue(Btn);
