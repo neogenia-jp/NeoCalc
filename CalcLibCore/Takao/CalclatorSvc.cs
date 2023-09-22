@@ -10,6 +10,19 @@ namespace CalcLib.Takao
         {
             if (CalcButtonMap.NumberMap.ContainsKey(btn))
             {
+                // Equalを押した後は計算を１から行うため初期化
+                if (ctx.state == CalcContext.State.Equal)
+                {
+                    HandleClear(ctx);
+                }
+
+                // operatorが入力された後は２つ目のoperandを入力したいため0をpush
+                if (ctx.operatorMode != null && ctx.digits.Count < 2)
+                {
+                    ctx.state = CalcContext.State.Second;
+                    ctx.digits.Push("0");
+                }
+
                 HandleNumber(ctx, CalcButtonMap.Map[btn]);
             }
             else if (CalcButtonMap.OperatorMap.ContainsKey(btn))
@@ -32,19 +45,6 @@ namespace CalcLib.Takao
         // 数字が入力されたときの処理
         public void HandleNumber(CalcContext ctx, string num)
         {
-            // Equalを押した後は計算を１から行うため初期化
-            if (ctx.state == CalcContext.State.Equal)
-            {
-                HandleClear(ctx);
-            }
-
-            // operatorが入力された後は２つ目のoperandを入力したいため0をpush
-            if (ctx.operatorMode != null && ctx.digits.Count < 2)
-            {
-                ctx.state = CalcContext.State.Second;
-                ctx.digits.Push("0");
-            }
-
             ctx.digits.Push(ctx.digits.Pop() + num);
         }
 
