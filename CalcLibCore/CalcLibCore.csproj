@@ -1,0 +1,37 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AngleSharp" Version="0.9.11" />
+    <PackageReference Include="HtmlAgilityPack" Version="1.11.48" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Yamamoto2\Executors\" />
+    <None Remove="Yamamoto2\Executors\" />
+    <None Remove="Tomida\Domain\" />
+    <None Remove="Tomida\Extensions\" />
+    <None Remove="Tomida\Commands\" />
+    <None Remove="Tomida\Commands\Switch\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Yamamoto2\Executors\" />
+    <Folder Include="Tomida\Domain\" />
+    <Folder Include="Tomida\Extensions\" />
+    <Folder Include="Tomida\Commands\" />
+    <Folder Include="Tomida\Commands\Switch\" />
+  </ItemGroup>
+</Project>

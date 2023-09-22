@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.33627.172
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NeoCalc", "NeoCalc\NeoCalc.csproj", "{5A443713-196E-4DAF-9DCF-48E78EBE290C}"
 EndProject
@@ -10,6 +10,14 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CalcLibTest", "CalcLibTest\CalcLibTest.csproj", "{5A004B0C-EAFB-416C-A176-838AD1D5D4BE}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebCalc", "WebCalc\WebCalc.csproj", "{9540DD66-80A3-43DC-ADF9-E88E21C7C839}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CalcLibCore", "CalcLibCore\CalcLibCore.csproj", "{4BED4061-BEDE-4B0C-AB54-AD150D1FBB41}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CalcLibCoreTest", "CalcLibCoreTest\CalcLibCoreTest.csproj", "{42B69698-C849-45E3-98CA-9AC1AA4C4E10}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebCalcCore", "WebCalcCore\WebCalcCore.csproj", "{C49147B3-F7DB-497C-8DFA-9EA0E4C42E17}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MauiCalc", "MauiCalc\MauiCalc.csproj", "{9B755C5C-11FF-4E4D-956F-9452C682B25B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,8 +41,27 @@ Global
 		{9540DD66-80A3-43DC-ADF9-E88E21C7C839}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9540DD66-80A3-43DC-ADF9-E88E21C7C839}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9540DD66-80A3-43DC-ADF9-E88E21C7C839}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4BED4061-BEDE-4B0C-AB54-AD150D1FBB41}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4BED4061-BEDE-4B0C-AB54-AD150D1FBB41}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4BED4061-BEDE-4B0C-AB54-AD150D1FBB41}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4BED4061-BEDE-4B0C-AB54-AD150D1FBB41}.Release|Any CPU.Build.0 = Release|Any CPU
+		{42B69698-C849-45E3-98CA-9AC1AA4C4E10}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{42B69698-C849-45E3-98CA-9AC1AA4C4E10}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{42B69698-C849-45E3-98CA-9AC1AA4C4E10}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{42B69698-C849-45E3-98CA-9AC1AA4C4E10}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C49147B3-F7DB-497C-8DFA-9EA0E4C42E17}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C49147B3-F7DB-497C-8DFA-9EA0E4C42E17}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C49147B3-F7DB-497C-8DFA-9EA0E4C42E17}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C49147B3-F7DB-497C-8DFA-9EA0E4C42E17}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9B755C5C-11FF-4E4D-956F-9452C682B25B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9B755C5C-11FF-4E4D-956F-9452C682B25B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9B755C5C-11FF-4E4D-956F-9452C682B25B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9B755C5C-11FF-4E4D-956F-9452C682B25B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A4960C76-64CA-463A-A222-5E0AB1F50989}
 	EndGlobalSection
 EndGlobal

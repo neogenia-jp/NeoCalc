@@ -67,6 +67,7 @@
     <Compile Include="CalcSvc.cs" />
     <Compile Include="CalcContext.cs" />
     <Compile Include="Maeda\Util\TimeCop.cs" />
+    <Compile Include="Maeda\YamamotoJanken\YamamotoJankenSvc.cs" />
     <Compile Include="Util\StockUtilYamamotoWrapper.cs" />
     <Compile Include="Util\StockUtilYamamoto.cs" />
     <Compile Include="Moriguchi\CalcClass.cs" />
@@ -101,6 +102,7 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
