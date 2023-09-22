@@ -59,6 +59,8 @@
     <Compile Include="Maeda\Dispatcher\SvcSwichedEventArg.cs" />
     <Compile Include="Maeda\Finance\FinanceSvc.cs" />
     <Compile Include="Maeda\Finance\StockUtilWrapper.cs" />
+    <Compile Include="Maeda\Janken\JankenImpl.cs" />
+    <Compile Include="Maeda\Janken\JankenSvc.cs" />
     <Compile Include="Maeda\Omikuji\OmikujiImpl.cs" />
     <Compile Include="Maeda\Omikuji\OmikujiSvc.cs" />
     <Compile Include="Maeda\CalcSvcMaeda.cs" />
