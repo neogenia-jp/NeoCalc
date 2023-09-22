@@ -46,12 +46,12 @@ namespace WebCalc.Controllers
                 Redirect("Index");
             }
             //var ctx = Session["Context"] as ICalcContext;
-            var ctx = GetObjectMemoryCache<ICalcContext>(sessionKey);
+            var ctx = GetObjectMemoryCache<ICalcContextEx>(sessionKey);
             if (ctx == null)
             {
                 ctx = Factory.CreateContext();
                 //Session["Context"] = ctx;
-                SetObjectMemoryCache<ICalcContext>(sessionKey, ctx);
+                SetObjectMemoryCache<ICalcContextEx>(sessionKey, ctx);
             }
 
             var btnName = $"Btn{btn}";
