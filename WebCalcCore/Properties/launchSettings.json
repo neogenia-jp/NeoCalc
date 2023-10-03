@@ -14,7 +14,7 @@
       "applicationUrl": "http://localhost:26852",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "CalcSvcClass": "CalcSvcTakao"
+        "CalcSvcClass": "CalcSvcTomida"
       },
       "dotnetRunMessages": true
     },

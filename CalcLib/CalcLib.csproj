@@ -59,12 +59,15 @@
     <Compile Include="Maeda\Dispatcher\SvcSwichedEventArg.cs" />
     <Compile Include="Maeda\Finance\FinanceSvc.cs" />
     <Compile Include="Maeda\Finance\StockUtilWrapper.cs" />
+    <Compile Include="Maeda\Janken\JankenImpl.cs" />
+    <Compile Include="Maeda\Janken\JankenSvc.cs" />
     <Compile Include="Maeda\Omikuji\OmikujiImpl.cs" />
     <Compile Include="Maeda\Omikuji\OmikujiSvc.cs" />
     <Compile Include="Maeda\CalcSvcMaeda.cs" />
     <Compile Include="CalcSvc.cs" />
     <Compile Include="CalcContext.cs" />
     <Compile Include="Maeda\Util\TimeCop.cs" />
+    <Compile Include="Maeda\YamamotoJanken\YamamotoJankenSvc.cs" />
     <Compile Include="Util\StockUtilYamamotoWrapper.cs" />
     <Compile Include="Util\StockUtilYamamoto.cs" />
     <Compile Include="Moriguchi\CalcClass.cs" />
@@ -99,6 +102,7 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

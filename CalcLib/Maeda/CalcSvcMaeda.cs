@@ -21,6 +21,8 @@ namespace CalcLib.Maeda
             typeof(CalcuratorSvc).FullName,
             typeof(Omikuji.OmikujiSvc).FullName,
             typeof(Finance.FinanceSvc).FullName,
+            typeof(Janken.JankenSvc).FullName,
+            typeof(YamamotoJanken.YamamotoJankenSvc).FullName,  // 山本さんに割り込みされました
         };
 
         SvcDispatcher Dispatcher = new SvcDispatcher(_services);
