@@ -3,14 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.33627.172
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NeoCalc", "NeoCalc\NeoCalc.csproj", "{5A443713-196E-4DAF-9DCF-48E78EBE290C}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CalcLib", "CalcLib\CalcLib.csproj", "{DD4D3060-7509-4163-AE69-66D0ADCD4BE5}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CalcLibTest", "CalcLibTest\CalcLibTest.csproj", "{5A004B0C-EAFB-416C-A176-838AD1D5D4BE}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebCalc", "WebCalc\WebCalc.csproj", "{9540DD66-80A3-43DC-ADF9-E88E21C7C839}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CalcLibCore", "CalcLibCore\CalcLibCore.csproj", "{4BED4061-BEDE-4B0C-AB54-AD150D1FBB41}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CalcLibCoreTest", "CalcLibCoreTest\CalcLibCoreTest.csproj", "{42B69698-C849-45E3-98CA-9AC1AA4C4E10}"
@@ -25,22 +17,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{5A443713-196E-4DAF-9DCF-48E78EBE290C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5A443713-196E-4DAF-9DCF-48E78EBE290C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5A443713-196E-4DAF-9DCF-48E78EBE290C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5A443713-196E-4DAF-9DCF-48E78EBE290C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{DD4D3060-7509-4163-AE69-66D0ADCD4BE5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DD4D3060-7509-4163-AE69-66D0ADCD4BE5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DD4D3060-7509-4163-AE69-66D0ADCD4BE5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DD4D3060-7509-4163-AE69-66D0ADCD4BE5}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5A004B0C-EAFB-416C-A176-838AD1D5D4BE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5A004B0C-EAFB-416C-A176-838AD1D5D4BE}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5A004B0C-EAFB-416C-A176-838AD1D5D4BE}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5A004B0C-EAFB-416C-A176-838AD1D5D4BE}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9540DD66-80A3-43DC-ADF9-E88E21C7C839}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9540DD66-80A3-43DC-ADF9-E88E21C7C839}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9540DD66-80A3-43DC-ADF9-E88E21C7C839}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9540DD66-80A3-43DC-ADF9-E88E21C7C839}.Release|Any CPU.Build.0 = Release|Any CPU
 		{4BED4061-BEDE-4B0C-AB54-AD150D1FBB41}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{4BED4061-BEDE-4B0C-AB54-AD150D1FBB41}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4BED4061-BEDE-4B0C-AB54-AD150D1FBB41}.Release|Any CPU.ActiveCfg = Release|Any CPU
