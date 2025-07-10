@@ -62,6 +62,8 @@ namespace CalcLib
         }
 
         // 演算子ボタンの文字列を取得
+        // 電卓表示部用の演算子の文字列を取得する
+        // nullを渡すと現在のストラテジーから表示する演算子文字列を取得する
         internal string GetOperatorString(CalcButton? btn)
         {
             var targetBtn = btn ?? GetButtonFromStrategy();
