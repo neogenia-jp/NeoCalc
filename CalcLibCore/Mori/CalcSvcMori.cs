@@ -9,15 +9,21 @@ namespace CalcLib
 {
     internal class CalcSvcMori : ICalcSvc
     {
-        public virtual ICalcContext CreateContext() => new CalcContext();
+
+        // 電卓の表示部
+        public virtual ICalcContext CreateContext() => new CalcContextExtend();
+
 
         public virtual void OnButtonClick(ICalcContext ctx0, CalcButton btn)
         {
-            var ctx = ctx0 as CalcContext;
-            Debug.WriteLine($"Button Clicked {btn}, context={ctx}");
+            if (ctx0 is not CalcContextExtend ctx)
+            {
+                Debug.WriteLine("Context is not CalcContext type");
+                return;
+            }
 
-            ctx.DisplayText = "Test";
-
+            // 表示部と入力を処理
+            ctx.ProcessInput(btn);
         }
     }
 }
