@@ -6,11 +6,12 @@ internal class AnswerState : IState
 {
     public void InputNumber(CalcContextYamamoto3 ctx, CalcButton btn)
     {
-        // MainDisplayに数字を入力
-        if (ctx.LeftSide.Length < 10)
-        {
-            ctx.LeftSide += btn.ToString().Replace("Btn", string.Empty);
-        }
+        // 内部状態をクリアする
+        ctx.LeftSide = "";
+        ctx.RightSide = "";
+        ctx.LeftSide = btn.ToString().Replace("Btn", string.Empty);
+        ctx.DisplayText = ctx.LeftSide;
+
         ctx.State = new LeftSideState();
     }
 

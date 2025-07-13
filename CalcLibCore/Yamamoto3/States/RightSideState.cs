@@ -9,6 +9,7 @@ internal class RightSideState : IState
         if (ctx.RightSide.Length < 10)
         {
             ctx.RightSide += btn.ToString().Replace("Btn", string.Empty);
+            ctx.DisplayText += btn.ToString().Replace("Btn", string.Empty);
         }
         ctx.State = new RightSideState();
     }
@@ -23,40 +24,54 @@ internal class RightSideState : IState
             return;
         }
 
-        // 左側の入力とOperatorと右側の入力で計算を行い、SubDisplayに結果を表示
-        // RightSideStateに戻る
+        // 左側の入力とOperatorと右側の入力で計算を行い、結果を表示
+        ctx.LeftSide = Calc(ctx).ToString(); 
+        ctx.RightSide = string.Empty; // RightSideはクリア
+        ctx.DisplayText = string.Empty; // MainDisplayはクリア
+
+        // OperatorStateに戻る
         ctx.State = new OperatorState();
     }
 
     public void InputEqual(CalcContextYamamoto3 ctx, CalcButton btn)
     {
+        ctx.DisplayText = Calc(ctx).ToString(); 
+        // SubDisplayをクリア
+        ctx.SubDisplayText = string.Empty;
+        ctx.State = new AnswerState();
+    }
+    private decimal Calc(CalcContextYamamoto3 ctx)
+    {
         // TODO:
         // ctx.Operator.Execute(left, right); みたいな感じでできると、条件分岐なくなる
         // 左側の入力とOperatorと右側の入力で計算を行い、MainDisplayに結果を表示
-        if(ctx.Operator == CalcButton.BtnPlus)
+        if (ctx.Operator == CalcButton.BtnPlus)
         {
-            ctx.DisplayText = (int.Parse(ctx.LeftSide) + int.Parse(ctx.RightSide)).ToString();
+            return decimal.Parse(ctx.LeftSide) + decimal.Parse(ctx.RightSide);
         }
-        else if(ctx.Operator == CalcButton.BtnMinus)
+        else if (ctx.Operator == CalcButton.BtnMinus)
         {
-            ctx.DisplayText = (int.Parse(ctx.LeftSide) - int.Parse(ctx.RightSide)).ToString();
+            return decimal.Parse(ctx.LeftSide) - decimal.Parse(ctx.RightSide);
         }
-        else if(ctx.Operator == CalcButton.BtnMultiple)
+        else if (ctx.Operator == CalcButton.BtnMultiple)
         {
-            ctx.DisplayText = (int.Parse(ctx.LeftSide) * int.Parse(ctx.RightSide)).ToString();
+            return decimal.Parse(ctx.LeftSide) * decimal.Parse(ctx.RightSide);
         }
-        else if(ctx.Operator == CalcButton.BtnDivide)
+        else if (ctx.Operator == CalcButton.BtnDivide)
         {
-            if(int.TryParse(ctx.RightSide, out var right) && right != 0)
+            if (decimal.TryParse(ctx.RightSide, out var right) && right != 0m)
             {
-                ctx.DisplayText = (int.Parse(ctx.LeftSide) / right).ToString();
+                return decimal.Parse(ctx.LeftSide) / right;
             }
             else
             {
-                ctx.DisplayText = "Error";
+                // TODO: 0除算した場合の仕様確認
+                return 0m;
             }
         }
-        // SubDisplayをクリア
-        ctx.State = new AnswerState();
+        else
+        {
+            throw new InvalidOperationException("Unsupported operator");
+        }
     }
 }

@@ -9,6 +9,7 @@ internal class OperatorState : IState
         if (ctx.RightSide.Length < 10)
         {
             ctx.RightSide += btn.ToString().Replace("Btn", string.Empty);
+            ctx.DisplayText += btn.ToString().Replace("Btn", string.Empty);
         }
         ctx.State = new RightSideState();
     }
