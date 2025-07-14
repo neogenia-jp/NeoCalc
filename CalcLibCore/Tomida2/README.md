@@ -9,7 +9,7 @@
 <expression> ::= <exp_input_operator> <terminator> | <exp_input_progress> <terminator>
 <exp_input_operator> ::= <operand> <operator>
 <exp_input_progress> ::= <operand> | <exp_input_operator> <operand>
-<operand> ::= <digits> | <digits> <dot> <digits>
+<operand> ::= <digits> | <dot> <digits> | <digits> <dot> | <digits> <dot> <digits>
 <digits> ::= <digit> | <digits> <digit>
 <terminator> ::= "="
 <operator> ::= "+" | "-" | "*" | "/"
