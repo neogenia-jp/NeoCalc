@@ -12,13 +12,11 @@ namespace CalcLib
         internal decimal CurrentValue { get; set; }
         // 左辺の値
         internal decimal Operand { get; set; }
-        // 新しい数字入力を受け付けるフラグ
-        internal bool isNewNumberInputStarted = true;
 
         // コンストラクタ
         public CalcContextExtend()
         {
-            State = NumberState.GetInstance();
+            State = NewNumberState.GetInstance();
             Strategy = null;
             CurrentValue = 0;
             Operand = 0;
@@ -33,12 +31,12 @@ namespace CalcLib
         // 数字桁数を増やす
         public void AppendNumber(CalcButton btn)
         {
-            string numText = GetNumberString(btn);
+            string numText = btn.ToNumberString();
             // 新しい数字入力が始まった場合は数字を表示する
-            if(isNewNumberInputStarted)
+            if(State is NewNumberState)
             {
                 DisplayText = numText;
-                isNewNumberInputStarted = false;
+                State = NumberState.GetInstance();
             }
             // 数値入力状態で数字が入ると詰めていく
             else
@@ -57,9 +55,9 @@ namespace CalcLib
             Strategy = null;
             DisplayText = "0";
             SubDisplayText = "";
-            isNewNumberInputStarted = true;
-            State = NumberState.GetInstance();
+            State = NewNumberState.GetInstance();
         }
+
 
         // 演算子ボタンの文字列を取得
         // 電卓表示部用の演算子の文字列を取得する
@@ -67,14 +65,7 @@ namespace CalcLib
         internal string GetOperatorString(CalcButton? btn)
         {
             var targetBtn = btn ?? GetButtonFromStrategy();
-            return targetBtn switch
-            {
-                CalcButton.BtnPlus => "+",
-                CalcButton.BtnMinus => "-",
-                CalcButton.BtnMultiple => "×",
-                CalcButton.BtnDivide => "÷",
-                _ => ""
-            };
+            return targetBtn?.ToOperatorString() ?? "";
         }
 
         // 演算子ボタンを取得
@@ -87,22 +78,7 @@ namespace CalcLib
             return null;
         }
 
-        // 数字ボタンから文字列を取得する
-        private string GetNumberString(CalcButton btn) => btn switch
-        {
-            CalcButton.Btn0 => "0",
-            CalcButton.Btn1 => "1",
-            CalcButton.Btn2 => "2",
-            CalcButton.Btn3 => "3",
-            CalcButton.Btn4 => "4",
-            CalcButton.Btn5 => "5",
-            CalcButton.Btn6 => "6",
-            CalcButton.Btn7 => "7",
-            CalcButton.Btn8 => "8",
-            CalcButton.Btn9 => "9",
-            CalcButton.BtnDot => ".",
-            _ => ""
-        };
+
 
         // 演算子ボタンによってストラテジーを変更する
         public ICalculationStrategy ChangeStrategy(CalcButton btn) => btn switch
@@ -121,7 +97,44 @@ namespace CalcLib
     {
         void AcceptInput(CalcContextExtend context, CalcButton btn);
     }
-    
+
+    internal class NewNumberState : IState
+    {
+        private static readonly IState singleton = new NewNumberState();
+        private NewNumberState() { }
+        public static IState GetInstance()
+        {
+            return singleton;
+        }
+
+        public void AcceptInput(CalcContextExtend context, CalcButton btn)
+        {
+            // 数字ボタンの場合 数字を追加してすぐNumberStateに遷移
+            if (btn.IsNumber())
+            {
+                context.AppendNumber(btn);
+                context.State = NumberState.GetInstance(); // 数字入力状態に遷移
+            }
+            // 演算子ボタン
+            else if (btn.IsOperator())
+            {
+                context.Operand = context.CurrentValue;
+                context.Strategy = context.ChangeStrategy(btn);
+                context.SubDisplayText = $"{context.CurrentValue} {context.GetOperatorString(btn)}";
+                context.State = OperatorState.GetInstance(); // 演算子入力状態に遷移
+            }
+            // イコールボタン
+            else if (btn.IsEqual())
+            {
+                // なにもしない
+            }
+            // クリアボタン
+            else if (btn.IsClear())
+            {
+                context.Reset();
+            }
+        }        
+    }
     /// <summary>
     /// 数字入力状態
     /// </summary>
@@ -137,14 +150,14 @@ namespace CalcLib
         public void AcceptInput(CalcContextExtend context, CalcButton btn)
         {
             // 数字ボタンの場合ただ数字を追加する
-            if (btn >= CalcButton.Btn0 && btn <= CalcButton.Btn9)
+            if (btn.IsNumber())
             {
                 context.AppendNumber(btn);
             }
             // 演算子ボタン
-            else if(btn >= CalcButton.BtnPlus && btn <= CalcButton.BtnMultiple)
+            else if (btn.IsOperator())
             {
-                // 計算中の場合演算子はまず計算を実行する
+                // 計算中の場合の演算子はまず計算を実行する
                 // Strategyがnullでないときは以前になんらかの入力がある
                 if (context.Strategy != null)
                 {
@@ -156,10 +169,9 @@ namespace CalcLib
                 context.Strategy = context.ChangeStrategy(btn);
                 context.SubDisplayText = $"{context.CurrentValue} {context.GetOperatorString(btn)}";
                 context.State = OperatorState.GetInstance(); // 演算子入力状態に遷移
-                context.isNewNumberInputStarted = true; // 新しい数字入力を受け付けられるようにする
             }
             // イコールボタン
-            else if (btn == CalcButton.BtnEqual)
+            else if (btn.IsEqual())
             {
                 // 計算中の場合のイコールはまず計算を実行する
                 if (context.Strategy != null)
@@ -170,7 +182,7 @@ namespace CalcLib
                 }
             }
             // クリアボタン
-            else if(btn >= CalcButton.BtnClear && btn <= CalcButton.BtnClearEnd)
+            else if (btn.IsClear())
             {
                 context.Reset();
             }
@@ -192,20 +204,19 @@ namespace CalcLib
         public void AcceptInput(CalcContextExtend context, CalcButton btn)
         {
             // 数字ボタンの場合は数字入力状態に戻す
-            if (btn >= CalcButton.Btn0 && btn <= CalcButton.Btn9)
+            if (btn.IsNumber())
             {
-                context.isNewNumberInputStarted = true;
-                context.State = NumberState.GetInstance();
+                context.State = NewNumberState.GetInstance();
                 context.State.AcceptInput(context, btn);
             }
             // 続けて演算子ボタンが押されると置き換える
-            else if (btn >= CalcButton.BtnPlus && btn <= CalcButton.BtnMultiple)
+            else if (btn.IsOperator())
             {
                 context.Strategy = context.ChangeStrategy(btn);
                 context.SubDisplayText = $"{context.Operand} {context.GetOperatorString(btn)}";
             }
             // イコールボタンは計算を実行する
-            else if (btn == CalcButton.BtnEqual)
+            else if (btn.IsEqual())
             {
                 var rightOperand = context.CurrentValue;
                 context.CurrentValue = context.Strategy.Execute(context.Operand, context.CurrentValue);
@@ -216,7 +227,7 @@ namespace CalcLib
                 context.State = EqualState.GetInstance(); // イコール入力状態に遷移
             }
             // クリアボタン
-            else if (btn == CalcButton.BtnClear)
+            else if (btn.IsClear())
             {
                 context.Reset();
             }
@@ -238,22 +249,21 @@ namespace CalcLib
         public void AcceptInput(CalcContextExtend context, CalcButton btn)
         {
             // 数字ボタンの場合は数字入力状態に戻す
-            if (btn >= CalcButton.Btn0 && btn <= CalcButton.Btn9)
+            if (btn.IsNumber())
             {
                 context.Reset();
                 context.State.AcceptInput(context, btn);
             }
             // イコールのあとに演算子がくると計算結果が左辺になり演算子ストラテジーを変更する
-            else if (btn >= CalcButton.BtnPlus && btn <= CalcButton.BtnMultiple)
+            else if (btn.IsOperator())
             {
                 context.Operand = context.CurrentValue;
                 context.Strategy = context.ChangeStrategy(btn); // 演算子を変更する
                 context.SubDisplayText = $"{context.CurrentValue} {context.GetOperatorString(btn)}";
                 context.State = OperatorState.GetInstance(); // 演算子入力状態に遷移
-                context.isNewNumberInputStarted = true; // 新しい数字入力を受け付けられるようにする
             }
             // イコールボタンは同じ計算を再実行する
-            else if (btn == CalcButton.BtnEqual)
+            else if (btn.IsEqual())
             {
                 var leftOperand = context.CurrentValue;
                 context.CurrentValue = context.Strategy.Execute(context.CurrentValue, context.Operand);
@@ -261,7 +271,7 @@ namespace CalcLib
                 context.SubDisplayText = $"{leftOperand} {context.GetOperatorString(null)} {context.Operand} =";
             }
             // クリアボタン
-            else if (btn == CalcButton.BtnClear)
+            else if (btn.IsClear())
             {
                 context.Reset();
             }
@@ -307,8 +317,10 @@ namespace CalcLib
     {
         public decimal Execute(decimal operand1, decimal operand2)
         {
-            if (operand2 == 0) return 0;
+            if (operand2 == 0m) return 0m; // mはdecimalのリテラル
             return operand1 / operand2;
         }
     }
+
+
 }
