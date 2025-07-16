@@ -17,7 +17,7 @@ namespace CalcLib
         public CalcContextExtend()
         {
             State = NewNumberState.GetInstance();
-            Strategy = null;
+            Strategy = new NoneStrategy(); //　初期状態の計算しないストラテジー
             CurrentValue = 0;
             Operand = 0;
         }
@@ -29,30 +29,17 @@ namespace CalcLib
         }
 
         // 数字桁数を増やす
-        public void AppendNumber(CalcButton btn)
-        {
-            string numText = btn.ToNumberString();
-            // 新しい数字入力が始まった場合は数字を表示する
-            if(State is NewNumberState)
-            {
-                DisplayText = numText;
-                State = NumberState.GetInstance();
-            }
-            // 数値入力状態で数字が入ると詰めていく
-            else
-            {
-                DisplayText += numText;
-            }
-            // 現在の値をdecimalに変換して保存
-            CurrentValue = decimal.Parse(DisplayText);
-        }
+        // public void AppendNumber(CalcButton btn)
+        // {
+                //各Stateに移動
+        // }
 
         // 計算完了後のリセット
         public void Reset()
         {
             CurrentValue = 0;
             Operand = 0;
-            Strategy = null;
+            Strategy = new NoneStrategy();
             DisplayText = "0";
             SubDisplayText = "";
             State = NewNumberState.GetInstance();
@@ -112,7 +99,8 @@ namespace CalcLib
             // 数字ボタンの場合 数字を追加してすぐNumberStateに遷移
             if (btn.IsNumber())
             {
-                context.AppendNumber(btn);
+                context.DisplayText = btn.ToNumberString();
+                context.CurrentValue = decimal.Parse(context.DisplayText);
                 context.State = NumberState.GetInstance(); // 数字入力状態に遷移
             }
             // 演算子ボタン
@@ -152,18 +140,16 @@ namespace CalcLib
             // 数字ボタンの場合ただ数字を追加する
             if (btn.IsNumber())
             {
-                context.AppendNumber(btn);
+                context.DisplayText += btn.ToNumberString();
+                context.CurrentValue = decimal.Parse(context.DisplayText);
+                context.State = NumberState.GetInstance(); // 数字入力状態に遷移
             }
             // 演算子ボタン
             else if (btn.IsOperator())
             {
                 // 計算中の場合の演算子はまず計算を実行する
-                // Strategyがnullでないときは以前になんらかの入力がある
-                if (context.Strategy != null)
-                {
-                    context.CurrentValue = context.Strategy.Execute(context.Operand, context.CurrentValue);
-                    context.DisplayText = context.CurrentValue.ToString();
-                }
+                context.CurrentValue = context.Strategy.Execute(context.Operand, context.CurrentValue);
+                context.DisplayText = context.CurrentValue.ToString();
 
                 context.Operand = context.CurrentValue;
                 context.Strategy = context.ChangeStrategy(btn);
@@ -174,12 +160,13 @@ namespace CalcLib
             else if (btn.IsEqual())
             {
                 // 計算中の場合のイコールはまず計算を実行する
-                if (context.Strategy != null)
-                {
-                    context.CurrentValue = context.Strategy.Execute(context.Operand, context.CurrentValue);
-                    context.DisplayText = context.CurrentValue.ToString();
-                    context.State = EqualState.GetInstance();
-                }
+                var rightOperand = context.CurrentValue;
+                context.CurrentValue = context.Strategy.Execute(context.Operand, context.CurrentValue);
+                context.DisplayText = context.CurrentValue.ToString();
+                // 計算のサマリーを表示
+                context.SubDisplayText = $"{context.Operand} {context.GetOperatorString(null)} {rightOperand} =";
+                context.Operand = rightOperand; // イコールの繰り返し計算のために右辺を保存
+                context.State = EqualState.GetInstance();
             }
             // クリアボタン
             else if (btn.IsClear())
@@ -285,6 +272,13 @@ namespace CalcLib
         decimal Execute(decimal operand1, decimal operand2);
     }
 
+    internal class NoneStrategy : ICalculationStrategy
+    {
+        public decimal Execute(decimal operand1, decimal operand2)
+        {
+            return operand2;
+        }
+    }
     // 足し算
     internal class AdditionStrategy : ICalculationStrategy
     {
