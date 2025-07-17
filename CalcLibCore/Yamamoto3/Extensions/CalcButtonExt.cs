@@ -22,6 +22,7 @@ internal static class CalcButtonExt
             CalcButton.BtnMinus => "-",
             CalcButton.BtnDivide => "/",
             CalcButton.BtnMultiple => "*",
+            CalcButton.BtnDot => ".",
             _ => throw new ArgumentOutOfRangeException(nameof(btn), btn, null)
         };
     }
@@ -31,7 +32,7 @@ internal static class CalcButtonExt
         return btn == CalcButton.Btn0 || btn == CalcButton.Btn1 || btn == CalcButton.Btn2 ||
                 btn == CalcButton.Btn3 || btn == CalcButton.Btn4 || btn == CalcButton.Btn5 ||
                 btn == CalcButton.Btn6 || btn == CalcButton.Btn7 || btn == CalcButton.Btn8 ||
-                btn == CalcButton.Btn9;
+                btn == CalcButton.Btn9 || btn == CalcButton.BtnDot;
     }
 
     public static bool IsOperator(this CalcButton btn)

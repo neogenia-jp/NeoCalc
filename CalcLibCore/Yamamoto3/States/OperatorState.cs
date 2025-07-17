@@ -7,8 +7,8 @@ internal class OperatorState : IState
 {
     public void InputNumber(CalcContextYamamoto3 ctx, CalcButton btn)
     {
-        ctx.RightSide += btn.ToDisplayString();
-        ctx.DisplayText += btn.ToDisplayString();
+        ctx.RightSide = btn.ToDisplayString();
+        ctx.DisplayText = btn.ToDisplayString();
         ctx.State = new RightSideState();
     }
 
