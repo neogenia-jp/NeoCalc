@@ -1,5 +1,6 @@
 using System;
 using CalcLib;
+using CalcLib.Yamamoto3.Extensions;
 
 namespace CalcLib.Yamamoto3;
 
@@ -11,8 +12,7 @@ public class Calculator
 
     public Calculator(string left, string right, CalcButton op)
     {
-        // TODO: このifいい加減書かなくしたい
-        if (op != CalcButton.BtnPlus && op != CalcButton.BtnMinus && op != CalcButton.BtnDivide && op != CalcButton.BtnMultiple)
+        if (!op.IsOperator())
         {
             // 演算子以外の場合はこのクラスは使えない
             throw new ArgumentException($"不正な演算子です {op}");

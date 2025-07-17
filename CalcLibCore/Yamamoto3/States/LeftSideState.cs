@@ -1,4 +1,5 @@
 using System;
+using CalcLib.Yamamoto3.Extensions;
 
 namespace CalcLib.Yamamoto3.States;
 
@@ -6,11 +7,8 @@ internal class LeftSideState : IState
 {
     public void InputNumber(CalcContextYamamoto3 ctx, CalcButton btn)
     {
-        if (ctx.LeftSide.Length < 10)
-        {
-            ctx.LeftSide += btn.ToString().Replace("Btn", string.Empty);
-            ctx.DisplayText += btn.ToString().Replace("Btn", string.Empty);
-        }
+        ctx.LeftSide += btn.ToDisplayString();
+        ctx.DisplayText += btn.ToDisplayString();
         ctx.State = new LeftSideState();
     }
 
