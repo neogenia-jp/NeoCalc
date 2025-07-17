@@ -12,6 +12,8 @@ namespace CalcLib
         internal decimal CurrentValue { get; set; }
         // 左辺の値
         internal decimal Operand { get; set; }
+        // 左辺の演算子
+        internal string OperatorString { get; set; } = "";
 
         // コンストラクタ
         public CalcContextExtend()
@@ -20,6 +22,9 @@ namespace CalcLib
             Strategy = new NoneStrategy(); //　初期状態の計算しないストラテジー
             CurrentValue = 0;
             Operand = 0;
+            OperatorString = "";
+            DisplayText = "0";
+            SubDisplayText = "";
         }
         
         // 入力を受け付ける
@@ -40,12 +45,17 @@ namespace CalcLib
             CurrentValue = 0;
             Operand = 0;
             Strategy = new NoneStrategy();
+            OperatorString = "";
             DisplayText = "0";
             SubDisplayText = "";
             State = NewNumberState.GetInstance();
         }
 
-
+        internal void UpdateDisplay(decimal value)
+        {
+            // 小数点以下の桁数を制限する
+            DisplayText = value.ToString("0.#############");
+        }
         // 演算子ボタンの文字列を取得
         // 電卓表示部用の演算子の文字列を取得する
         // nullを渡すと現在のストラテジーから表示する演算子文字列を取得する
@@ -108,7 +118,8 @@ namespace CalcLib
             {
                 context.Operand = context.CurrentValue;
                 context.Strategy = context.ChangeStrategy(btn);
-                context.SubDisplayText = $"{context.CurrentValue} {context.GetOperatorString(btn)}";
+                context.OperatorString = context.GetOperatorString(btn); // 演算子文字列を保存
+                context.SubDisplayText = $"{context.CurrentValue} {context.OperatorString}";
                 context.State = OperatorState.GetInstance(); // 演算子入力状態に遷移
             }
             // イコールボタン
@@ -147,13 +158,32 @@ namespace CalcLib
             // 演算子ボタン
             else if (btn.IsOperator())
             {
+                // まだ計算が始まっていない（NoneStrategy）場合は計算を実行せずにそのまま演算子を設定する
+                if (context.Strategy is NoneStrategy)
+                {
+                    context.Operand = context.CurrentValue;
+                    context.Strategy = context.ChangeStrategy(btn);
+                    context.OperatorString = context.GetOperatorString(btn); // 演算子文字列保存
+                    context.SubDisplayText = $"{context.Operand} {context.OperatorString}";
+                    context.State = OperatorState.GetInstance(); // 演算子入力状態に遷移
+                    return;
+                }
+
                 // 計算中の場合の演算子はまず計算を実行する
+                var rightOperand = context.CurrentValue;
+                
+                // 既存のSubDisplayTextから計算履歴を構築
+                var tempExpression = context.SubDisplayText;
+                
                 context.CurrentValue = context.Strategy.Execute(context.Operand, context.CurrentValue);
-                context.DisplayText = context.CurrentValue.ToString();
+                context.UpdateDisplay(context.CurrentValue);
 
                 context.Operand = context.CurrentValue;
                 context.Strategy = context.ChangeStrategy(btn);
-                context.SubDisplayText = $"{context.CurrentValue} {context.GetOperatorString(btn)}";
+                context.OperatorString = context.GetOperatorString(btn); // 新しい演算子を保存
+                
+                // 計算履歴を保持しながら新しい演算子を追加
+                context.SubDisplayText = $"{tempExpression} {rightOperand} {context.OperatorString}";
                 context.State = OperatorState.GetInstance(); // 演算子入力状態に遷移
             }
             // イコールボタン
@@ -162,9 +192,9 @@ namespace CalcLib
                 // 計算中の場合のイコールはまず計算を実行する
                 var rightOperand = context.CurrentValue;
                 context.CurrentValue = context.Strategy.Execute(context.Operand, context.CurrentValue);
-                context.DisplayText = context.CurrentValue.ToString();
+                context.UpdateDisplay(context.CurrentValue);
                 // 計算のサマリーを表示
-                context.SubDisplayText = $"{context.Operand} {context.GetOperatorString(null)} {rightOperand} =";
+                context.SubDisplayText = $"{context.Operand} {context.OperatorString} {rightOperand} =";
                 context.Operand = rightOperand; // イコールの繰り返し計算のために右辺を保存
                 context.State = EqualState.GetInstance();
             }
@@ -193,14 +223,16 @@ namespace CalcLib
             // 数字ボタンの場合は数字入力状態に戻す
             if (btn.IsNumber())
             {
-                context.State = NewNumberState.GetInstance();
-                context.State.AcceptInput(context, btn);
+                context.DisplayText = btn.ToNumberString();
+                context.CurrentValue = decimal.Parse(context.DisplayText);
+                context.State = NumberState.GetInstance();
             }
             // 続けて演算子ボタンが押されると置き換える
             else if (btn.IsOperator())
             {
                 context.Strategy = context.ChangeStrategy(btn);
-                context.SubDisplayText = $"{context.Operand} {context.GetOperatorString(btn)}";
+                context.OperatorString = context.GetOperatorString(btn); // 演算子文字列を更新
+                context.SubDisplayText = $"{context.Operand} {context.OperatorString}";
             }
             // イコールボタンは計算を実行する
             else if (btn.IsEqual())
@@ -246,7 +278,8 @@ namespace CalcLib
             {
                 context.Operand = context.CurrentValue;
                 context.Strategy = context.ChangeStrategy(btn); // 演算子を変更する
-                context.SubDisplayText = $"{context.CurrentValue} {context.GetOperatorString(btn)}";
+                context.OperatorString = context.GetOperatorString(btn); // 演算子文字列を保存
+                context.SubDisplayText = $"{context.CurrentValue} {context.OperatorString}";
                 context.State = OperatorState.GetInstance(); // 演算子入力状態に遷移
             }
             // イコールボタンは同じ計算を再実行する
@@ -255,7 +288,7 @@ namespace CalcLib
                 var leftOperand = context.CurrentValue;
                 context.CurrentValue = context.Strategy.Execute(context.CurrentValue, context.Operand);
                 context.DisplayText = context.CurrentValue.ToString();
-                context.SubDisplayText = $"{leftOperand} {context.GetOperatorString(null)} {context.Operand} =";
+                context.SubDisplayText = $"{leftOperand} {context.OperatorString} {context.Operand} =";
             }
             // クリアボタン
             else if (btn.IsClear())
