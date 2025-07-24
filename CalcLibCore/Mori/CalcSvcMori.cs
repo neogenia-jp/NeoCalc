@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CalcLib.Mori;
 
 namespace CalcLib
 {
@@ -21,9 +22,11 @@ namespace CalcLib
                 Debug.WriteLine("Context is not CalcContext type");
                 return;
             }
+            var cmd = ButtonCommandFactory.Create(btn);
+            cmd.Execute(ctx);
 
-            // 表示部と入力を処理
-            ctx.ProcessInput(btn);
+            // // 表示部と入力を処理
+            // ctx.Accept(btn);
         }
     }
 }

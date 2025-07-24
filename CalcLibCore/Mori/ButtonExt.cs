@@ -1,4 +1,4 @@
-namespace CalcLib
+namespace CalcLib.Mori
 {
     /// <summary>
     /// CalcButtonの拡張メソッド
@@ -32,15 +32,9 @@ namespace CalcLib
         };
 
 
-        internal static bool IsNumber(this CalcButton btn)
-        {
-            return (CalcButton.Btn0 <= btn && btn <= CalcButton.Btn9) || btn == CalcButton.BtnDot;
-        }
+        internal static bool IsNumber(this CalcButton btn) => btn.IsBetween(CalcButton.Btn0, CalcButton.Btn9) || btn == CalcButton.BtnDot;
 
-        internal static bool IsOperator(this CalcButton btn)
-        {
-            return CalcButton.BtnPlus <= btn && btn <= CalcButton.BtnMultiple;
-        }
+        internal static bool IsOperator(this CalcButton btn) => btn.IsBetween(CalcButton.BtnPlus, CalcButton.BtnDivide);
 
 
         internal static bool IsEqual(this CalcButton btn)
@@ -48,15 +42,13 @@ namespace CalcLib
             return btn == CalcButton.BtnEqual;
         }
 
-        internal static bool IsClear(this CalcButton btn)
-        {
-            return CalcButton.BtnClear <= btn && btn <= CalcButton.BtnClearEnd;
-        }
+        internal static bool IsClear(this CalcButton btn) => btn == CalcButton.BtnClear;
 
-        internal static bool IsBS(this CalcButton btn)
-        {
-            return btn == CalcButton.BtnBS;
-        }
+        internal static bool IsBS(this CalcButton btn) => btn == CalcButton.BtnBS;
+
+        internal static bool IsCE(this CalcButton btn) => btn == CalcButton.BtnClearEnd;
+
+        internal static bool IsBetween(this CalcButton btn, CalcButton start, CalcButton end) => btn >= start && btn <= end;
 
     }
 } 

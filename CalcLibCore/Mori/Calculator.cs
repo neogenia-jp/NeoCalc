@@ -1,351 +1,247 @@
-namespace CalcLib
+using System.Text.RegularExpressions;
+namespace CalcLib.Mori
 {
-
-    internal class CalcContextExtend : CalcContext 
+    internal class CalcContextExtend : CalcContext
     {
-        // 電卓の状態を全体的に管理するクラス
-        // stateパターン
-        internal IState State { get; set; }
-        // 計算のロジックを管理するクラス
-        internal ICalculationStrategy? Strategy { get; set; }
-        // 現在の値
-        internal decimal CurrentValue { get; set; }
-        // 左辺の値
-        internal decimal Operand { get; set; }
-        // 左辺の演算子
-        internal string OperatorString { get; set; } = "";
+        string _buffer = ""; // 数値入力時に詰めていくバッファ
+        readonly Stack<ICalculable> _valueStack = new(); // 数値のスタック
+        readonly Stack<CalcButton> _operatorStack = new(); // 演算子のスタック
+        private readonly List<string> _displayHistory = new(); // ディスプレイ表示用の履歴
+        ICalcState _state = NewNumberState.GetInstance();
+        
+        // イコール連続実行用の記憶
+        private CalcButton? _lastOperator = null;
+        private decimal? _lastRightOperand = null;
 
-        // コンストラクタ
-        public CalcContextExtend()
+        // サブ表示部のテキストを更新する
+        private void UpdateSubDisplayText()
         {
-            State = NewNumberState.GetInstance();
-            Strategy = new NoneStrategy(); //　初期状態の計算しないストラテジー
-            CurrentValue = 0;
-            Operand = 0;
-            OperatorString = "";
-            DisplayText = "0";
-            SubDisplayText = "";
+            SubDisplayText = string.Join(" ", _displayHistory);
+        }
+
+        // ButtonCommand から呼ばれるメソッド
+        public void Accept(CalcButton btn)
+        {
+            _state = _state.AcceptInput(this, btn);
+            UpdateSubDisplayText();
+        }
+
+        // 最初の数値 .の入力を受け付ける
+        internal void StartNumber(CalcButton btn)
+        {
+            _buffer = (btn == CalcButton.BtnDot) ? "0." : btn.ToNumberString();
+            RefreshDisplay();
+            ClearLastOperation();
+        }
+
+        // 数値入力状態で足していく
+        internal void AppendNumber(CalcButton btn)
+        {
+            if (btn == CalcButton.BtnDot && _buffer.Contains('.')) return;
+            _buffer += btn.ToNumberString();
+            RefreshDisplay();
+        }
+
+        // 数値を確定する
+        internal void ConfirmNumber()
+        {
+            if (string.IsNullOrEmpty(_buffer)) return;
+            _displayHistory.Add(_buffer);
+            if (decimal.TryParse(_buffer, out var num))
+            {
+                _valueStack.Push(new ValueNode(num));
+            }
+            _buffer = "";
+        }
+
+        // 演算子を処理する
+        internal void ProcessOperator(CalcButton op)
+        {
+            _displayHistory.Add(op.ToOperatorString());
+            FixPending();
+            _operatorStack.Push(op);
+            ClearLastOperation();
         }
         
-        // 入力を受け付ける
-        public void ProcessInput(CalcButton btn)
+        // 直前の演算子を置き換える　連続押し対応
+        internal void ReplaceLastOperator(CalcButton op)
         {
-            State.AcceptInput(this, btn);
-        }
-
-        // 数字桁数を増やす
-        // public void AppendNumber(CalcButton btn)
-        // {
-                //各Stateに移動
-        // }
-
-        // 計算完了後のリセット
-        public void Reset()
-        {
-            CurrentValue = 0;
-            Operand = 0;
-            Strategy = new NoneStrategy();
-            OperatorString = "";
-            DisplayText = "0";
-            SubDisplayText = "";
-            State = NewNumberState.GetInstance();
-        }
-
-        internal void UpdateDisplay(decimal value)
-        {
-            // 小数点以下の桁数を制限する
-            DisplayText = value.ToString("0.#############");
-        }
-        // 演算子ボタンの文字列を取得
-        // 電卓表示部用の演算子の文字列を取得する
-        // nullを渡すと現在のストラテジーから表示する演算子文字列を取得する
-        internal string GetOperatorString(CalcButton? btn)
-        {
-            var targetBtn = btn ?? GetButtonFromStrategy();
-            return targetBtn?.ToOperatorString() ?? "";
-        }
-
-        // 演算子ボタンを取得
-        private CalcButton? GetButtonFromStrategy()
-        {
-            if (Strategy is AdditionStrategy) return CalcButton.BtnPlus;
-            if (Strategy is SubtractionStrategy) return CalcButton.BtnMinus;
-            if (Strategy is MultiplicationStrategy) return CalcButton.BtnMultiple;
-            if (Strategy is DivisionStrategy) return CalcButton.BtnDivide;
-            return null;
-        }
-
-
-
-        // 演算子ボタンによってストラテジーを変更する
-        public ICalculationStrategy ChangeStrategy(CalcButton btn) => btn switch
-        {
-            CalcButton.BtnPlus => new AdditionStrategy(),
-            CalcButton.BtnMinus => new SubtractionStrategy(),
-            CalcButton.BtnMultiple => new MultiplicationStrategy(),
-            CalcButton.BtnDivide => new DivisionStrategy(),
-        };
-    }
-
-    /// <summary>
-    /// 状態インターフェース
-    /// </summary>
-    internal interface IState
-    {
-        void AcceptInput(CalcContextExtend context, CalcButton btn);
-    }
-
-    internal class NewNumberState : IState
-    {
-        private static readonly IState singleton = new NewNumberState();
-        private NewNumberState() { }
-        public static IState GetInstance()
-        {
-            return singleton;
-        }
-
-        public void AcceptInput(CalcContextExtend context, CalcButton btn)
-        {
-            // 数字ボタンの場合 数字を追加してすぐNumberStateに遷移
-            if (btn.IsNumber())
+            if (_displayHistory.Any())
             {
-                context.DisplayText = btn.ToNumberString();
-                context.CurrentValue = decimal.Parse(context.DisplayText);
-                context.State = NumberState.GetInstance(); // 数字入力状態に遷移
+                // 表示用入れ替え
+                _displayHistory[_displayHistory.Count - 1] = op.ToOperatorString();
             }
-            // 演算子ボタン
-            else if (btn.IsOperator())
+            if (_operatorStack.Any())
             {
-                context.Operand = context.CurrentValue;
-                context.Strategy = context.ChangeStrategy(btn);
-                context.OperatorString = context.GetOperatorString(btn); // 演算子文字列を保存
-                context.SubDisplayText = $"{context.CurrentValue} {context.OperatorString}";
-                context.State = OperatorState.GetInstance(); // 演算子入力状態に遷移
+                // 演算子スタックを入れ替え
+                _operatorStack.Pop();
+                _operatorStack.Push(op);
             }
-            // イコールボタン
-            else if (btn.IsEqual())
-            {
-                // なにもしない
-            }
-            // クリアボタン
-            else if (btn.IsClear())
-            {
-                context.Reset();
-            }
-        }        
-    }
-    /// <summary>
-    /// 数字入力状態
-    /// </summary>
-    internal class NumberState : IState
-    {
-        private static IState singleton = new NumberState();
-        private NumberState() { }
-        public static IState GetInstance()
-        {
-            return singleton;
         }
 
-        public void AcceptInput(CalcContextExtend context, CalcButton btn)
+        // イコールを押した時の処理
+        internal void ProcessEqual()
         {
-            // 数字ボタンの場合ただ数字を追加する
-            if (btn.IsNumber())
+            if (_displayHistory.LastOrDefault() != "=")
             {
-                context.DisplayText += btn.ToNumberString();
-                context.CurrentValue = decimal.Parse(context.DisplayText);
-                context.State = NumberState.GetInstance(); // 数字入力状態に遷移
+                _displayHistory.Add("=");
             }
-            // 演算子ボタン
-            else if (btn.IsOperator())
+            
+            // 初回のイコール処理
+            if (_lastOperator == null && _operatorStack.Count > 0 && _valueStack.Count >= 2)
             {
-                // まだ計算が始まっていない（NoneStrategy）場合は計算を実行せずにそのまま演算子を設定する
-                if (context.Strategy is NoneStrategy)
+                // 前回の演算子と右辺を記憶
+                _lastOperator = _operatorStack.Peek();
+                _lastRightOperand = _valueStack.Peek().Evaluate();
+            }
+            
+            // 連続イコール処理
+            if (_lastOperator != null && _lastRightOperand != null && _valueStack.Count == 1)
+            {
+                // 前回の演算子と右辺で計算を繰り返し
+                var currentValue = _valueStack.Peek().Evaluate();
+                ICalculable node = _lastOperator switch
                 {
-                    context.Operand = context.CurrentValue;
-                    context.Strategy = context.ChangeStrategy(btn);
-                    context.OperatorString = context.GetOperatorString(btn); // 演算子文字列保存
-                    context.SubDisplayText = $"{context.Operand} {context.OperatorString}";
-                    context.State = OperatorState.GetInstance(); // 演算子入力状態に遷移
-                    return;
-                }
-
-                // 計算中の場合の演算子はまず計算を実行する
-                var rightOperand = context.CurrentValue;
+                    CalcButton.BtnPlus => new AdditionNode(new ValueNode(currentValue), new ValueNode(_lastRightOperand.Value)),
+                    CalcButton.BtnMinus => new SubtractionNode(new ValueNode(currentValue), new ValueNode(_lastRightOperand.Value)),
+                    CalcButton.BtnMultiple => new MultiplicationNode(new ValueNode(currentValue), new ValueNode(_lastRightOperand.Value)),
+                    CalcButton.BtnDivide => new DivisionNode(new ValueNode(currentValue), new ValueNode(_lastRightOperand.Value)),
+                    _ => new ValueNode(currentValue)
+                };
+                var result = node.Evaluate();
+                DisplayText = result.ToString("0.#############");
+                _buffer = result.ToString();
+                _valueStack.Clear();
+                _valueStack.Push(new ValueNode(result));
                 
-                // 既存のSubDisplayTextから計算履歴を構築
-                var tempExpression = context.SubDisplayText;
-                
-                context.CurrentValue = context.Strategy.Execute(context.Operand, context.CurrentValue);
-                context.UpdateDisplay(context.CurrentValue);
-
-                context.Operand = context.CurrentValue;
-                context.Strategy = context.ChangeStrategy(btn);
-                context.OperatorString = context.GetOperatorString(btn); // 新しい演算子を保存
-                
-                // 計算履歴を保持しながら新しい演算子を追加
-                context.SubDisplayText = $"{tempExpression} {rightOperand} {context.OperatorString}";
-                context.State = OperatorState.GetInstance(); // 演算子入力状態に遷移
+                // サブディスプレイに連続計算式を表示
+                _displayHistory.Clear();
+                _displayHistory.Add(currentValue.ToString("0.#############"));
+                _displayHistory.Add(_lastOperator.Value.ToOperatorString());
+                _displayHistory.Add(_lastRightOperand.Value.ToString("0.#############"));
+                _displayHistory.Add("=");
+                return;
             }
-            // イコールボタン
-            else if (btn.IsEqual())
+            
+            // 通常の計算処理
+            FixPending();
+            while (_operatorStack.Count > 0 && _valueStack.Count >= 2)
             {
-                // 計算中の場合のイコールはまず計算を実行する
-                var rightOperand = context.CurrentValue;
-                context.CurrentValue = context.Strategy.Execute(context.Operand, context.CurrentValue);
-                context.UpdateDisplay(context.CurrentValue);
-                // 計算のサマリーを表示
-                context.SubDisplayText = $"{context.Operand} {context.OperatorString} {rightOperand} =";
-                context.Operand = rightOperand; // イコールの繰り返し計算のために右辺を保存
-                context.State = EqualState.GetInstance();
+                CreateExpressionNode();
             }
-            // クリアボタン
-            else if (btn.IsClear())
+            if (_valueStack.TryPop(out var root))
             {
-                context.Reset();
+                var res = root.Evaluate();
+                DisplayText = res.ToString("0.#############");
+                _buffer = res.ToString();
+                _operatorStack.Clear();
+                _valueStack.Clear();
+                _valueStack.Push(new ValueNode(res));
+                _displayHistory.Clear();
             }
         }
-    }
 
-    /// <summary>
-    /// 演算子入力状態
-    /// </summary>
-    internal class OperatorState : IState
-    {
-        private static IState singleton = new OperatorState();
-        private OperatorState() { }
-        public static IState GetInstance()
+        // 結果を左辺として新しい計算を開始する
+        internal void StartResultAsLeftOperand()
         {
-            return singleton;
+            _displayHistory.Clear();
+            _displayHistory.Add(_buffer);
+        }
+
+        internal void Backspace()
+        {
+            if (_buffer.Length > 0)
+            {
+                _buffer = _buffer[..^1]; // C# 8.0 以降の構文, _buffer.Substring(0, _buffer.Length - 1)相当
+            }
+            if (_buffer.Length == 0)
+            {
+                _buffer = "0";
+            }
+            RefreshDisplay();
+        }
+
+        internal void ClearEntry()
+        {
+            _buffer = "0";
+            DisplayText = "0";
+        }
+
+        internal void Reset()
+        {
+            DisplayText = "0";
+            _displayHistory.Clear();
+            _buffer = "";
+            _valueStack.Clear();
+            _operatorStack.Clear();
+            ClearLastOperation();
         }
         
-        public void AcceptInput(CalcContextExtend context, CalcButton btn)
+        // イコール連続実行用の記憶をクリア
+        private void ClearLastOperation()
         {
-            // 数字ボタンの場合は数字入力状態に戻す
-            if (btn.IsNumber())
-            {
-                context.DisplayText = btn.ToNumberString();
-                context.CurrentValue = decimal.Parse(context.DisplayText);
-                context.State = NumberState.GetInstance();
-            }
-            // 続けて演算子ボタンが押されると置き換える
-            else if (btn.IsOperator())
-            {
-                context.Strategy = context.ChangeStrategy(btn);
-                context.OperatorString = context.GetOperatorString(btn); // 演算子文字列を更新
-                context.SubDisplayText = $"{context.Operand} {context.OperatorString}";
-            }
-            // イコールボタンは計算を実行する
-            else if (btn.IsEqual())
-            {
-                var rightOperand = context.CurrentValue;
-                context.CurrentValue = context.Strategy.Execute(context.Operand, context.CurrentValue);
-                context.DisplayText = context.CurrentValue.ToString();
-                // 現在のストラテジーを適用して計算結果を表示する
-                context.SubDisplayText = $"{context.Operand} {context.GetOperatorString(null)} {rightOperand} =";
-                context.Operand = rightOperand; // イコールの繰り返し計算のために右辺を保存
-                context.State = EqualState.GetInstance(); // イコール入力状態に遷移
-            }
-            // クリアボタン
-            else if (btn.IsClear())
-            {
-                context.Reset();
-            }
-        }
-    }
-
-    /// <summary>
-    /// イコール入力状態
-    /// </summary>
-    internal class EqualState : IState
-    {
-        private static IState singleton = new EqualState();
-        private EqualState() { }
-        public static IState GetInstance()
-        {
-            return singleton;
+            _lastOperator = null;
+            _lastRightOperand = null;
         }
 
-        public void AcceptInput(CalcContextExtend context, CalcButton btn)
+        // 未計算の演算子を解消する
+        private void FixPending()
         {
-            // 数字ボタンの場合は数字入力状態に戻す
-            if (btn.IsNumber())
+            // 演算子と数値が足りない場合は何もしない
+            if (_operatorStack.Count < 1 || _valueStack.Count < 2) return;
+            CreateExpressionNode();
+            var node = _valueStack.Peek();
+            var result = node.Evaluate();
+            _valueStack.Pop();
+            _valueStack.Push(new ValueNode(result));
+            DisplayText = result.ToString("0.#############");
+        }
+
+        // 演算子と数値を組み合わせて計算式を作成する
+        private void CreateExpressionNode()
+        {
+            // 演算子と数値が足りない場合は何もしない
+            if (_operatorStack.Count == 0 || _valueStack.Count < 2) return;
+
+            var op = _operatorStack.Pop();
+            var right = _valueStack.Pop();
+            var left = _valueStack.Pop();
+
+            ICalculable node = op switch
             {
-                context.Reset();
-                context.State.AcceptInput(context, btn);
-            }
-            // イコールのあとに演算子がくると計算結果が左辺になり演算子ストラテジーを変更する
-            else if (btn.IsOperator())
+                CalcButton.BtnPlus => new AdditionNode(left, right),
+                CalcButton.BtnMinus => new SubtractionNode(left, right),
+                CalcButton.BtnMultiple => new MultiplicationNode(left, right),
+                CalcButton.BtnDivide => new DivisionNode(left, right),
+                _ => throw new System.InvalidOperationException("Unknown operator")
+            };
+
+            _valueStack.Push(node);
+        }
+        private void RefreshDisplay()
+        {
+            if (string.IsNullOrEmpty(_buffer))
             {
-                context.Operand = context.CurrentValue;
-                context.Strategy = context.ChangeStrategy(btn); // 演算子を変更する
-                context.OperatorString = context.GetOperatorString(btn); // 演算子文字列を保存
-                context.SubDisplayText = $"{context.CurrentValue} {context.OperatorString}";
-                context.State = OperatorState.GetInstance(); // 演算子入力状態に遷移
+                DisplayText = "0";
+                return;
             }
-            // イコールボタンは同じ計算を再実行する
-            else if (btn.IsEqual())
-            {
-                var leftOperand = context.CurrentValue;
-                context.CurrentValue = context.Strategy.Execute(context.CurrentValue, context.Operand);
-                context.DisplayText = context.CurrentValue.ToString();
-                context.SubDisplayText = $"{leftOperand} {context.OperatorString} {context.Operand} =";
-            }
-            // クリアボタン
-            else if (btn.IsClear())
-            {
-                context.Reset();
-            }
-        }
-    }
 
+            // マイナス符号は分離
+            var isMinus = _buffer.StartsWith("-");
+            var num     = isMinus ? _buffer[1..] : _buffer;
 
-    // 計算のロジックを管理するクラス
-    internal interface ICalculationStrategy
-    {
-        decimal Execute(decimal operand1, decimal operand2);
-    }
+            // 小数点で分離
+            var leftPart    = num.Split('.', 2);
+            var rightPart  = leftPart[0];
+            var fracPart = leftPart.Length > 1 ? "." + leftPart[1] : "";
 
-    internal class NoneStrategy : ICalculationStrategy
-    {
-        public decimal Execute(decimal operand1, decimal operand2)
-        {
-            return operand2;
-        }
-    }
-    // 足し算
-    internal class AdditionStrategy : ICalculationStrategy
-    {
-        public decimal Execute(decimal operand1, decimal operand2)
-        {
-            return operand1 + operand2;
-        }
-    }
+            // 整数部に千区切りカンマを挿入
+            var withComma = Regex.Replace(
+                rightPart,
+                "(?<=\\d)(?=(\\d{3})+$)",   // 右側から3桁ごとに
+                ",");
 
-    // 引き算
-    internal class SubtractionStrategy : ICalculationStrategy
-    {
-        public decimal Execute(decimal operand1, decimal operand2)
-        {
-            return operand1 - operand2;
-        }
-    }
-
-    // 掛け算
-    internal class MultiplicationStrategy : ICalculationStrategy
-    {
-        public decimal Execute(decimal operand1, decimal operand2)
-        {
-            return operand1 * operand2;
-        }
-    }
-
-    // 割り算
-    internal class DivisionStrategy : ICalculationStrategy
-    {
-        public decimal Execute(decimal operand1, decimal operand2)
-        {
-            if (operand2 == 0m) return 0m; // mはdecimalのリテラル
-            return operand1 / operand2;
+            DisplayText = (isMinus ? "-" : "") + withComma + fracPart;
         }
     }
 
