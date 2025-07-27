@@ -8,7 +8,7 @@ internal class InitState : IState
     public void InputNumber(CalcContextYamamoto3 ctx, CalcButton btn)
     {
         ctx.LeftSide += btn.ToDisplayString();
-        ctx.DisplayText += btn.ToDisplayString();
+        ctx.MainDisplayManager.Update(btn.ToDisplayString());
         ctx.State = new LeftSideState();
     }
 

@@ -8,7 +8,7 @@ internal class RightSideState : IState
     public void InputNumber(CalcContextYamamoto3 ctx, CalcButton btn)
     {
         ctx.RightSide += btn.ToDisplayString();
-        ctx.DisplayText += btn.ToDisplayString();
+        ctx.MainDisplayManager.Concat(btn.ToDisplayString());
         ctx.State = new RightSideState();
     }
 
@@ -25,7 +25,7 @@ internal class RightSideState : IState
         // 左側の入力とOperatorと右側の入力で計算を行い、結果を表示
         ctx.LeftSide = new Calculator(ctx.LeftSide, ctx.RightSide, ctx.Operator.Value).Run().ToString();
         ctx.RightSide = string.Empty; // RightSideはクリア
-        ctx.DisplayText = string.Empty; // MainDisplayはクリア
+        ctx.MainDisplayManager.Clear(); // MainDisplayはクリア
         ctx.Operator = btn;
 
         // OperatorStateに戻る
@@ -36,7 +36,7 @@ internal class RightSideState : IState
     {
         // TODO: DisplayTextに変更があるたびにここを変更しないといけず苦しい。クラスにするなりして変更する箇所がわかりやすいようにしたい
         // decimal型で受け取って、それをいい感じにDisplayTextに変換して入れてくれるようなやつ
-        ctx.DisplayText = new Calculator(ctx.LeftSide, ctx.RightSide, ctx.Operator.Value).Run().ToString("0.#############");
+        ctx.MainDisplayManager.Update(new Calculator(ctx.LeftSide, ctx.RightSide, ctx.Operator.Value).Run());
         // SubDisplayをクリア
         //ctx.SubDisplayText = string.Empty;
         ctx.State = new AnswerState();

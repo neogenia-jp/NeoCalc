@@ -8,7 +8,7 @@ internal class OperatorState : IState
     public void InputNumber(CalcContextYamamoto3 ctx, CalcButton btn)
     {
         ctx.RightSide = btn.ToDisplayString();
-        ctx.DisplayText = btn.ToDisplayString();
+        ctx.MainDisplayManager.Update(btn.ToDisplayString());
         ctx.State = new RightSideState();
     }
 
@@ -17,7 +17,7 @@ internal class OperatorState : IState
         // subdisplayにleftを渡して、right側の入力を待つ
         ctx.Operator = btn;
         ctx.SubDisplayText = ctx.LeftSide;
-        ctx.DisplayText = "";
+        ctx.MainDisplayManager.Clear();
         ctx.State = new RightSideState();
     }
 

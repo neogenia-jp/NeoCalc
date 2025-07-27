@@ -10,6 +10,10 @@ namespace CalcLib.Yamamoto3
 		public string LeftSide { get; set; } = string.Empty;
 		public string RightSide { get; set; } = string.Empty;
 		public CalcButton? Operator { get; set; } = null;
+
+		public MainDisplayManager MainDisplayManager { get; } = new MainDisplayManager();
+
+        public override string DisplayText { get => MainDisplayManager.GetText(); set => throw new Exception("こいつを直接操作するな"); }
     }
 }
 
