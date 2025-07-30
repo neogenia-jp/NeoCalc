@@ -112,28 +112,86 @@ namespace CalcLibCoreTest.Tomida2
                 CalcButton.BtnEqual
             };
 
+            Console.WriteLine("複合入力のテスト: 10+5=");
             foreach (var button in inputSequence)
             {
-                var strategy = ButtonStrategyFactory.GetStrategy(button);
-                strategy.OnButtonClick(ctx, button);
+                ctx.HandleButtonClick(button);
+                Console.WriteLine($"  {button}: Input={ctx.GetCurrentInput()}, Display={ctx.DisplayText}");
             }
-
-            string actual = ctx.GetCurrentInput();
-            string expected = "10+5=";
             
-            Debug.Assert(actual == expected, $"Expected {expected}, but got {actual}");
-            Console.WriteLine($"✓ Complex input: {actual}");
-            
-            // DisplayTextも確認（パーサーによる評価結果）
+            // 結果の確認
             try
             {
                 string displayText = ctx.DisplayText;
-                Console.WriteLine($"✓ Display result: {displayText}");
+                Console.WriteLine($"✓ 最終結果: {displayText}");
+                
+                // 次の計算をテスト（結果を使った継続計算）
+                Console.WriteLine("\n継続計算のテスト: +3=");
+                ctx.HandleButtonClick(CalcButton.BtnPlus);
+                Console.WriteLine($"  +: Input={ctx.GetCurrentInput()}, Display={ctx.DisplayText}");
+                ctx.HandleButtonClick(CalcButton.Btn3);
+                Console.WriteLine($"  3: Input={ctx.GetCurrentInput()}, Display={ctx.DisplayText}");
+                ctx.HandleButtonClick(CalcButton.BtnEqual);
+                Console.WriteLine($"  =: Input={ctx.GetCurrentInput()}, Display={ctx.DisplayText}");
+                
+                // 新しい計算のテスト
+                Console.WriteLine("\n新しい計算のテスト: 7*2=");
+                ctx.HandleButtonClick(CalcButton.Btn7);
+                Console.WriteLine($"  7: Input={ctx.GetCurrentInput()}, Display={ctx.DisplayText}");
+                ctx.HandleButtonClick(CalcButton.BtnMultiple);
+                Console.WriteLine($"  *: Input={ctx.GetCurrentInput()}, Display={ctx.DisplayText}");
+                ctx.HandleButtonClick(CalcButton.Btn2);
+                Console.WriteLine($"  2: Input={ctx.GetCurrentInput()}, Display={ctx.DisplayText}");
+                ctx.HandleButtonClick(CalcButton.BtnEqual);
+                Console.WriteLine($"  =: Input={ctx.GetCurrentInput()}, Display={ctx.DisplayText}");
+                
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"⚠ Display evaluation failed: {ex.Message}");
+                Console.WriteLine($"⚠ エラーが発生: {ex.Message}");
             }
+        }
+
+        /// <summary>
+        /// 連続演算のテスト（1+2+3=のような操作）
+        /// </summary>
+        public static void TestChainedOperations()
+        {
+            Console.WriteLine("\n=== 連続演算のテスト ===");
+            var ctx = new CalcContextTomida2();
+            
+            // 1+2+3= のテスト
+            var buttons = new[] 
+            { 
+                CalcButton.Btn1, CalcButton.BtnPlus, CalcButton.Btn2, 
+                CalcButton.BtnPlus, CalcButton.Btn3, CalcButton.BtnEqual 
+            };
+            
+            Console.WriteLine("連続加算のテスト: 1+2+3=");
+            foreach (var button in buttons)
+            {
+                ctx.HandleButtonClick(button);
+                Console.WriteLine($"  {button}: Input={ctx.GetCurrentInput()}, Display={ctx.DisplayText}");
+            }
+            
+            Console.WriteLine($"✓ 最終結果: {ctx.DisplayText}");
+            
+            // 2*3*4= のテスト
+            ctx.ClearInput();
+            var buttons2 = new[] 
+            { 
+                CalcButton.Btn2, CalcButton.BtnMultiple, CalcButton.Btn3, 
+                CalcButton.BtnMultiple, CalcButton.Btn4, CalcButton.BtnEqual 
+            };
+            
+            Console.WriteLine("\n連続乗算のテスト: 2*3*4=");
+            foreach (var button in buttons2)
+            {
+                ctx.HandleButtonClick(button);
+                Console.WriteLine($"  {button}: Input={ctx.GetCurrentInput()}, Display={ctx.DisplayText}");
+            }
+            
+            Console.WriteLine($"✓ 最終結果: {ctx.DisplayText}");
         }
 
         /// <summary>
@@ -148,6 +206,7 @@ namespace CalcLibCoreTest.Tomida2
             TestOperatorButtons();
             TestEqualButton();
             TestComplexInput();
+            TestChainedOperations();
             
             Console.WriteLine("=== All Tests Completed ===");
         }

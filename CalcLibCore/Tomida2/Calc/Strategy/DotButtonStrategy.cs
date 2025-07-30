@@ -9,6 +9,9 @@ namespace CalcLibCore.Tomida2.Calc.Strategy
     {
         void IButtonStrategy.OnButtonClick(CalcContextTomida2 ctx, CalcButton btn)
         {
+            // 結果表示後の小数点入力では新しい計算を開始
+            ctx.StartNewCalculation();
+            
             ctx.AppendInput(".");
         }
     }

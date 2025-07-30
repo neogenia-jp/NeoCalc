@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace CalcLibCore.Tomida2.Calc.Interpreter
 {
@@ -99,6 +100,67 @@ namespace CalcLibCore.Tomida2.Calc.Interpreter
         '/' => SecondOperand.Value != 0 ? FirstOperand / SecondOperand.Value : throw new DivideByZeroException(),
         _ => throw new InvalidOperationException($"Unknown operator: {Operator.Value}")
       };
+    }
+  }
+
+  /// <summary>
+  /// 複数の演算操作をチェーンした式を表すデータ構造（例：1+2+3-4）
+  /// </summary>
+  public class ChainedExpression : IParseResult
+  {
+    public List<decimal> Operands { get; set; } = new List<decimal>();
+    public List<char> Operators { get; set; } = new List<char>();
+    public bool IsComplete { get; set; }
+
+    /// <summary>
+    /// 左結合で式を評価して結果を返す
+    /// </summary>
+    /// <returns>計算結果</returns>
+    public decimal Evaluate()
+    {
+      if (Operands.Count == 0)
+        throw new InvalidOperationException("No operands to evaluate");
+
+      if (Operands.Count == 1)
+        return Operands[0];
+
+      if (Operators.Count != Operands.Count - 1)
+        throw new InvalidOperationException("Operand and operator count mismatch");
+
+      // 左結合で評価
+      decimal result = Operands[0];
+      for (int i = 0; i < Operators.Count; i++)
+      {
+        char op = Operators[i];
+        decimal nextOperand = Operands[i + 1];
+
+        result = op switch
+        {
+          '+' => result + nextOperand,
+          '-' => result - nextOperand,
+          '*' => result * nextOperand,
+          '/' => nextOperand != 0 ? result / nextOperand : throw new DivideByZeroException(),
+          _ => throw new InvalidOperationException($"Unknown operator: {op}")
+        };
+      }
+
+      return result;
+    }
+
+    /// <summary>
+    /// 新しいオペランドを追加
+    /// </summary>
+    public void AddOperand(decimal operand)
+    {
+      Operands.Add(operand);
+    }
+
+    /// <summary>
+    /// 新しい演算子を追加
+    /// </summary>
+    public void AddOperator(char op)
+    {
+      Operators.Add(op);
     }
   }
 }

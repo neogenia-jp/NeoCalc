@@ -277,7 +277,7 @@ namespace CalcLibCore.Tomida2.Calc.Interpreter
   }
 
   /// <summary>
-  /// &lt;state&gt; ::= &lt;expression&gt; | &lt;exp_input_operator&gt; | &lt;exp_input_progress&gt;
+  /// &lt;state&gt; ::= &lt;chained_expression&gt; | &lt;expression&gt; | &lt;exp_input_operator&gt; | &lt;exp_input_progress&gt;
   /// </summary>
   public class StateExpression : NonTerminalExpression
   {
@@ -287,7 +287,43 @@ namespace CalcLibCore.Tomida2.Calc.Interpreter
 
       try
       {
-        // Case 1: <expression> (最も具体的 - 末尾に=がある完全な式)
+        // Case 1: 連続した演算を含む式（最も優先 - 1+2+3形式をサポート）
+        try
+        {
+          var chainedExpr = new ChainedExpressionParser();
+          var result = (ChainedExpression)chainedExpr.Interpret(context);
+          
+          // 連続した演算が検出された場合、それを優先する
+          if (result.Operators.Count > 0)
+          {
+            // イコール記号がある場合は完全な式として処理
+            context.SkipWhitespace();
+            if (!context.IsAtEnd && context.CurrentChar == '=')
+            {
+              var terminator = new TerminatorExpression();
+              terminator.Interpret(context);
+              result.IsComplete = true;
+              return result;
+            }
+            else
+            {
+              // イコール記号がない場合は進行中の式として返す
+              return result;
+            }
+          }
+          else
+          {
+            // 単一のオペランドの場合は従来のロジックにフォールバック
+            context.SetPosition(savedPosition);
+            throw new InvalidOperationException("Single operand, fallback to traditional logic");
+          }
+        }
+        catch (InvalidOperationException)
+        {
+          context.SetPosition(savedPosition);
+        }
+
+        // Case 2: <expression> (従来の2項演算完全式)
         try
         {
           var expression = new ExpressionExpression();
@@ -298,7 +334,7 @@ namespace CalcLibCore.Tomida2.Calc.Interpreter
           context.SetPosition(savedPosition);
         }
 
-        // Case 2: <exp_input_progress> (中程度 - operand + operator + operand)
+        // Case 3: <exp_input_progress> (従来の2項演算進行中)
         try
         {
           var expInputProgress = new ExpInputProgressExpression();
@@ -309,13 +345,77 @@ namespace CalcLibCore.Tomida2.Calc.Interpreter
           context.SetPosition(savedPosition);
         }
 
-        // Case 3: <exp_input_operator> (最も一般的 - operand + operator)
+        // Case 4: <exp_input_operator> (単一オペランド+演算子)
         var expInputOp = new ExpInputOperatorExpression();
         return expInputOp.Interpret(context);
       }
       catch (InvalidOperationException)
       {
         throw new InvalidOperationException("Expected valid state expression");
+      }
+    }
+  }
+
+  /// <summary>
+  /// 連続した演算を処理する式（例：1+2+3-4）
+  /// &lt;chained_expression&gt; ::= &lt;operand&gt; (&lt;operator&gt; &lt;operand&gt;)*
+  /// </summary>
+  public class ChainedExpressionParser : NonTerminalExpression
+  {
+    public override object Interpret(InterpreterContext context)
+    {
+      var chainedExpr = new ChainedExpression();
+      
+      try
+      {
+        // 最初のオペランドを読み取る
+        var operandExpr = new OperandExpression();
+        decimal firstOperand = (decimal)operandExpr.Interpret(context);
+        chainedExpr.AddOperand(firstOperand);
+
+        // 演算子とオペランドのペアを繰り返し読み取る
+        while (!context.IsAtEnd)
+        {
+          context.SkipWhitespace();
+          
+          // イコール記号をチェック（終了条件）
+          if (!context.IsAtEnd && context.CurrentChar == '=')
+          {
+            chainedExpr.IsComplete = true;
+            break;
+          }
+
+          // 演算子をチェック
+          if (context.IsAtEnd || !(context.CurrentChar == '+' || context.CurrentChar == '-' || 
+                                  context.CurrentChar == '*' || context.CurrentChar == '/'))
+          {
+            break;
+          }
+
+          // 演算子を読み取る
+          var operatorExpr = new OperatorExpression();
+          char operatorChar = (char)operatorExpr.Interpret(context);
+          chainedExpr.AddOperator(operatorChar);
+
+          context.SkipWhitespace();
+
+          // 次のオペランドを読み取る
+          if (context.IsAtEnd || (!char.IsDigit(context.CurrentChar) && context.CurrentChar != '.'))
+          {
+            // 演算子の後にオペランドがない場合は、未完了の演算子入力として扱う
+            // この場合は従来のロジックにフォールバック
+            throw new InvalidOperationException("Expected operand after operator");
+          }
+
+          decimal nextOperand = (decimal)operandExpr.Interpret(context);
+          chainedExpr.AddOperand(nextOperand);
+        }
+
+        return chainedExpr;
+      }
+      catch (InvalidOperationException)
+      {
+        throw new InvalidOperationException("Failed to parse chained expression");
       }
     }
   }
