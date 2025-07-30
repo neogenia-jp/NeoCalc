@@ -1,6 +1,6 @@
 using System;
 
-namespace CalcLibCore.Tomida2
+namespace CalcLibCore.Tomida2.Calc.Interpreter
 {
   /// <summary>
   /// 演算子が入力された状態を表すデータ構造

@@ -1,6 +1,6 @@
 using System;
 
-namespace CalcLibCore.Tomida2
+namespace CalcLibCore.Tomida2.Calc.Interpreter
 {
   /// <summary>
   /// CalculatorParserの使用例を示すサンプルクラス

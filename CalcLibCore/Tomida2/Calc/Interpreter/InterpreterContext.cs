@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace CalcLibCore.Tomida2
+namespace CalcLibCore.Tomida2.Calc.Interpreter
 {
   /// <summary>
   /// Interpreterパターンで使用するコンテキストクラス

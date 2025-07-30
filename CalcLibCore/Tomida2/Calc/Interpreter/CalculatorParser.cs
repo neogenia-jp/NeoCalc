@@ -1,6 +1,6 @@
 using System;
 
-namespace CalcLibCore.Tomida2
+namespace CalcLibCore.Tomida2.Calc.Interpreter
 {
   /// <summary>
   /// BNFに基づく計算機パーサー

@@ -1,7 +1,7 @@
 using System;
 using System.Text;
 
-namespace CalcLibCore.Tomida2
+namespace CalcLibCore.Tomida2.Calc.Interpreter
 {
   /// <summary>
   /// 非終端記号の基底クラス
