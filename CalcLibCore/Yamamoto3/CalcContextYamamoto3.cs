@@ -13,7 +13,11 @@ namespace CalcLib.Yamamoto3
 
 		public MainDisplayManager MainDisplayManager { get; } = new MainDisplayManager();
 
+		public SubDisplayManager SubDisplayManager { get; } = new SubDisplayManager();
+
         public override string DisplayText { get => MainDisplayManager.GetText(); set => throw new Exception("こいつを直接操作するな"); }
+
+        public override string SubDisplayText { get => SubDisplayManager.GetText(); set => throw new Exception("こいつを直接操作するな"); }
     }
 }
 

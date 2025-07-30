@@ -21,7 +21,7 @@ internal static class CalcButtonExt
             CalcButton.BtnPlus => "+",
             CalcButton.BtnMinus => "-",
             CalcButton.BtnDivide => "/",
-            CalcButton.BtnMultiple => "*",
+            CalcButton.BtnMultiple => "×",
             CalcButton.BtnDot => ".",
             _ => throw new ArgumentOutOfRangeException(nameof(btn), btn, null)
         };

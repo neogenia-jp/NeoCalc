@@ -19,8 +19,9 @@ internal class AnswerState : IState
     public void InputOperator(CalcContextYamamoto3 ctx, CalcButton btn)
     {
         // MainDisplayの内容を左辺およびSubDisplayにセット
-        ctx.LeftSide = ctx.MainDisplayManager.GetText();
-        ctx.SubDisplayText = ctx.MainDisplayManager.GetText();
+        ctx.LeftSide = ctx.MainDisplayManager.GetRawText();
+        ctx.SubDisplayManager.Append(ctx.LeftSide);
+        ctx.SubDisplayManager.Append(btn.ToDisplayString());
         ctx.State = new OperatorState();
     }
 

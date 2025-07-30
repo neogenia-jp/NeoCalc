@@ -16,8 +16,8 @@ internal class LeftSideState : IState
     {
         // subdisplayにleftを渡して、right側の入力を待つ
         ctx.Operator = btn;
-        ctx.SubDisplayText = ctx.LeftSide;
-        ctx.MainDisplayManager.Clear();
+        ctx.SubDisplayManager.Append(ctx.LeftSide);
+        ctx.SubDisplayManager.Append(ctx.Operator.Value.ToDisplayString());
         ctx.State = new OperatorState();
     }
 

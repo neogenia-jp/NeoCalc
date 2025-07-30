@@ -18,14 +18,18 @@ internal class RightSideState : IState
         if (string.IsNullOrEmpty(ctx.RightSide))
         {
             ctx.Operator = btn;
+            ctx.SubDisplayManager.ReplaceLast(btn.ToDisplayString());
             ctx.State = new OperatorState();
             return;
         }
 
+        ctx.SubDisplayManager.Append(ctx.RightSide);
+        ctx.SubDisplayManager.Append(btn.ToDisplayString());
+
         // 左側の入力とOperatorと右側の入力で計算を行い、結果を表示
         ctx.LeftSide = new Calculator(ctx.LeftSide, ctx.RightSide, ctx.Operator.Value).Run().ToString();
         ctx.RightSide = string.Empty; // RightSideはクリア
-        ctx.MainDisplayManager.Clear(); // MainDisplayはクリア
+        ctx.MainDisplayManager.Update(ctx.LeftSide);
         ctx.Operator = btn;
 
         // OperatorStateに戻る
@@ -37,6 +41,7 @@ internal class RightSideState : IState
         // TODO: DisplayTextに変更があるたびにここを変更しないといけず苦しい。クラスにするなりして変更する箇所がわかりやすいようにしたい
         // decimal型で受け取って、それをいい感じにDisplayTextに変換して入れてくれるようなやつ
         ctx.MainDisplayManager.Update(new Calculator(ctx.LeftSide, ctx.RightSide, ctx.Operator.Value).Run());
+        ctx.SubDisplayManager.Clear();
         // SubDisplayをクリア
         //ctx.SubDisplayText = string.Empty;
         ctx.State = new AnswerState();

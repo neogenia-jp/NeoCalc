@@ -14,11 +14,8 @@ internal class OperatorState : IState
 
     public void InputOperator(CalcContextYamamoto3 ctx, CalcButton btn)
     {
-        // subdisplayにleftを渡して、right側の入力を待つ
         ctx.Operator = btn;
-        ctx.SubDisplayText = ctx.LeftSide;
-        ctx.MainDisplayManager.Clear();
-        ctx.State = new RightSideState();
+        ctx.SubDisplayManager.ReplaceLast(btn.ToDisplayString());
     }
 
     public void InputEqual(CalcContextYamamoto3 ctx, CalcButton btn)

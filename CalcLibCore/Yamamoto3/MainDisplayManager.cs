@@ -14,7 +14,14 @@ public class MainDisplayManager
     public string GetText()
     {
         // カンマ付きの表示を返す
-        return _text.ToString();
+        return decimal.Parse(GetRawText()).ToString("#,0.#############");
+    }
+
+    
+    public string GetRawText()
+    {
+        // 生の表示を返す
+        return _text;
     }
 
     public void Update(decimal value)
