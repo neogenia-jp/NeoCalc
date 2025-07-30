@@ -6,7 +6,7 @@ namespace CalcLibCore.Tomida2
 {
   internal class CalcContextTomida2 : CalcContext
   {
-    private static readonly CalculatorParser parser = new CalculatorParser();
+    private static readonly CalculatorParser parser = new();
     string RowInput { get; set; } = string.Empty;
     bool IsResultDisplayed { get; set; } = false;
     
