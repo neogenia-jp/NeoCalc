@@ -153,7 +153,7 @@ namespace CalcLibCore.Tomida2.Calc.Interpreter
   }
 
   /// <summary>
-  /// &lt;exp_input_progress&gt; ::= &lt;operand&gt; | &lt;exp_input_operator&gt; &lt;operand&gt;
+  /// &lt;exp_input_progress&gt; ::= &lt;operand&gt; | &lt;operand&gt; &lt;operator&gt; &lt;operand&gt;
   /// </summary>
   public class ExpInputProgressExpression : NonTerminalExpression
   {
@@ -163,41 +163,60 @@ namespace CalcLibCore.Tomida2.Calc.Interpreter
 
       try
       {
-        // Case 1: <exp_input_operator> <operand>
-        try
+        // まず最初のオペランドを読み取る
+        var firstOperand = new OperandExpression();
+        decimal firstOperandValue = (decimal)firstOperand.Interpret(context);
+
+        // 空白をスキップ
+        context.SkipWhitespace();
+
+        // 演算子があるかチェック
+        if (!context.IsAtEnd && (context.CurrentChar == '+' || context.CurrentChar == '-' || 
+                                context.CurrentChar == '*' || context.CurrentChar == '/'))
         {
-          var expInputOp = new ExpInputOperatorExpression();
-          var operand = new OperandExpression();
+          // 演算子を読み取る
+          var operatorExpr = new OperatorExpression();
+          char operatorChar = (char)operatorExpr.Interpret(context);
 
-          var operatorInput = (OperatorInput)expInputOp.Interpret(context);
-          decimal secondOperand = (decimal)operand.Interpret(context);
+          // 空白をスキップ
+          context.SkipWhitespace();
 
+          // 2番目のオペランドがあるかチェック
+          if (!context.IsAtEnd && (char.IsDigit(context.CurrentChar) || context.CurrentChar == '.'))
+          {
+            // 2番目のオペランドを読み取る（完全な進行中入力）
+            var secondOperand = new OperandExpression();
+            decimal secondOperandValue = (decimal)secondOperand.Interpret(context);
+
+            return new ProgressInput
+            {
+              FirstOperand = firstOperandValue,
+              Operator = operatorChar,
+              SecondOperand = secondOperandValue
+            };
+          }
+          else
+          {
+            // 演算子はあるが2番目のオペランドがない場合は失敗
+            // この場合は ExpInputOperatorExpression で処理されるべき
+            throw new InvalidOperationException("Second operand expected after operator");
+          }
+        }
+        else
+        {
+          // 演算子がない場合は単一のオペランド
           return new ProgressInput
           {
-            FirstOperand = operatorInput.Operand,
-            Operator = operatorInput.Operator,
-            SecondOperand = secondOperand
+            FirstOperand = firstOperandValue,
+            Operator = null,
+            SecondOperand = null
           };
         }
-        catch (InvalidOperationException)
-        {
-          context.SetPosition(savedPosition);
-        }
-
-        // Case 2: <operand>
-        var operandExpr = new OperandExpression();
-        decimal operandValue = (decimal)operandExpr.Interpret(context);
-
-        return new ProgressInput
-        {
-          FirstOperand = operandValue,
-          Operator = null,
-          SecondOperand = null
-        };
       }
       catch (InvalidOperationException)
       {
-        throw new InvalidOperationException("Expected operand or operator input followed by operand");
+        context.SetPosition(savedPosition);
+        throw new InvalidOperationException("Expected operand or complete progress input");
       }
     }
   }
@@ -268,7 +287,7 @@ namespace CalcLibCore.Tomida2.Calc.Interpreter
 
       try
       {
-        // Case 1: <expression>
+        // Case 1: <expression> (最も具体的 - 末尾に=がある完全な式)
         try
         {
           var expression = new ExpressionExpression();
@@ -279,20 +298,20 @@ namespace CalcLibCore.Tomida2.Calc.Interpreter
           context.SetPosition(savedPosition);
         }
 
-        // Case 2: <exp_input_operator>
+        // Case 2: <exp_input_progress> (中程度 - operand + operator + operand)
         try
         {
-          var expInputOp = new ExpInputOperatorExpression();
-          return expInputOp.Interpret(context);
+          var expInputProgress = new ExpInputProgressExpression();
+          return expInputProgress.Interpret(context);
         }
         catch (InvalidOperationException)
         {
           context.SetPosition(savedPosition);
         }
 
-        // Case 3: <exp_input_progress>
-        var expInputProgress = new ExpInputProgressExpression();
-        return expInputProgress.Interpret(context);
+        // Case 3: <exp_input_operator> (最も一般的 - operand + operator)
+        var expInputOp = new ExpInputOperatorExpression();
+        return expInputOp.Interpret(context);
       }
       catch (InvalidOperationException)
       {
