@@ -2,26 +2,26 @@ namespace CalcLib.Mori
 {
     internal interface ICalcState
     {
-        ICalcState AcceptInput(CalcContextExtend ctx, CalcButton btn);
+        ICalcState AcceptInput(Calculator calc, CalcButton btn);
     }
 
     // baseクラスで状態に関係なく同じ動作のボタンの動作を定義
     internal abstract class CalcStateBase : ICalcState
     {
-        public virtual ICalcState AcceptInput(CalcContextExtend ctx, CalcButton btn)
+        public virtual ICalcState AcceptInput(Calculator calc, CalcButton btn)
         {
             if (btn.IsClear())
             {
-                ctx.Reset();
+                calc.Reset();
                 return NewNumberState.GetInstance();
             }
             else
             {
-                return AcceptInputCore(ctx, btn);
+                return AcceptInputCore(calc, btn);
             }
         }
 
-        protected abstract ICalcState AcceptInputCore(CalcContextExtend ctx, CalcButton btn);
+        protected abstract ICalcState AcceptInputCore(Calculator calc, CalcButton btn);
     }
 
     // 初期状態
@@ -31,20 +31,19 @@ namespace CalcLib.Mori
         private NewNumberState() { }
         public static ICalcState GetInstance() => singleton;
 
-        protected override ICalcState AcceptInputCore(CalcContextExtend context, CalcButton btn)
+        protected override ICalcState AcceptInputCore(Calculator calc, CalcButton btn)
         {
             if (btn.IsNumber())
             {
-                // 数値の入力し始め
-                context.StartNumber(btn);
+                calc.StartNumber(btn);
                 return  NumberState.GetInstance();
             }
             else if (btn.IsOperator())
             {
                 // 初期状態で演算子が押された場合、0を左辺として処理
-                context.StartNumber(CalcButton.Btn0);
-                context.ConfirmNumber();
-                context.ProcessOperator(btn);
+                calc.StartNumber(CalcButton.Btn0);
+                calc.ConfirmNumber();
+                calc.ProcessOperator(btn);
                 return OperatorState.GetInstance();
             }
             return this;
@@ -58,31 +57,31 @@ namespace CalcLib.Mori
         private NumberState() { }
         public static ICalcState GetInstance() => singleton;
 
-        protected override ICalcState AcceptInputCore(CalcContextExtend context, CalcButton btn)
+        protected override ICalcState AcceptInputCore(Calculator calc, CalcButton btn)
         {
             if (btn.IsNumber())
             {
-                context.AppendNumber(btn);
+                calc.AppendNumber(btn);
             }
             else if (btn.IsOperator())
             {
-                context.ConfirmNumber();
-                context.ProcessOperator(btn);
+                calc.ConfirmNumber();
+                calc.ProcessOperator(btn);
                 return OperatorState.GetInstance();
-            }
-            else if (btn.IsEqual())
-            {
-                context.ConfirmNumber();
-                context.ProcessEqual();
-                return EqualState.GetInstance();
             }
             else if (btn.IsBS())
             {
-                context.Backspace();
+                calc.Backspace();
+            }
+            else if (btn.IsEqual())
+            {
+                calc.ConfirmNumber();
+                calc.ProcessEqual();
+                return EqualState.GetInstance();
             }
             else if (btn.IsCE())
             {
-                context.ClearEntry();
+                calc.ClearEntry();
                 return NewNumberState.GetInstance();
             }
             return this;
@@ -96,27 +95,33 @@ namespace CalcLib.Mori
         private OperatorState() { }
         public static ICalcState GetInstance() => singleton;
 
-        protected override ICalcState AcceptInputCore(CalcContextExtend context, CalcButton btn)
+        protected override ICalcState AcceptInputCore(Calculator calc, CalcButton btn)
         {
             if (btn.IsNumber())
             {
-                context.StartNumber(btn);
+                calc.StartNumber(btn);
                 return NumberState.GetInstance();
             }
             else if (btn.IsOperator())
             {
-                context.ReplaceLastOperator(btn);
+                calc.ReplaceLastOperator(btn);
+                return this;
+            }
+            else if (btn.IsBS())
+            {
+                // 演算子中のBSは無視する
+                return this;
+            }
+            else if (btn.IsCE())
+            {
+                calc.ClearEntry();
+                return NewNumberState.GetInstance();
             }
             else if (btn.IsEqual())
             {
                 // 演算子状態で=ボタンが押された場合、左辺の値をそのまま結果として表示
-                context.ProcessEqual();
+                calc.ProcessEqual();
                 return EqualState.GetInstance();
-            }
-            else if (btn.IsCE())
-            {
-                context.ClearEntry();
-                return NewNumberState.GetInstance();
             }
             return this;
         }
@@ -129,27 +134,27 @@ namespace CalcLib.Mori
         private EqualState() { }
         public static ICalcState GetInstance() => singleton;
 
-        protected override ICalcState AcceptInputCore(CalcContextExtend context, CalcButton btn)
+        protected override ICalcState AcceptInputCore(Calculator calc, CalcButton btn)
         {
             if (btn.IsNumber())
             {
-                context.Reset();
-                context.StartNumber(btn);
+                calc.Reset();
+                calc.StartNumber(btn);
                 return NumberState.GetInstance();
             }
             else if (btn.IsOperator())
             {
                 // 演算子を押した場合、結果を左辺として新しい計算を開始する
-                context.StartResultAsLeftOperand();
-                context.ProcessOperator(btn);
+                calc.StartResultAsLeftOperand();
+                calc.ProcessOperator(btn);
                 return OperatorState.GetInstance();
             }
             else if (btn.IsEqual())
             {
                 // 結果表示状態で=ボタンが押された場合、前回の計算を繰り返し
-                context.ProcessEqual();
+                calc.ProcessEqual();
             }
             return this;
         }
     }
-} 
+}

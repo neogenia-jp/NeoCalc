@@ -1,19 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Diagnostics;
 using CalcLib.Mori;
 
 namespace CalcLib
 {
     internal class CalcSvcMori : ICalcSvc
     {
-
-        // 電卓の表示部
         public virtual ICalcContext CreateContext() => new CalcContextExtend();
-
 
         public virtual void OnButtonClick(ICalcContext ctx0, CalcButton btn)
         {
@@ -24,9 +16,6 @@ namespace CalcLib
             }
             var cmd = ButtonCommandFactory.Create(btn);
             cmd.Execute(ctx);
-
-            // // 表示部と入力を処理
-            // ctx.Accept(btn);
         }
     }
 }

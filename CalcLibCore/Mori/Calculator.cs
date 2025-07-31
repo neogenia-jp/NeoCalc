@@ -1,85 +1,108 @@
 using System.Text.RegularExpressions;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
 namespace CalcLib.Mori
 {
-    internal class CalcContextExtend : CalcContext
+    // 計算機処理の中心になるクラス 旧CalcContext
+    internal class Calculator : ISubject
     {
-        string _buffer = ""; // 数値入力時に詰めていくバッファ
-        readonly Stack<ICalculable> _valueStack = new(); // 数値のスタック
-        readonly Stack<CalcButton> _operatorStack = new(); // 演算子のスタック
-        private readonly List<string> _displayHistory = new(); // ディスプレイ表示用の履歴
-        ICalcState _state = NewNumberState.GetInstance();
+        internal string Buffer { get; private set; } = ""; // 数値入力時に詰めていくバッファ
+        internal IReadOnlyList<string> DisplayHistory => _displayHistory; // ディスプレイ表示用の履歴
+        internal ICalcState State { get; private set; } = NewNumberState.GetInstance();
         
+        private readonly Stack<ICalculable> _valueStack = new(); // 数値のスタック
+        private readonly Stack<CalcButton> _operatorStack = new(); // 演算子のスタック
+        private readonly List<string> _displayHistory = new();
+
         // イコール連続実行用の記憶
         private CalcButton? _lastOperator = null;
         private decimal? _lastRightOperand = null;
+        
+        private readonly List<IObserver> _observers = new();
 
-        // サブ表示部のテキストを更新する
-        private void UpdateSubDisplayText()
+        // サブジェクト用 オブザーバー登録
+        public void Attach(IObserver observer)
         {
-            SubDisplayText = string.Join(" ", _displayHistory);
+            if (!_observers.Contains(observer))
+            {
+                _observers.Add(observer);
+            }
         }
 
-        // ButtonCommand から呼ばれるメソッド
+        // サブジェクト用 オブザーバー解除
+        public void Detach(IObserver observer)
+        {
+            _observers.Remove(observer);
+        }
+
+        // サブジェクト用 通知
+        public void Notify()
+        {
+            foreach (var observer in _observers)
+            {
+                observer.Update(this);
+            }
+        }
+
+        // 起点のメソッド
         public void Accept(CalcButton btn)
         {
-            _state = _state.AcceptInput(this, btn);
-            UpdateSubDisplayText();
+            State = State.AcceptInput(this, btn);
+            Notify(); // 表示部更新
         }
 
-        // 最初の数値 .の入力を受け付ける
+        // 計算系の処理
         internal void StartNumber(CalcButton btn)
         {
-            _buffer = (btn == CalcButton.BtnDot) ? "0." : btn.ToNumberString();
-            RefreshDisplay();
+            Buffer = (btn == CalcButton.BtnDot) ? "0." : btn.ToNumberString();
             ClearLastOperation();
+            Notify(); // 表示部更新
         }
 
-        // 数値入力状態で足していく
         internal void AppendNumber(CalcButton btn)
         {
-            if (btn == CalcButton.BtnDot && _buffer.Contains('.')) return;
-            _buffer += btn.ToNumberString();
-            RefreshDisplay();
+            if (btn == CalcButton.BtnDot && Buffer.Contains('.')) return;
+            Buffer += btn.ToNumberString();
+            Notify(); // 表示部更新
         }
 
-        // 数値を確定する
         internal void ConfirmNumber()
         {
-            if (string.IsNullOrEmpty(_buffer)) return;
-            _displayHistory.Add(_buffer);
-            if (decimal.TryParse(_buffer, out var num))
+            if (string.IsNullOrEmpty(Buffer)) return;
+            _displayHistory.Add(Buffer);
+            if (decimal.TryParse(Buffer, out var num))
             {
                 _valueStack.Push(new ValueNode(num));
             }
-            _buffer = "";
         }
 
-        // 演算子を処理する
+        // 演算子の処理
         internal void ProcessOperator(CalcButton op)
         {
             _displayHistory.Add(op.ToOperatorString());
             FixPending();
             _operatorStack.Push(op);
             ClearLastOperation();
+            Notify(); // 表示部更新
         }
-        
-        // 直前の演算子を置き換える　連続押し対応
+
+        // 最後の演算子を置き換える
         internal void ReplaceLastOperator(CalcButton op)
         {
             if (_displayHistory.Any())
             {
-                // 表示用入れ替え
                 _displayHistory[_displayHistory.Count - 1] = op.ToOperatorString();
             }
             if (_operatorStack.Any())
             {
-                // 演算子スタックを入れ替え
                 _operatorStack.Pop();
                 _operatorStack.Push(op);
             }
+            Notify(); // 表示部更新
         }
 
-        // イコールを押した時の処理
         internal void ProcessEqual()
         {
             if (_displayHistory.LastOrDefault() != "=")
@@ -87,18 +110,14 @@ namespace CalcLib.Mori
                 _displayHistory.Add("=");
             }
             
-            // 初回のイコール処理
             if (_lastOperator == null && _operatorStack.Count > 0 && _valueStack.Count >= 2)
             {
-                // 前回の演算子と右辺を記憶
                 _lastOperator = _operatorStack.Peek();
                 _lastRightOperand = _valueStack.Peek().Evaluate();
             }
             
-            // 連続イコール処理
             if (_lastOperator != null && _lastRightOperand != null && _valueStack.Count == 1)
             {
-                // 前回の演算子と右辺で計算を繰り返し
                 var currentValue = _valueStack.Peek().Evaluate();
                 ICalculable node = _lastOperator switch
                 {
@@ -109,21 +128,19 @@ namespace CalcLib.Mori
                     _ => new ValueNode(currentValue)
                 };
                 var result = node.Evaluate();
-                DisplayText = result.ToString("0.#############");
-                _buffer = result.ToString();
+                Buffer = result.ToString();
                 _valueStack.Clear();
                 _valueStack.Push(new ValueNode(result));
                 
-                // サブディスプレイに連続計算式を表示
                 _displayHistory.Clear();
                 _displayHistory.Add(currentValue.ToString("0.#############"));
                 _displayHistory.Add(_lastOperator.Value.ToOperatorString());
                 _displayHistory.Add(_lastRightOperand.Value.ToString("0.#############"));
                 _displayHistory.Add("=");
+                Notify(); // 表示部更新
                 return;
             }
             
-            // 通常の計算処理
             FixPending();
             while (_operatorStack.Count > 0 && _valueStack.Count >= 2)
             {
@@ -131,76 +148,72 @@ namespace CalcLib.Mori
             }
             if (_valueStack.TryPop(out var root))
             {
-                var res = root.Evaluate();
-                DisplayText = res.ToString("0.#############");
-                _buffer = res.ToString();
+                var res = Math.Round(root.Evaluate(), 13);
+                Buffer = res.ToString();
+
                 _operatorStack.Clear();
                 _valueStack.Clear();
                 _valueStack.Push(new ValueNode(res));
                 _displayHistory.Clear();
             }
+            Notify(); // 表示部更新
         }
 
-        // 結果を左辺として新しい計算を開始する
         internal void StartResultAsLeftOperand()
         {
             _displayHistory.Clear();
-            _displayHistory.Add(_buffer);
+            _displayHistory.Add(Buffer);
         }
 
         internal void Backspace()
         {
-            if (_buffer.Length > 0)
+            if (Buffer.Length > 0)
             {
-                _buffer = _buffer[..^1]; // C# 8.0 以降の構文, _buffer.Substring(0, _buffer.Length - 1)相当
+                Buffer = Buffer[..^1];
             }
-            if (_buffer.Length == 0)
+            if (Buffer.Length == 0)
             {
-                _buffer = "0";
+                Buffer = "0";
             }
-            RefreshDisplay();
+            Notify(); // 表示部更新
         }
 
         internal void ClearEntry()
         {
-            _buffer = "0";
-            DisplayText = "0";
+            Buffer = "0";
+            Notify(); // 表示部更新
         }
 
         internal void Reset()
         {
-            DisplayText = "0";
             _displayHistory.Clear();
-            _buffer = "";
+            Buffer = "";
             _valueStack.Clear();
             _operatorStack.Clear();
             ClearLastOperation();
+            State = NewNumberState.GetInstance();
+            Notify(); // 表示部更新
         }
         
-        // イコール連続実行用の記憶をクリア
         private void ClearLastOperation()
         {
             _lastOperator = null;
             _lastRightOperand = null;
         }
 
-        // 未計算の演算子を解消する
         private void FixPending()
         {
-            // 演算子と数値が足りない場合は何もしない
             if (_operatorStack.Count < 1 || _valueStack.Count < 2) return;
             CreateExpressionNode();
             var node = _valueStack.Peek();
             var result = node.Evaluate();
             _valueStack.Pop();
             _valueStack.Push(new ValueNode(result));
-            DisplayText = result.ToString("0.#############");
+            Buffer = result.ToString(); // 中途式の処理はバッファも更新する
         }
 
-        // 演算子と数値を組み合わせて計算式を作成する
         private void CreateExpressionNode()
         {
-            // 演算子と数値が足りない場合は何もしない
             if (_operatorStack.Count == 0 || _valueStack.Count < 2) return;
 
             var op = _operatorStack.Pop();
@@ -218,32 +231,5 @@ namespace CalcLib.Mori
 
             _valueStack.Push(node);
         }
-        private void RefreshDisplay()
-        {
-            if (string.IsNullOrEmpty(_buffer))
-            {
-                DisplayText = "0";
-                return;
-            }
-
-            // マイナス符号は分離
-            var isMinus = _buffer.StartsWith("-");
-            var num     = isMinus ? _buffer[1..] : _buffer;
-
-            // 小数点で分離
-            var leftPart    = num.Split('.', 2);
-            var rightPart  = leftPart[0];
-            var fracPart = leftPart.Length > 1 ? "." + leftPart[1] : "";
-
-            // 整数部に千区切りカンマを挿入
-            var withComma = Regex.Replace(
-                rightPart,
-                "(?<=\\d)(?=(\\d{3})+$)",   // 右側から3桁ごとに
-                ",");
-
-            DisplayText = (isMinus ? "-" : "") + withComma + fracPart;
-        }
     }
-
-
 }
