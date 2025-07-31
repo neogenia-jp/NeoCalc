@@ -38,12 +38,8 @@ internal class RightSideState : IState
 
     public void InputEqual(CalcContextYamamoto3 ctx, CalcButton btn)
     {
-        // TODO: DisplayTextに変更があるたびにここを変更しないといけず苦しい。クラスにするなりして変更する箇所がわかりやすいようにしたい
-        // decimal型で受け取って、それをいい感じにDisplayTextに変換して入れてくれるようなやつ
         ctx.MainDisplayManager.Update(new Calculator(ctx.LeftSide, ctx.RightSide, ctx.Operator.Value).Run());
         ctx.SubDisplayManager.Clear();
-        // SubDisplayをクリア
-        //ctx.SubDisplayText = string.Empty;
         ctx.State = new AnswerState();
     }
 }

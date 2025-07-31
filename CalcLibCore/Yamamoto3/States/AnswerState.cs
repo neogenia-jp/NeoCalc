@@ -19,6 +19,8 @@ internal class AnswerState : IState
     public void InputOperator(CalcContextYamamoto3 ctx, CalcButton btn)
     {
         // MainDisplayの内容を左辺およびSubDisplayにセット
+        // サブディスプレイはカンマ付きだとダメだからGetRawTextというメソッド追加してカンマなしのものを
+        // 設定するようにしたけど、これを意識しないといけないのが苦しい・・・
         ctx.LeftSide = ctx.MainDisplayManager.GetRawText();
         ctx.SubDisplayManager.Append(ctx.LeftSide);
         ctx.SubDisplayManager.Append(btn.ToDisplayString());
