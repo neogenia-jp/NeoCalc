@@ -76,6 +76,15 @@ namespace CalcLib.Mori
         }
     }
 
+    internal class OmikujiButtonCommand : IButtonCommand
+    {
+        public void Execute(ICalcContext ctx)
+        {
+            var context = (CalcContextExtend)ctx;
+            context.Accept(CalcButton.BtnExt1);
+        }
+    }
+
     // ボタンコマンドファクトリ
     // 各ボタンに対応するコマンドを生成する
     internal static class ButtonCommandFactory
@@ -103,7 +112,7 @@ namespace CalcLib.Mori
             CalcButton.BtnClear => new ClearButtonCommand(),
             CalcButton.BtnClearEnd => new ClearEntryButtonCommand(),
             CalcButton.BtnBS => new BackspaceButtonCommand(),
-
+            CalcButton.BtnExt1 => new OmikujiButtonCommand(),
             _ => throw new System.ArgumentOutOfRangeException(nameof(btn))
         };
     }

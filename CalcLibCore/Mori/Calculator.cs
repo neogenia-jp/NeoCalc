@@ -20,8 +20,8 @@ namespace CalcLib.Mori
         private CalcButton? _lastOperator = null;
         private decimal? _lastRightOperand = null;
         
-        // 結果のテキストをタプルで返す
-        internal DisplaySource ToDisplay()
+        // 表示用のテキストとモードを返す
+        internal DisplaySource RowDisplay()
         {
             var mode = State switch
             {

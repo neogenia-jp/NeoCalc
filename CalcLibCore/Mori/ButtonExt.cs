@@ -48,6 +48,8 @@ namespace CalcLib.Mori
 
         internal static bool IsCE(this CalcButton btn) => btn == CalcButton.BtnClearEnd;
 
+        internal static bool IsOmikuji(this CalcButton btn) => btn == CalcButton.BtnExt1;
+
         internal static bool IsBetween(this CalcButton btn, CalcButton start, CalcButton end) => start <= btn && btn <= end;
 
     }
