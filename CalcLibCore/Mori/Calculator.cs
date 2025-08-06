@@ -6,7 +6,7 @@ using System.Linq;
 namespace CalcLib.Mori
 {
     // 計算機処理の中心になるクラス 旧CalcContext
-    internal class Calculator : ISubject
+    internal class Calculator
     {
         internal string Buffer { get; private set; } = ""; // 数値入力時に詰めていくバッファ
         internal IReadOnlyList<string> DisplayHistory => _displayHistory; // ディスプレイ表示用の履歴
@@ -20,37 +20,21 @@ namespace CalcLib.Mori
         private CalcButton? _lastOperator = null;
         private decimal? _lastRightOperand = null;
         
-        private readonly List<IObserver> _observers = new();
-
-        // サブジェクト用 オブザーバー登録
-        public void Attach(IObserver observer)
+        // 結果のテキストをタプルで返す
+        internal DisplaySource ToDisplay()
         {
-            if (!_observers.Contains(observer))
+            var mode = State switch
             {
-                _observers.Add(observer);
-            }
-        }
-
-        // サブジェクト用 オブザーバー解除
-        public void Detach(IObserver observer)
-        {
-            _observers.Remove(observer);
-        }
-
-        // サブジェクト用 通知
-        public void Notify()
-        {
-            foreach (var observer in _observers)
-            {
-                observer.Update(this);
-            }
+                NumberState => UIMode.CalcInputting,
+                _ => UIMode.CalcDefault
+            };
+            return new DisplaySource(Buffer, string.Join(" ", _displayHistory), mode);
         }
 
         // 起点のメソッド
         public void Accept(CalcButton btn)
         {
             State = State.AcceptInput(this, btn);
-            Notify(); // 表示部更新
         }
 
         // 計算系の処理
@@ -58,14 +42,12 @@ namespace CalcLib.Mori
         {
             Buffer = (btn == CalcButton.BtnDot) ? "0." : btn.ToNumberString();
             ClearLastOperation();
-            Notify(); // 表示部更新
         }
 
         internal void AppendNumber(CalcButton btn)
         {
             if (btn == CalcButton.BtnDot && Buffer.Contains('.')) return;
             Buffer += btn.ToNumberString();
-            Notify(); // 表示部更新
         }
 
         internal void ConfirmNumber()
@@ -85,7 +67,6 @@ namespace CalcLib.Mori
             FixPending();
             _operatorStack.Push(op);
             ClearLastOperation();
-            Notify(); // 表示部更新
         }
 
         // 最後の演算子を置き換える
@@ -100,7 +81,6 @@ namespace CalcLib.Mori
                 _operatorStack.Pop();
                 _operatorStack.Push(op);
             }
-            Notify(); // 表示部更新
         }
 
         internal void ProcessEqual()
@@ -137,7 +117,6 @@ namespace CalcLib.Mori
                 _displayHistory.Add(_lastOperator.Value.ToOperatorString());
                 _displayHistory.Add(_lastRightOperand.Value.ToString("0.#############"));
                 _displayHistory.Add("=");
-                Notify(); // 表示部更新
                 return;
             }
             
@@ -156,7 +135,6 @@ namespace CalcLib.Mori
                 _valueStack.Push(new ValueNode(res));
                 _displayHistory.Clear();
             }
-            Notify(); // 表示部更新
         }
 
         internal void StartResultAsLeftOperand()
@@ -175,13 +153,11 @@ namespace CalcLib.Mori
             {
                 Buffer = "0";
             }
-            Notify(); // 表示部更新
         }
 
         internal void ClearEntry()
         {
             Buffer = "0";
-            Notify(); // 表示部更新
         }
 
         internal void Reset()
@@ -192,7 +168,6 @@ namespace CalcLib.Mori
             _operatorStack.Clear();
             ClearLastOperation();
             State = NewNumberState.GetInstance();
-            Notify(); // 表示部更新
         }
         
         private void ClearLastOperation()
