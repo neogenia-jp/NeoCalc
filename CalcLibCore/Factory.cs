@@ -13,6 +13,9 @@ namespace CalcLib
 
         public static ICalcSvc CreateService()
         {
+            // 面倒なので直接指定
+            return new CalcLibCore.Tomida2.CalcSvcTomida2();
+            /*
             // 環境変数「CalcSvcClass」よりクラス名を決定する
             var clsName = Environment.GetEnvironmentVariable("CalcSvcClass");
             if (string.IsNullOrWhiteSpace(clsName))
@@ -22,6 +25,7 @@ namespace CalcLib
 
             var obj = Activator.CreateInstance(Assembly.GetExecutingAssembly().GetTypes().First(x=>x.Name == clsName));
             return obj as ICalcSvc;
+            */
         }
     }
 
