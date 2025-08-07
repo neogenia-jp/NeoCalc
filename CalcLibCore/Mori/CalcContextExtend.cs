@@ -4,13 +4,12 @@ namespace CalcLib.Mori
     {
         // 電卓とそれ以外のモードを切り替えるState
         private IModeState _mode = CalcMode.GetInstance();
-        // private readonly DisplayObserver _displayObserver;
         private readonly List<IObserver> _observers = new();
         public DisplaySource DisplaySource => _mode.RowDisplay();
         public CalcContextExtend()
         {
-            // _displayObserver = new DisplayObserver(this);
-            // Attach(_displayObserver);
+            // 初期状態で電卓をクリア動作させる
+            _mode = _mode.Accept(this, CalcButton.BtnClear);
             // 初期状態を反映
             Notify();
         }

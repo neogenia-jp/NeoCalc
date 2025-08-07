@@ -81,7 +81,7 @@ namespace CalcLib.Mori
         public void Execute(ICalcContext ctx)
         {
             var context = (CalcContextExtend)ctx;
-            context.Accept(CalcButton.BtnExt1);
+            context.Accept(CalcButton.BtnExt2);
         }
     }
 
@@ -112,7 +112,8 @@ namespace CalcLib.Mori
             CalcButton.BtnClear => new ClearButtonCommand(),
             CalcButton.BtnClearEnd => new ClearEntryButtonCommand(),
             CalcButton.BtnBS => new BackspaceButtonCommand(),
-            CalcButton.BtnExt1 => new OmikujiButtonCommand(),
+            // CalcButton.BtnExt1 => new OmikujiButtonCommand(),
+            CalcButton.BtnExt2 => new OmikujiButtonCommand(),
             _ => throw new System.ArgumentOutOfRangeException(nameof(btn))
         };
     }
