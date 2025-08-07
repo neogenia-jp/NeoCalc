@@ -1,7 +1,7 @@
 namespace CalcLib.Mori
 {   
     // 表示モードのクラス
-    public enum UIMode { CalcDefault, CalcInputting, Omikuji }
+    public enum UIMode { CalcDefault, CalcInputting, Omikuji, OmikujiEnd }
     public class DisplaySource
     {
         public string MainText { get; }

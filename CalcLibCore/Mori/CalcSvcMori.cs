@@ -16,7 +16,6 @@ namespace CalcLib
         {
             return num switch
             {
-                1 => "ex1",
                 2 => "omikuji",
                 _ => null
             };

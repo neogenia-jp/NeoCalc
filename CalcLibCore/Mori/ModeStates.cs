@@ -36,15 +36,21 @@ internal class OmikujiState : IModeState
     private readonly Omikuji _omikuji = new();
     private static readonly IModeState singleton = new OmikujiState();
     private OmikujiState() { }
-    public static IModeState GetInstance() => singleton;
+    public static IModeState GetInstance() 
+    {
+        // 暫定初期化
+        var instance = (OmikujiState)singleton;
+        instance._omikuji.Init();
+        return singleton;
+    }
 
     public IModeState Accept(CalcContextExtend context, CalcButton btn)
     {
-        if (btn.IsClear() || btn.IsCE())
+        if (_omikuji.Accept(context, btn))
         {
             return CalcMode.GetInstance();
         }
-        _omikuji.Accept(context, btn);
+        
         return this;
     }
 
