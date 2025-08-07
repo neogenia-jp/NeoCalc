@@ -3,9 +3,23 @@ using CalcLib.Mori;
 
 namespace CalcLib
 {
-    internal class CalcSvcMori : ICalcSvc
+    internal class CalcSvcMori : ICalcSvcEx
     {
-        public virtual ICalcContext CreateContext() => new CalcContextExtend();
+        public virtual ICalcContext CreateContext()
+        {
+            var ctx = new CalcContextExtend();
+            ctx.Attach(new DisplayObserver(ctx));
+            return ctx;
+        }
+
+        public string GetExtButtonText(int num)
+        {
+            return num switch
+            {
+                2 => "omikuji",
+                _ => null
+            };
+        }
 
         public virtual void OnButtonClick(ICalcContext ctx0, CalcButton btn)
         {
