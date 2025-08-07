@@ -1,12 +1,14 @@
 using CalcLib;
 using CalcLibCore.Tomida2.Calc.Interpreter;
 using CalcLibCore.Tomida2.Calc.Strategy;
+using CalcLibCore.Tomida2.Calc.implements;
 
 namespace CalcLibCore.Tomida2
 {
   internal class CalcContextTomida2 : CalcContext
   {
     private static readonly CalculatorParser parser = new();
+    private static readonly DisplayTextImpl displayTextImpl = new();
     string RowInput { get; set; } = string.Empty;
     bool IsResultDisplayed { get; set; } = false;
     
@@ -22,29 +24,8 @@ namespace CalcLibCore.Tomida2
     { 
       get 
       {
-        // 結果表示中はそのまま返す
-        if (IsResultDisplayed)
-        {
-          return RowInput;
-        }
-        
-        try 
-        {
-          var result = ParseResult.Evaluate();
-          // 小数点以下の桁数を制限（13桁）
-          if (result != Math.Floor(result))
-          {
-            return Math.Round(result, 13).ToString();
-          }
-          return result.ToString();
-        }
-        catch 
-        {
-          // パーサーエラーが発生した場合は、現在の入力をそのまま表示
-          return RowInput;
-        }
+        return displayTextImpl.ToDisplay(RowInput, IsResultDisplayed, ParseResult);
       }
-      set => base.DisplayText = value; 
     }
 
     /// <summary>
