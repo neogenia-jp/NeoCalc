@@ -2,6 +2,7 @@ using CalcLib;
 using CalcLibCore.Tomida2.Calc.Interpreter;
 using CalcLibCore.Tomida2.Calc.Strategy;
 using CalcLibCore.Tomida2.Calc.implements;
+using CalcLibCore.Tomida2.Calc.Memento;
 
 namespace CalcLibCore.Tomida2
 {
@@ -9,6 +10,7 @@ namespace CalcLibCore.Tomida2
   {
     private static readonly CalculatorParser parser = new();
     private static readonly DisplayTextImpl displayTextImpl = new();
+    private readonly CalcContextCaretaker _caretaker = new();
     string RowInput { get; set; } = string.Empty;
     bool IsResultDisplayed { get; set; } = false;
     
@@ -101,6 +103,43 @@ namespace CalcLibCore.Tomida2
       {
         throw new System.NotSupportedException($"Button {button} is not supported");
       }
+    }
+
+    /// <summary>
+    /// 現在の状態をMementoとして保存します
+    /// </summary>
+    public void SaveState()
+    {
+      var memento = new CalcContextMemento(RowInput, IsResultDisplayed);
+      _caretaker.SaveMemento(memento);
+    }
+
+    /// <summary>
+    /// 最後に保存された状態に戻します（Undo）
+    /// </summary>
+    /// <returns>Undo実行できた場合はtrue</returns>
+    public bool Undo()
+    {
+      var memento = _caretaker.GetLastMemento();
+      if (memento == null)
+        return false;
+
+      RowInput = memento.RowInput;
+      IsResultDisplayed = memento.IsResultDisplayed;
+      return true;
+    }
+
+    /// <summary>
+    /// Undo可能かどうかを確認します
+    /// </summary>
+    public bool CanUndo => _caretaker.CanUndo;
+
+    /// <summary>
+    /// 履歴をクリアします
+    /// </summary>
+    public void ClearHistory()
+    {
+      _caretaker.ClearHistory();
     }
   }
 }

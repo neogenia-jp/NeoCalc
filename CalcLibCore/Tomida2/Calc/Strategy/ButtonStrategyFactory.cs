@@ -34,7 +34,10 @@ namespace CalcLibCore.Tomida2.Calc.Strategy
                 { CalcButton.BtnPlus, new OperatorButtonStrategy('+') },
                 { CalcButton.BtnMinus, new OperatorButtonStrategy('-') },
                 { CalcButton.BtnDivide, new OperatorButtonStrategy('/') },
-                { CalcButton.BtnMultiple, new OperatorButtonStrategy('*') }
+                { CalcButton.BtnMultiple, new OperatorButtonStrategy('*') },
+                
+                // Backspace（Undo）
+                { CalcButton.BtnBS, new BackspaceButtonStrategy() }
             };
 
         /// <summary>

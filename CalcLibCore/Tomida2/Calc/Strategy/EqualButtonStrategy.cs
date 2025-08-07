@@ -10,6 +10,9 @@ namespace CalcLibCore.Tomida2.Calc.Strategy
     {
         void IButtonStrategy.OnButtonClick(CalcContextTomida2 ctx, CalcButton btn)
         {
+            // 操作前の状態を保存（Undo用）
+            ctx.SaveState();
+            
             // 現在の入力があるかチェック
             var currentInput = ctx.GetCurrentInput();
             if (string.IsNullOrEmpty(currentInput))
