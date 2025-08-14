@@ -1,21 +1,53 @@
 namespace CalcLib.Mori
 {
-    internal class CalcContextExtend : CalcContext
+    internal class CalcContextExtend : CalcContext, ISubject
     {
-        private readonly Calculator _calculator = new();
-        private readonly DisplayObserver _displayObserver;
-
+        // 電卓とそれ以外のモードを切り替えるState
+        private IModeState _mode = CalcMode.GetInstance();
+        private readonly List<IObserver> _observers = new();
+        public DisplaySource DisplaySource => _mode.RowDisplay();
         public CalcContextExtend()
         {
-            _displayObserver = new DisplayObserver(this);
-            _calculator.Attach(_displayObserver);
+            // 初期状態で電卓をクリア動作させる
+            _mode = _mode.Accept(this, CalcButton.BtnClear).Next;
             // 初期状態を反映
-            _calculator.Notify();
+            Notify();
+        }
+
+        // サブジェクト用 オブザーバー登録
+        public void Attach(IObserver observer)
+        {
+            if (!_observers.Contains(observer)) 
+            {
+                _observers.Add(observer);
+            }
+        }
+
+        // サブジェクト用 オブザーバー解除
+        public void Detach(IObserver observer)
+        {
+            _observers.Remove(observer);
+        }
+
+        // サブジェクト用 通知
+        public void Notify()
+        {
+            foreach (var observer in _observers)
+            {
+                observer.Update(this);
+            }
         }
 
         public void Accept(CalcButton btn)
         {
-            _calculator.Accept(btn);
+            ModeResult result = _mode.Accept(this, btn);
+            _mode = result.Next;
+			if (result.ForwardButton.HasValue)
+			{
+                result = _mode.Accept(this, result.ForwardButton.Value);
+				_mode = result.Next;
+			}
+            Notify();
         }
     }
 }

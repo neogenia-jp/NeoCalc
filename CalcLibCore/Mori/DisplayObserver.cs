@@ -29,10 +29,10 @@ namespace CalcLib.Mori
 
         public void Update(ISubject subject)
         {
-            if (subject is Calculator calculator)
+            if (subject is CalcContextExtend context)
             {
-                UpdateMainDisplay(calculator);
-                UpdateSubDisplay(calculator);
+                UpdateMainDisplay();
+                UpdateSubDisplay();
             }
         }
 
@@ -45,14 +45,17 @@ namespace CalcLib.Mori
             return value;
         }
 
-        private void UpdateMainDisplay(Calculator calculator)
+        private void UpdateMainDisplay()
         {
+            var source = _context.DisplaySource;
+            var buffer = source.MainText;
+            var mode = source.Mode;
+
             // 計算中のバッファを表示用にフォーマットする
-            var buffer = calculator.Buffer;
             if (string.IsNullOrEmpty(buffer)) { _context.DisplayText = "0"; return; }
 
             // 計算確定後は、バッファをそのまま表示する
-            if (calculator.State is not NumberState)
+            if (mode is UIMode.CalcDefault)
             {
                 _context.DisplayText = TryFormatNumber(buffer);
                 return;
@@ -101,11 +104,11 @@ namespace CalcLib.Mori
         }
 
 
-        private void UpdateSubDisplay(Calculator calculator)
+        private void UpdateSubDisplay()
         {
             // TODO: 3項以降の表示は削るよう整形したい
             // var formattedHistory = calculator.DisplayHistory.Select(FormatIfNumber);
-            _context.SubDisplayText = string.Join(" ", calculator.DisplayHistory);
+            _context.SubDisplayText = _context.DisplaySource.SubText;
         }
     }
 }
