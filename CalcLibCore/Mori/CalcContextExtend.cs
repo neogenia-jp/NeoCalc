@@ -9,7 +9,7 @@ namespace CalcLib.Mori
         public CalcContextExtend()
         {
             // 初期状態で電卓をクリア動作させる
-            _mode = _mode.Accept(this, CalcButton.BtnClear);
+            _mode = _mode.Accept(this, CalcButton.BtnClear).Next;
             // 初期状態を反映
             Notify();
         }
@@ -40,8 +40,13 @@ namespace CalcLib.Mori
 
         public void Accept(CalcButton btn)
         {
-            // モードの切り替えStateに委譲
-            _mode = _mode.Accept(this, btn);
+            ModeResult result = _mode.Accept(this, btn);
+            _mode = result.Next;
+			if (result.ForwardButton.HasValue)
+			{
+                result = _mode.Accept(this, result.ForwardButton.Value);
+				_mode = result.Next;
+			}
             Notify();
         }
     }
