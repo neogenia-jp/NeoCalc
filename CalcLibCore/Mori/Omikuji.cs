@@ -18,7 +18,7 @@ namespace CalcLib.Mori
         /// <param name="context">電卓コンテキスト</param>
         /// <param name="btn">ボタン</param>
         /// <returns>モードを終了時 true、継続する場合は false</returns>
-        public bool Accept(CalcContextExtend context, CalcButton btn)
+        public bool Accept(CalcButton btn)
         {
             if (btn.IsClear() || btn.IsCE() || btn.IsOmikuji()) return Exit();
             if (HasSelected) return Exit();

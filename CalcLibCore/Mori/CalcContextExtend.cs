@@ -3,15 +3,22 @@ namespace CalcLib.Mori
     internal class CalcContextExtend : CalcContext, ISubject
     {
         // 電卓とそれ以外のモードを切り替えるState
-        private IModeState _mode = CalcMode.GetInstance();
+        private readonly Dictionary<string, IModeState> _modes;
+        private string _modeKey = "calc";
+        private IModeState Mode => _modes[_modeKey];
         private readonly List<IObserver> _observers = new();
-        public DisplaySource DisplaySource => _mode.RowDisplay();
+        public DisplaySource DisplaySource => Mode.RowDisplay();
         public CalcContextExtend()
         {
-            // 初期状態で電卓をクリア動作させる
-            _mode = _mode.Accept(this, CalcButton.BtnClear).Next;
-            // 初期状態を反映
-            Notify();
+            // モードの初期化
+            _modes = new()
+            {
+                ["calc"] = new CalcMode(),
+                ["omikuji"] = new OmikujiState()
+            };
+
+            // 初期状態で電卓をクリア動作させる 直接Acceptを呼ぶ
+            Accept(CalcButton.BtnClear);
         }
 
         // サブジェクト用 オブザーバー登録
@@ -40,12 +47,21 @@ namespace CalcLib.Mori
 
         public void Accept(CalcButton btn)
         {
-            ModeResult result = _mode.Accept(this, btn);
-            _mode = result.Next;
+            // モード切り替えボタンここで処理する
+            if (btn.IsOmikuji())
+            {
+                _modeKey = "omikuji";
+                Notify();
+                return;
+            }
+
+            ModeResult result = Mode.Accept(btn);
+            if (result.NextKey != null) _modeKey = result.NextKey;
+
 			if (result.ForwardButton.HasValue)
 			{
-                result = _mode.Accept(this, result.ForwardButton.Value);
-				_mode = result.Next;
+                result = Mode.Accept(result.ForwardButton.Value);
+				if (result.NextKey != null) _modeKey = result.NextKey;
 			}
             Notify();
         }

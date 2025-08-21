@@ -4,23 +4,24 @@ namespace CalcLib.Mori
 {
     internal class ModeResult
     {
-        public IModeState? Next { get; }
+        // 暫定 型ではなく文字列でモードを指定
+        public string? NextKey { get; }
         public CalcButton? ForwardButton { get; }
 
-        private ModeResult(IModeState? next, CalcButton? forwardButton)
+        private ModeResult(string? next, CalcButton? forwardButton)
         {
-            Next = next;
+            NextKey = next;
             ForwardButton = forwardButton;
         }
 
-        public static ModeResult Continue(IModeState state)
+        public static ModeResult Continue()
         {
-            return new(state, null);
+            return new(null, null);
         }
 
-        public static ModeResult SwitchMode(IModeState? next, CalcButton? forwardButton = null)
+        public static ModeResult SwitchMode(string key, CalcButton? forwardButton = null)
         {
-            return new(next, forwardButton);
+            return new(key, forwardButton);
         }
     }
 }
