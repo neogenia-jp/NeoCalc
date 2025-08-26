@@ -10,6 +10,7 @@ namespace CalcLibCore.Tomida2
   {
     private static readonly CalculatorParser parser = new();
     private static readonly DisplayTextImpl displayTextImpl = new();
+    private static readonly SubDisplayTextImpl subDisplayTextImpl = new();
     private readonly CalcContextCaretaker _caretaker = new();
     string RowInput { get; set; } = string.Empty;
     bool IsResultDisplayed { get; set; } = false;
@@ -43,6 +44,14 @@ namespace CalcLibCore.Tomida2
       get 
       {
         return displayTextImpl.ToDisplay(RowInput, IsResultDisplayed, ParseResult);
+      }
+    }
+
+    public override string SubDisplayText 
+    { 
+      get 
+      {
+        return subDisplayTextImpl.ToDisplay(RowInput, IsResultDisplayed, ParseResult);
       }
     }
 
