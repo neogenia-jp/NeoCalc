@@ -23,6 +23,12 @@ namespace CalcLibCore.Tomida2.Calc.implements
                 return rowInput;
             }
             
+            // 空の入力の場合は"0"を返す
+            if (string.IsNullOrEmpty(rowInput))
+            {
+                return "0";
+            }
+            
             try 
             {
                 var result = parseResult.Evaluate();
@@ -36,7 +42,7 @@ namespace CalcLibCore.Tomida2.Calc.implements
             catch 
             {
                 // パーサーエラーが発生した場合は、現在の入力をそのまま表示
-                return rowInput;
+                return string.IsNullOrEmpty(rowInput) ? "0" : rowInput;
             }
         }
     }

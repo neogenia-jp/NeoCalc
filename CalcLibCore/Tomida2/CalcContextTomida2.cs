@@ -19,8 +19,24 @@ namespace CalcLibCore.Tomida2
     /// </summary>
     public bool IsDisplayingResult => IsResultDisplayed;
     
-    IParseResult ParseResult =>
-      parser.Parse(RowInput);
+    IParseResult ParseResult
+    {
+      get
+      {
+        if (string.IsNullOrEmpty(RowInput))
+          return new DefaultParseResult();
+        
+        try
+        {
+          return parser.Parse(RowInput);
+        }
+        catch
+        {
+          // パーサーエラーが発生した場合はデフォルト値を返す
+          return new DefaultParseResult();
+        }
+      }
+    }
 
     public override string DisplayText 
     { 

@@ -16,6 +16,21 @@ namespace CalcLibCore.Tomida2.Calc.Interpreter
   }
 
   /// <summary>
+  /// 空の入力状態のデフォルト解析結果
+  /// </summary>
+  public class DefaultParseResult : IParseResult
+  {
+    /// <summary>
+    /// 空の入力では0を返す
+    /// </summary>
+    /// <returns>0</returns>
+    public decimal Evaluate()
+    {
+      return 0;
+    }
+  }
+
+  /// <summary>
   /// 演算子が入力された状態を表すデータ構造
   /// </summary>
   public class OperatorInput : IParseResult
