@@ -203,7 +203,7 @@ namespace CalcLibCore.Tomida2.Calc.implements
             if (string.IsNullOrEmpty(token))
                 return false;
 
-            return double.TryParse(token, out _);
+            return decimal.TryParse(token, out _);
         }
 
         /// <summary>
@@ -224,22 +224,22 @@ namespace CalcLibCore.Tomida2.Calc.implements
         private string FormatNumber(string value)
         {
             // 末尾が小数点のみの場合（例：1000000.）を先に処理
-            if (value.EndsWith(".") && double.TryParse(value.TrimEnd('.'), out double dotNum))
+            if (value.EndsWith(".") && decimal.TryParse(value.TrimEnd('.'), out decimal dotNum))
             {
                 return dotNum.ToString("N0") + ".";
             }
             
-            if (double.TryParse(value, out double num))
+            if (decimal.TryParse(value, out decimal num))
             {
                 // 小数点以下がある場合
-                if (num != Math.Floor(num))
+                if (num != decimal.Floor(num))
                 {
-                    var rounded = Math.Round(num, 13);
+                    var rounded = decimal.Round(num, 13);
                     // 整数部分と小数部分を分離してフォーマット
-                    var integerPart = Math.Floor(Math.Abs(rounded));
+                    var integerPart = decimal.Floor(Math.Abs(rounded));
                     var decimalPart = Math.Abs(rounded) - integerPart;
                     
-                    // 整数部分を3桁ごとにカンマ区切り
+                    // 整数部分を3桁ごとにカンマ区切り（絶対値で処理）
                     string formattedIntegerPart = integerPart.ToString("N0");
                     
                     // 負数の場合は符号を追加
@@ -292,7 +292,7 @@ namespace CalcLibCore.Tomida2.Calc.implements
             if (value.EndsWith(".") && !value.StartsWith("."))
             {
                 string integerPart = value.TrimEnd('.');
-                if (double.TryParse(integerPart, out double dotNum))
+                if (decimal.TryParse(integerPart, out decimal dotNum))
                 {
                     return dotNum.ToString("N0") + ".";
                 }
@@ -311,17 +311,25 @@ namespace CalcLibCore.Tomida2.Calc.implements
                         return "0." + parts[1];
                     }
                     
-                    if (double.TryParse(parts[0], out double intPart))
+                    if (decimal.TryParse(parts[0], out decimal intPart))
                     {
                         string formattedIntPart = intPart.ToString("N0");
-                        return formattedIntPart + "." + parts[1];
+                        // 小数部分がある場合は、それも含める
+                        if (!string.IsNullOrEmpty(parts[1]))
+                        {
+                            return formattedIntPart + "." + parts[1];
+                        }
+                        else
+                        {
+                            return formattedIntPart + ".";
+                        }
                     }
                 }
                 return value;
             }
 
             // 整数の場合
-            if (double.TryParse(value, out double num))
+            if (decimal.TryParse(value, out decimal num))
             {
                 return num.ToString("N0");
             }
@@ -336,18 +344,18 @@ namespace CalcLibCore.Tomida2.Calc.implements
         /// <returns>フォーマットされた文字列</returns>
         private string FormatCalculationResult(string value)
         {
-            if (double.TryParse(value, out double num))
+            if (decimal.TryParse(value, out decimal num))
             {
                 // 極小の値は0にする
-                if (Math.Abs(num) < 1e-13)
+                if (Math.Abs(num) < 1e-13m)
                 {
                     return "0";
                 }
 
                 // 小数点以下がある場合
-                if (num != Math.Floor(num))
+                if (num != decimal.Floor(num))
                 {
-                    var rounded = Math.Round(num, 13);
+                    var rounded = decimal.Round(num, 13);
                     
                     // 小数点以下13桁まで表示（科学記数法を避ける）
                     string formattedValue = rounded.ToString("F13").TrimEnd('0');
@@ -360,7 +368,7 @@ namespace CalcLibCore.Tomida2.Calc.implements
                     if (formattedValue.Contains("."))
                     {
                         string[] parts = formattedValue.Split('.');
-                        if (double.TryParse(parts[0], out double intPart))
+                        if (decimal.TryParse(parts[0], out decimal intPart))
                         {
                             string formattedIntPart = intPart.ToString("N0");
                             return formattedIntPart + "." + parts[1];
@@ -369,7 +377,7 @@ namespace CalcLibCore.Tomida2.Calc.implements
                     else
                     {
                         // 小数部分がない場合（整数になった場合）
-                        if (double.TryParse(formattedValue, out double integerValue))
+                        if (decimal.TryParse(formattedValue, out decimal integerValue))
                         {
                             return integerValue.ToString("N0");
                         }

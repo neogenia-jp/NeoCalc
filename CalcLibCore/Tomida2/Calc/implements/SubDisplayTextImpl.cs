@@ -73,7 +73,7 @@ namespace CalcLibCore.Tomida2.Calc.implements
                 char currentChar = processedInput[i];
                 
                 // 演算子の場合は前後に空白を追加し、表示用に変換
-                if (IsOperator(currentChar))
+                if (IsOperator(currentChar) && !IsNegativeSign(processedInput, i))
                 {
                     // 前に空白を追加（ただし、先頭に空白が既にある場合は追加しない）
                     if (result.Length > 0 && result[result.Length - 1] != ' ')
@@ -153,6 +153,26 @@ namespace CalcLibCore.Tomida2.Calc.implements
         private bool IsOperator(char c)
         {
             return c == '+' || c == '-' || c == '*' || c == '/';
+        }
+
+        /// <summary>
+        /// 指定された位置の'-'が負の符号かどうかを判定します
+        /// </summary>
+        /// <param name="input">入力文字列</param>
+        /// <param name="index">'-'の位置</param>
+        /// <returns>負の符号の場合true</returns>
+        private bool IsNegativeSign(string input, int index)
+        {
+            if (input[index] != '-')
+                return false;
+
+            // 先頭の場合は負の符号
+            if (index == 0)
+                return true;
+
+            // 直前の文字が演算子の場合は負の符号
+            char prevChar = input[index - 1];
+            return IsOperator(prevChar);
         }
     }
 }
