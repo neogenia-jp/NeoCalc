@@ -11,20 +11,20 @@ namespace CalcLibCore.Tomida2.Calc.implements
         /// <summary>
         /// 表示用のテキストを生成します
         /// </summary>
-        /// <param name="rowInput">現在の入力内容</param>
+        /// <param name="rawInput">現在の入力内容</param>
         /// <param name="isResultDisplayed">結果表示中かどうか</param>
         /// <param name="parseResult">パース結果</param>
         /// <returns>表示用テキスト</returns>
-        public string ToDisplay(string rowInput, bool isResultDisplayed, IParseResult parseResult)
+        public string ToDisplay(string rawInput, bool isResultDisplayed, IParseResult parseResult)
         {
             // 結果表示中はそのまま返す（既に計算済みの値）
             if (isResultDisplayed)
             {
-                return FormatCalculationResult(rowInput);
+                return FormatCalculationResult(rawInput);
             }
             
             // 空の入力の場合は"0"を返す
-            if (string.IsNullOrEmpty(rowInput))
+            if (string.IsNullOrEmpty(rawInput))
             {
                 return "0";
             }
@@ -32,7 +32,7 @@ namespace CalcLibCore.Tomida2.Calc.implements
             try 
             {
                 // 入力の最後の部分を分析
-                var lastToken = GetLastToken(rowInput);
+                var lastToken = GetLastToken(rawInput);
                 
                 // 小数点の重複処理（例：".."を"0."として扱う）
                 if (lastToken.Contains(".."))
@@ -50,7 +50,7 @@ namespace CalcLibCore.Tomida2.Calc.implements
                 if (IsOperator(lastToken))
                 {
                     // パーサーエラーが発生する可能性があるので、手動で中間結果を計算
-                    var intermediateResult = CalculateIntermediateResult(rowInput);
+                    var intermediateResult = CalculateIntermediateResult(rawInput);
                     return FormatCalculationResult(intermediateResult.ToString());
                 }
                 
@@ -63,13 +63,13 @@ namespace CalcLibCore.Tomida2.Calc.implements
                 // パーサーエラーが発生した場合は、手動計算を試行
                 try
                 {
-                    var fallbackResult = CalculateIntermediateResult(rowInput);
+                    var fallbackResult = CalculateIntermediateResult(rawInput);
                     return FormatCalculationResult(fallbackResult.ToString());
                 }
                 catch
                 {
                     // それでも失敗した場合は入力をそのまま表示
-                    return string.IsNullOrEmpty(rowInput) ? "0" : rowInput;
+                    return string.IsNullOrEmpty(rawInput) ? "0" : rawInput;
                 }
             }
         }

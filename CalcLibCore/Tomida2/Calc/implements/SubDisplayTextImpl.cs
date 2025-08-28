@@ -14,11 +14,11 @@ namespace CalcLibCore.Tomida2.Calc.implements
         /// 式の末尾がオペランドの場合はそのオペランドを表示せず、
         /// 末尾が=の場合は空文字列を返します
         /// </summary>
-        /// <param name="rowInput">現在の入力内容</param>
+        /// <param name="rawInput">現在の入力内容</param>
         /// <param name="isResultDisplayed">結果表示中かどうか</param>
         /// <param name="parseResult">パース結果</param>
         /// <returns>サブ表示用テキスト</returns>
-        public string ToDisplay(string rowInput, bool isResultDisplayed, IParseResult parseResult)
+        public string ToDisplay(string rawInput, bool isResultDisplayed, IParseResult parseResult)
         {
             // 結果表示中は空文字を返す
             if (isResultDisplayed)
@@ -27,13 +27,13 @@ namespace CalcLibCore.Tomida2.Calc.implements
             }
             
             // 空の入力の場合は空文字を返す
-            if (string.IsNullOrEmpty(rowInput))
+            if (string.IsNullOrEmpty(rawInput))
             {
                 return string.Empty;
             }
             
             // 末尾が=の場合は空文字を返す
-            if (rowInput.TrimEnd().EndsWith("="))
+            if (rawInput.TrimEnd().EndsWith("="))
             {
                 return string.Empty;
             }
@@ -41,12 +41,12 @@ namespace CalcLibCore.Tomida2.Calc.implements
             try 
             {
                 // 入力文字列をフォーマット（末尾のオペランドを除去し、オペランドとオペレーターの間に空白を挿入）
-                return FormatExpressionWithoutTrailingOperand(rowInput);
+                return FormatExpressionWithoutTrailingOperand(rawInput);
             }
             catch 
             {
                 // エラーが発生した場合は元の入力をそのまま返す
-                return rowInput;
+                return rawInput;
             }
         }
 

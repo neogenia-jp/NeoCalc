@@ -12,7 +12,7 @@ namespace CalcLibCore.Tomida2
     private static readonly DisplayTextImpl displayTextImpl = new();
     private static readonly SubDisplayTextImpl subDisplayTextImpl = new();
     private readonly CalcContextCaretaker _caretaker = new();
-    string RowInput { get; set; } = string.Empty;
+    string RawInput { get; set; } = string.Empty;
     bool IsResultDisplayed { get; set; } = false;
     
     /// <summary>
@@ -24,12 +24,12 @@ namespace CalcLibCore.Tomida2
     {
       get
       {
-        if (string.IsNullOrEmpty(RowInput))
+        if (string.IsNullOrEmpty(RawInput))
           return new DefaultParseResult();
         
         try
         {
-          return parser.Parse(RowInput);
+          return parser.Parse(RawInput);
         }
         catch
         {
@@ -43,7 +43,7 @@ namespace CalcLibCore.Tomida2
     { 
       get 
       {
-        return displayTextImpl.ToDisplay(RowInput, IsResultDisplayed, ParseResult);
+        return displayTextImpl.ToDisplay(RawInput, IsResultDisplayed, ParseResult);
       }
     }
 
@@ -51,7 +51,7 @@ namespace CalcLibCore.Tomida2
     { 
       get 
       {
-        return subDisplayTextImpl.ToDisplay(RowInput, IsResultDisplayed, ParseResult);
+        return subDisplayTextImpl.ToDisplay(RawInput, IsResultDisplayed, ParseResult);
       }
     }
 
@@ -61,7 +61,7 @@ namespace CalcLibCore.Tomida2
     /// <param name="input">追加する文字</param>
     public void AppendInput(string input)
     {
-      RowInput += input;
+      RawInput += input;
     }
     
     /// <summary>
@@ -70,7 +70,7 @@ namespace CalcLibCore.Tomida2
     /// <param name="result">表示する結果</param>
     public void SetResult(string result)
     {
-      RowInput = result;
+      RawInput = result;
       IsResultDisplayed = true;
     }
     
@@ -81,7 +81,7 @@ namespace CalcLibCore.Tomida2
     {
       if (IsResultDisplayed)
       {
-        RowInput = string.Empty;
+        RawInput = string.Empty;
         IsResultDisplayed = false;
       }
     }
@@ -102,7 +102,7 @@ namespace CalcLibCore.Tomida2
     /// </summary>
     public void ClearInput()
     {
-      RowInput = string.Empty;
+      RawInput = string.Empty;
     }
 
     /// <summary>
@@ -110,7 +110,7 @@ namespace CalcLibCore.Tomida2
     /// </summary>
     public string GetCurrentInput()
     {
-      return RowInput;
+      return RawInput;
     }
 
     /// <summary>
@@ -135,7 +135,7 @@ namespace CalcLibCore.Tomida2
     /// </summary>
     public void SaveState()
     {
-      var memento = new CalcContextMemento(RowInput, IsResultDisplayed);
+      var memento = new CalcContextMemento(RawInput, IsResultDisplayed);
       _caretaker.SaveMemento(memento);
     }
 
@@ -149,7 +149,7 @@ namespace CalcLibCore.Tomida2
       if (memento == null)
         return false;
 
-      RowInput = memento.RowInput;
+      RawInput = memento.RawInput;
       IsResultDisplayed = memento.IsResultDisplayed;
       return true;
     }

@@ -8,7 +8,7 @@ namespace CalcLibCore.Tomida2.Calc.Memento
         /// <summary>
         /// 保存された入力内容
         /// </summary>
-        public string RowInput { get; }
+        public string RawInput { get; }
 
         /// <summary>
         /// 保存された結果表示状態
@@ -18,11 +18,11 @@ namespace CalcLibCore.Tomida2.Calc.Memento
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        /// <param name="rowInput">入力内容</param>
+        /// <param name="rawInput">入力内容</param>
         /// <param name="isResultDisplayed">結果表示状態</param>
-        public CalcContextMemento(string rowInput, bool isResultDisplayed)
+        public CalcContextMemento(string rawInput, bool isResultDisplayed)
         {
-            RowInput = rowInput;
+            RawInput = rawInput;
             IsResultDisplayed = isResultDisplayed;
         }
     }
