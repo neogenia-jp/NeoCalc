@@ -31,22 +31,15 @@ namespace CalcLibCore.Tomida2.Calc.implements
             
             try 
             {
-                // 入力の最後の部分を分析
-                var lastToken = GetLastToken(rawInput);
-                
-                // 小数点の重複処理（例：".."を"0."として扱う）
-                if (lastToken.Contains(".."))
+                // parseResultの末尾がオペランドの場合は、rawInputから最後のオペランドをそのまま表示
+                if (IsInputEndingWithOperand(rawInput))
                 {
-                    return "0.";
-                }
-                
-                // 最後がオペランド（数値）の場合はそのオペランドを表示
-                if (IsNumericToken(lastToken) || lastToken.EndsWith(".") || lastToken == ".")
-                {
-                    return FormatInputNumber(lastToken);
+                    var lastOperand = GetLastOperandFromRawInput(rawInput);
+                    return lastOperand;
                 }
                 
                 // 最後が演算子の場合は中間結果を表示
+                var lastToken = GetLastToken(rawInput);
                 if (IsOperator(lastToken))
                 {
                     // パーサーエラーが発生する可能性があるので、手動で中間結果を計算
@@ -207,13 +200,69 @@ namespace CalcLibCore.Tomida2.Calc.implements
         }
 
         /// <summary>
-        /// 文字列が演算子かどうかを判定します
+        /// 指定された文字が演算子かどうかを判定します
         /// </summary>
         /// <param name="token">判定する文字列</param>
         /// <returns>演算子の場合true</returns>
         private bool IsOperator(string token)
         {
             return token == "+" || token == "-" || token == "*" || token == "/";
+        }
+
+        /// <summary>
+        /// 入力が数値（オペランド）で終わっているかどうかを判定します
+        /// </summary>
+        /// <param name="rawInput">入力文字列</param>
+        /// <returns>オペランドで終わっている場合true</returns>
+        private bool IsInputEndingWithOperand(string rawInput)
+        {
+            if (string.IsNullOrEmpty(rawInput))
+                return false;
+
+            var lastToken = GetLastToken(rawInput);
+            
+            // 小数点の重複処理（例：".."を"0."として扱う）
+            if (lastToken.Contains(".."))
+            {
+                return true;  // 特殊ケースとして扱う
+            }
+            
+            // 数値、小数点で終わる文字列、または小数点のみの場合
+            return IsNumericToken(lastToken) || lastToken.EndsWith(".") || lastToken == ".";
+        }
+
+        /// <summary>
+        /// rawInputから最後のオペランドを取得します（入力内容をそのまま返すが、適切なフォーマットを適用）
+        /// </summary>
+        /// <param name="rawInput">入力文字列</param>
+        /// <returns>最後のオペランド文字列</returns>
+        private string GetLastOperandFromRawInput(string rawInput)
+        {
+            if (string.IsNullOrEmpty(rawInput))
+                return "0";
+
+            var lastToken = GetLastToken(rawInput);
+            
+            // 小数点の重複処理（例：".."を"0."として扱う）
+            if (lastToken.Contains(".."))
+            {
+                return "0.";
+            }
+            
+            // 小数点のみの場合は"0."として表示
+            if (lastToken == ".")
+            {
+                return "0.";
+            }
+            
+            // 先頭が小数点の場合（例：".1"）は"0."を付加
+            if (lastToken.StartsWith("."))
+            {
+                return "0" + lastToken;
+            }
+            
+            // 数値の場合は入力フォーマットを適用（カンマ区切りなど）
+            return FormatInputNumber(lastToken);
         }
 
         /// <summary>
@@ -314,15 +363,7 @@ namespace CalcLibCore.Tomida2.Calc.implements
                     if (decimal.TryParse(parts[0], out decimal intPart))
                     {
                         string formattedIntPart = intPart.ToString("N0");
-                        // 小数部分がある場合は、それも含める
-                        if (!string.IsNullOrEmpty(parts[1]))
-                        {
-                            return formattedIntPart + "." + parts[1];
-                        }
-                        else
-                        {
-                            return formattedIntPart + ".";
-                        }
+                        return formattedIntPart + "." + parts[1];
                     }
                 }
                 return value;
