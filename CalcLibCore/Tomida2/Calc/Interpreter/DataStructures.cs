@@ -13,6 +13,11 @@ namespace CalcLibCore.Tomida2.Calc.Interpreter
     /// </summary>
     /// <returns>計算結果</returns>
     decimal Evaluate();
+
+    /// <summary>
+    /// 式がイコール（=）で終端されているかどうか
+    /// </summary>
+    bool IsTerminated { get; }
   }
 
   /// <summary>
@@ -28,6 +33,11 @@ namespace CalcLibCore.Tomida2.Calc.Interpreter
     {
       return 0;
     }
+
+    /// <summary>
+    /// 空の入力状態は終端されていない
+    /// </summary>
+    public bool IsTerminated => false;
   }
 
   /// <summary>
@@ -46,6 +56,11 @@ namespace CalcLibCore.Tomida2.Calc.Interpreter
     {
       return Operand;
     }
+
+    /// <summary>
+    /// 演算子入力状態は終端されていない
+    /// </summary>
+    public bool IsTerminated => false;
   }
 
   /// <summary>
@@ -83,6 +98,11 @@ namespace CalcLibCore.Tomida2.Calc.Interpreter
         return FirstOperand;
       }
     }
+
+    /// <summary>
+    /// 進行中の入力状態は終端されていない
+    /// </summary>
+    public bool IsTerminated => false;
   }
 
   /// <summary>
@@ -116,6 +136,11 @@ namespace CalcLibCore.Tomida2.Calc.Interpreter
         _ => throw new InvalidOperationException($"Unknown operator: {Operator.Value}")
       };
     }
+
+    /// <summary>
+    /// 完全な式の場合、IsCompleteプロパティと同じ値を返す
+    /// </summary>
+    public bool IsTerminated => IsComplete;
   }
 
   /// <summary>
@@ -161,6 +186,11 @@ namespace CalcLibCore.Tomida2.Calc.Interpreter
 
       return result;
     }
+
+    /// <summary>
+    /// チェーンされた式の場合、IsCompleteプロパティと同じ値を返す
+    /// </summary>
+    public bool IsTerminated => IsComplete;
 
     /// <summary>
     /// 新しいオペランドを追加

@@ -32,8 +32,8 @@ namespace CalcLibCore.Tomida2.Calc.implements
                 return string.Empty;
             }
             
-            // 末尾が=の場合は空文字を返す
-            if (rawInput.TrimEnd().EndsWith("="))
+            // 末尾が=の場合は空文字を返す（parseResultから判定）
+            if (parseResult.IsTerminated)
             {
                 return string.Empty;
             }
