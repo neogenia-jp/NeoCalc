@@ -19,7 +19,7 @@ internal class CalcMode : IModeState
     public ModeResult Accept(CalcButton btn)
     {
        _calculator.Accept(btn);
-       return ModeResult.Continue();
+        return ModeResult.Continue();
     }
 
     public DisplaySource RowDisplay()
@@ -65,3 +65,4 @@ internal class OmikujiState : IModeState
     }
 }
 }
+
