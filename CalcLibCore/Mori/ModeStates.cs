@@ -4,6 +4,8 @@ namespace CalcLib.Mori
 {
 internal interface IModeState
 {
+    void OnEnter();
+    void OnLeave();
     ModeResult Accept(CalcButton btn);
     DisplaySource RowDisplay();
 }
@@ -11,6 +13,8 @@ internal interface IModeState
 internal class CalcMode : IModeState
 {
     private readonly Calculator _calculator = new();
+    public void OnEnter() { }
+    public void OnLeave() { }
 
     public ModeResult Accept(CalcButton btn)
     {
@@ -27,6 +31,8 @@ internal class CalcMode : IModeState
 internal class OmikujiState : IModeState
 {
     private readonly Omikuji _omikuji = new();
+    public void OnEnter() { _omikuji.Init(); }
+    public void OnLeave() { _omikuji.Init(); }
     public ModeResult Accept(CalcButton btn)
     {
 		// クリア/CE/おみくじ → 電卓へ戻る（引き継ぎなし）

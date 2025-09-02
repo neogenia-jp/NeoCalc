@@ -4,6 +4,7 @@ namespace CalcLib.Mori
     {
         // 電卓とそれ以外のモードを切り替えるState
         private readonly Dictionary<string, IModeState> _modes;
+        // 現在のモードのキー文字列
         private string _modeKey = "calc";
         private IModeState Mode => _modes[_modeKey];
         private readonly List<IObserver> _observers = new();
@@ -17,8 +18,21 @@ namespace CalcLib.Mori
                 ["omikuji"] = new OmikujiState()
             };
 
+            // 既定モードでまずOnEnter
+            Mode.OnEnter();
+
             // 初期状態で電卓をクリア動作させる 直接Acceptを呼ぶ
             Accept(CalcButton.BtnClear);
+        }
+
+        private void SwitchMode(string key)
+        {
+            if (_modeKey == key) return;
+            // 現在のモードでOnLeave処理
+            Mode.OnLeave();
+            _modeKey = key;
+            // 新しいモードでOnEnter処理
+            Mode.OnEnter();
         }
 
         // サブジェクト用 オブザーバー登録
@@ -47,22 +61,38 @@ namespace CalcLib.Mori
 
         public void Accept(CalcButton btn)
         {
-            // モード切り替えボタンここで処理する
+            // 暫定 おみくじボタンはトグル
             if (btn.IsOmikuji())
             {
-                _modeKey = "omikuji";
+                var next = _modeKey == "omikuji" ? "calc" : "omikuji";
+                SwitchMode(next);
+                Notify();
+                return;
+            }
+
+            // おみくじ中のClear/CEはcalcへ戻す
+            if (_modeKey == "omikuji" && (btn.IsClear() || btn.IsCE()))
+            {
+                SwitchMode("calc");
+                var post = Mode.Accept(btn); // ボタンをcalcに委譲 ModeResult
+                if (post.NextKey != null) { SwitchMode(post.NextKey); }
+                if (post.ForwardButton.HasValue)
+                {
+                    post = Mode.Accept(post.ForwardButton.Value);
+                    if (post.NextKey != null) { SwitchMode(post.NextKey); }
+                }
                 Notify();
                 return;
             }
 
             ModeResult result = Mode.Accept(btn);
-            if (result.NextKey != null) _modeKey = result.NextKey;
+            if (result.NextKey != null) { SwitchMode(result.NextKey); }
 
-			if (result.ForwardButton.HasValue)
-			{
+				if (result.ForwardButton.HasValue)
+				{
                 result = Mode.Accept(result.ForwardButton.Value);
-				if (result.NextKey != null) _modeKey = result.NextKey;
-			}
+					if (result.NextKey != null) { SwitchMode(result.NextKey); }
+				}
             Notify();
         }
     }

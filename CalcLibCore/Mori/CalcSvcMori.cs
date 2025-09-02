@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using CalcLib.Mori;
+using CalcLib.Mori.Display;
 
 namespace CalcLib
 {
@@ -8,7 +9,8 @@ namespace CalcLib
         public virtual ICalcContext CreateContext()
         {
             var ctx = new CalcContextExtend();
-            ctx.Attach(new DisplayObserver(ctx));
+            var formatter = new DefaultDisplayFormatter();
+            ctx.Attach(new DisplayObserver(ctx, formatter));
             return ctx;
         }
 
