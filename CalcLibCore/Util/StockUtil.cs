@@ -35,7 +35,8 @@ namespace CalcLib.Util
             // みんかぶの株式ページURL
             string URLText = "https://minkabu.jp/stock/100000018";
             //証券コードをURLに追加
-            URLText += code;
+            // みんかぶの株式ページURL
+            string URLText = $"https://minkabu.jp/stock/{code}";
 
             var html = "";
 
