@@ -64,5 +64,23 @@ internal class OmikujiState : IModeState
         return _omikuji.RowDisplay();
     }
 }
+
+    internal class StockState : IModeState
+    {   
+    
+        public void OnEnter() { }
+
+        public void OnLeave() { }
+
+        public ModeResult Accept(CalcButton btn)
+        {
+            return ModeResult.Continue();
+        }
+
+        public DisplaySource RowDisplay()
+        {
+            return new DisplaySource("株価機能", "sub", UIMode.CalcDefault);
+        }
+    }
 }
 

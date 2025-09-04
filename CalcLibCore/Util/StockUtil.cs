@@ -32,8 +32,8 @@ namespace CalcLib.Util
             var doc = new HtmlAgilityPack.HtmlDocument();
             var web = new System.Net.WebClient();
 
-            //Yahooファイナンスの株式ページURL
-            string URLText = "https://stocks.finance.yahoo.co.jp/stocks/detail/?code=";
+            // みんかぶの株式ページURL
+            string URLText = "https://minkabu.jp/stock/100000018";
             //証券コードをURLに追加
             URLText += code;
 
@@ -56,7 +56,7 @@ namespace CalcLib.Util
                 doc.LoadHtml(html);
 
                 //株価を示す部分をXPathで指定
-                string xPath = @"//td[@class=""stoksPrice""]";
+                string xPath = @"//div[@class=""stock_price""]";
 
                 var stock = doc.DocumentNode.SelectSingleNode(xPath);
 
