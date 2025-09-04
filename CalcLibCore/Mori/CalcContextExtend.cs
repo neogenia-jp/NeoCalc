@@ -15,7 +15,8 @@ namespace CalcLib.Mori
             _modes = new()
             {
                 ["calc"] = new CalcMode(),
-                ["omikuji"] = new OmikujiState()
+                ["omikuji"] = new OmikujiState(),
+                ["stock"] = new StockState()
             };
 
             // 既定モードでまずOnEnter
@@ -61,6 +62,14 @@ namespace CalcLib.Mori
 
         public void Accept(CalcButton btn)
         {
+            // 暫定 株価ボタンはトグル
+            if (btn.IsStock())
+            {
+                var next = _modeKey == "stock" ? "calc" : "stock";
+                SwitchMode(next);
+                Notify();
+                return;
+            }
             // 暫定 おみくじボタンはトグル
             if (btn.IsOmikuji())
             {
