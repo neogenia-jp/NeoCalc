@@ -34,7 +34,7 @@ namespace CalcLib.Mori
 
         internal static bool IsNumber(this CalcButton btn) => btn.IsBetween(CalcButton.Btn0, CalcButton.Btn9) || btn == CalcButton.BtnDot;
 
-        internal static bool IsOperator(this CalcButton btn) => btn.IsBetween(CalcButton.BtnPlus, CalcButton.BtnDivide);
+        internal static bool IsOperator(this CalcButton btn) => btn.IsBetween(CalcButton.BtnPlus, CalcButton.BtnMultiple);
 
 
         internal static bool IsEqual(this CalcButton btn)
@@ -48,7 +48,10 @@ namespace CalcLib.Mori
 
         internal static bool IsCE(this CalcButton btn) => btn == CalcButton.BtnClearEnd;
 
-        internal static bool IsBetween(this CalcButton btn, CalcButton start, CalcButton end) => btn >= start && btn <= end;
+        internal static bool IsOmikuji(this CalcButton btn) => btn == CalcButton.BtnExt2;
+        internal static bool IsOmikujiSelect(this CalcButton btn) => btn.IsBetween(CalcButton.Btn1, CalcButton.Btn4);
+
+        internal static bool IsBetween(this CalcButton btn, CalcButton start, CalcButton end) => start <= btn && btn <= end;
 
     }
 } 

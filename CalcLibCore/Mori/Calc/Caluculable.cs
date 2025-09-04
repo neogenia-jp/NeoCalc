@@ -79,3 +79,4 @@ namespace CalcLib.Mori
         public override string Symbol => "÷";
     }
 }
+
