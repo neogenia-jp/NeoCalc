@@ -40,4 +40,9 @@ internal static class CalcButtonExt
         return btn == CalcButton.BtnPlus || btn == CalcButton.BtnMinus ||
                 btn == CalcButton.BtnDivide || btn == CalcButton.BtnMultiple;
     }
+
+    public static bool IsBs(this CalcButton btn)
+    {
+        return btn == CalcButton.BtnBS;
+    }
 }

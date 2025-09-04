@@ -42,4 +42,10 @@ internal class RightSideState : IState
         ctx.SubDisplayManager.Clear();
         ctx.State = new AnswerState();
     }
+
+    public void InputBs(CalcContextYamamoto3 ctx, CalcButton btn)
+    {
+        ctx.RightSide = ctx.RightSide.DeleteLastLetter();
+        ctx.MainDisplayManager.DeleteLastLetter();
+    }
 }

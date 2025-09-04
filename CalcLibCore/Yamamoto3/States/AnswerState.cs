@@ -31,4 +31,9 @@ internal class AnswerState : IState
     {
         // 特になし
     }
+
+    public void InputBs(CalcContextYamamoto3 ctx, CalcButton btn)
+    {
+        // 特になし
+    }
 }

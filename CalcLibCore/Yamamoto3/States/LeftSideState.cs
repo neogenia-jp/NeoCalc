@@ -25,4 +25,10 @@ internal class LeftSideState : IState
     {
         // 特に何もしない
     }
+
+    public void InputBs(CalcContextYamamoto3 ctx, CalcButton btn)
+    {
+        ctx.LeftSide = ctx.LeftSide.DeleteLastLetter();
+        ctx.MainDisplayManager.DeleteLastLetter();
+    }
 }

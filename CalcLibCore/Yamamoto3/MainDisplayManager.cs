@@ -1,4 +1,5 @@
 using System;
+using CalcLib.Yamamoto3.Extensions;
 
 namespace CalcLib.Yamamoto3;
 
@@ -17,7 +18,7 @@ public class MainDisplayManager
         return decimal.Parse(GetRawText()).ToString("#,0.#############");
     }
 
-    
+
     public string GetRawText()
     {
         // 生の表示を返す
@@ -45,5 +46,10 @@ public class MainDisplayManager
     public void Clear()
     {
         _text = "";
+    }
+
+    public void DeleteLastLetter()
+    {
+        Update(_text.DeleteLastLetter());
     }
 }

@@ -22,4 +22,9 @@ internal class OperatorState : IState
     {
         // 特に何もしない
     }
+
+    public void InputBs(CalcContextYamamoto3 ctx, CalcButton btn)
+    {
+        // 特に何もしない
+    }
 }

@@ -27,6 +27,10 @@ namespace CalcLib.Yamamoto3
             {
                 ctx.State.InputEqual(ctx, btn);
             }
+            else if (btn.IsBs())
+            {
+                ctx.State.InputBs(ctx, btn);
+            }
             else
             {
                 // その他のボタンは何もしない
