@@ -4,13 +4,13 @@ namespace CalcLib.Mori
 {
     internal class ModeResult
     {
-        // 暫定 型ではなく文字列でモードを指定
-        public string? NextKey { get; }
+        // 遷移先モード（型安全化）
+        public ModeKey? Next { get; }
         public CalcButton? ForwardButton { get; }
 
-        private ModeResult(string? next, CalcButton? forwardButton)
+        private ModeResult(ModeKey? next, CalcButton? forwardButton)
         {
-            NextKey = next;
+            Next = next;
             ForwardButton = forwardButton;
         }
 
@@ -19,10 +19,9 @@ namespace CalcLib.Mori
             return new(null, null);
         }
 
-        public static ModeResult SwitchMode(string key, CalcButton? forwardButton = null)
+        public static ModeResult SwitchMode(ModeKey key, CalcButton? forwardButton = null)
         {
             return new(key, forwardButton);
         }
     }
 }
-

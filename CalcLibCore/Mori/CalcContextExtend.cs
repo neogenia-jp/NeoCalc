@@ -3,9 +3,9 @@ namespace CalcLib.Mori
     internal class CalcContextExtend : CalcContext, ISubject
     {
         // 電卓とそれ以外のモードを切り替えるState
-        private readonly Dictionary<string, IModeState> _modes;
+        private readonly Dictionary<ModeKey, IModeState> _modes;
         // 現在のモードのキー文字列
-        private string _modeKey = "calc";
+        private ModeKey _modeKey = ModeKey.Calc;
         private IModeState Mode => _modes[_modeKey];
         private readonly List<IObserver> _observers = new();
         public DisplaySource DisplaySource => Mode.RowDisplay();
@@ -14,9 +14,9 @@ namespace CalcLib.Mori
             // モードの初期化
             _modes = new()
             {
-                ["calc"] = new CalcMode(),
-                ["omikuji"] = new OmikujiState(),
-                ["stock"] = new StockState()
+                [ModeKey.Calc] = new CalcMode(),
+                [ModeKey.Omikuji] = new OmikujiState(),
+                [ModeKey.Stock] = new StockState()
             };
 
             // 既定モードでまずOnEnter
@@ -26,7 +26,8 @@ namespace CalcLib.Mori
             Accept(CalcButton.BtnClear);
         }
 
-        private void SwitchMode(string key)
+
+        private void SwitchMode(ModeKey key)
         {
             if (_modeKey == key) return;
             // 現在のモードでOnLeave処理
@@ -62,47 +63,54 @@ namespace CalcLib.Mori
 
         public void Accept(CalcButton btn)
         {
-            // 暫定 株価ボタンはトグル
+            // 株価ボタンはトグル
             if (btn.IsStock())
             {
-                var next = _modeKey == "stock" ? "calc" : "stock";
+                var next = _modeKey == ModeKey.Stock ? ModeKey.Calc : ModeKey.Stock;
                 SwitchMode(next);
                 Notify();
                 return;
             }
-            // 暫定 おみくじボタンはトグル
+            // おみくじボタンはトグル
             if (btn.IsOmikuji())
             {
-                var next = _modeKey == "omikuji" ? "calc" : "omikuji";
+                var next = _modeKey == ModeKey.Omikuji ? ModeKey.Calc : ModeKey.Omikuji;
                 SwitchMode(next);
                 Notify();
                 return;
             }
 
-            // おみくじ中のClear/CEはcalcへ戻す
-            if (_modeKey == "omikuji" && (btn.IsClear() || btn.IsCE()))
+            // おみくじ中のClear/CEはcalcへ戻す（同ボタンを前進処理）
+            if (_modeKey == ModeKey.Omikuji && (btn.IsClear() || btn.IsCE()))
             {
-                SwitchMode("calc");
-                var post = Mode.Accept(btn); // ボタンをcalcに委譲 ModeResult
-                if (post.NextKey != null) { SwitchMode(post.NextKey); }
-                if (post.ForwardButton.HasValue)
-                {
-                    post = Mode.Accept(post.ForwardButton.Value);
-                    if (post.NextKey != null) { SwitchMode(post.NextKey); }
-                }
+                SwitchMode(ModeKey.Calc);
+                ProcessWithForward(btn);
                 Notify();
                 return;
             }
 
-            ModeResult result = Mode.Accept(btn);
-            if (result.NextKey != null) { SwitchMode(result.NextKey); }
-
-				if (result.ForwardButton.HasValue)
-				{
-                result = Mode.Accept(result.ForwardButton.Value);
-					if (result.NextKey != null) { SwitchMode(result.NextKey); }
-				}
+            // 通常処理
+            ProcessWithForward(btn);
             Notify();
+        }
+
+        // モード切り替えとフォワードボタンの処理
+        private void ProcessWithForward(CalcButton btn)
+        {
+            ModeResult result = Mode.Accept(btn);
+            while (true)
+            {
+                if (result.Next != null)
+                {
+                    SwitchMode(result.Next.Value);
+                }
+                if (result.ForwardButton.HasValue)
+                {
+                    result = Mode.Accept(result.ForwardButton.Value);
+                    continue;
+                }
+                break;
+            }
         }
     }
 }

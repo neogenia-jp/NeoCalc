@@ -18,7 +18,7 @@ internal class CalcMode : IModeState
 
     public ModeResult Accept(CalcButton btn)
     {
-       _calculator.Accept(btn);
+        _calculator.Accept(btn);
         return ModeResult.Continue();
     }
 
@@ -35,19 +35,13 @@ internal class OmikujiState : IModeState
     public void OnLeave() { _omikuji.Init(); }
     public ModeResult Accept(CalcButton btn)
     {
-		// クリア/CE/おみくじ → 電卓へ戻る（引き継ぎなし）
-		if (btn.IsClear() || btn.IsCE() || btn.IsOmikuji())
-		{
-			_omikuji.Init();
-			return ModeResult.SwitchMode("calc");
-		}
 		// おみくじをひいたあとの数字の場合は、数字を引き継いで電卓へ
-		if (_omikuji.HasSelected)
-		{
-			var fwd = btn.IsNumber() ? btn : (CalcButton?)null;
-			_omikuji.Init();
-			return ModeResult.SwitchMode("calc", fwd);
-		}
+        if (_omikuji.HasSelected)
+        {
+            var fwd = btn.IsNumber() ? btn : (CalcButton?)null;
+            _omikuji.Init();
+            return ModeResult.SwitchMode(ModeKey.Calc, fwd);
+        }
 		// おみじく未選択かつ 1〜4 おみくじにコンテキストとボタンを渡す
 		if (btn.IsOmikujiSelect())
 		{
@@ -72,10 +66,10 @@ internal class OmikujiState : IModeState
 
         public void OnLeave() { }
 
-        public ModeResult Accept(CalcButton btn)
-        {
+    public ModeResult Accept(CalcButton btn)
+    {
             return ModeResult.Continue();
-        }
+    }
 
         public DisplaySource RowDisplay()
         {
@@ -83,4 +77,3 @@ internal class OmikujiState : IModeState
         }
     }
 }
-
