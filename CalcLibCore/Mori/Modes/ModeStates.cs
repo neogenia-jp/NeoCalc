@@ -1,5 +1,9 @@
 // 電卓以外のextraモード用State
 
+using System;
+using System.Text.RegularExpressions;
+using CalcLib.Util;
+
 namespace CalcLib.Mori
 {
 internal interface IModeState
@@ -60,20 +64,57 @@ internal class OmikujiState : IModeState
 }
 
     internal class StockState : IModeState
-    {   
-    
-        public void OnEnter() { }
+    {
+        private readonly CalcMode _calcMode;
+        private readonly Stock _stock = new();
+
+        public StockState(CalcMode calcMode)
+        {
+            _calcMode = calcMode;
+        }
+
+        public void OnEnter()
+        {
+            // Calcの表示から4桁コードを読み取り、株価取得
+            _stock.Init(_calcMode.RowDisplay());
+        }   
 
         public void OnLeave() { }
 
-    public ModeResult Accept(CalcButton btn)
-    {
+        public ModeResult Accept(CalcButton btn)
+        {
+            // 数字キーとクリア系は電卓モードへ
+            if (btn.IsNumber() || btn.IsClear() || btn.IsCE() || btn.IsBS())
+            {
+                return ModeResult.SwitchMode(ModeKey.Calc, btn);
+            }
+
+            // = キーは現在表示中の指標を再取得
+            if (btn.IsEqual())
+            {
+                _stock.Refresh();
+                return ModeResult.Continue();
+            }
+
+            // - でNYダウ表示
+            if (btn == CalcButton.BtnMinus)
+            {
+                _stock.Accept(btn);
+                return ModeResult.Continue();
+            }
+            // + で日経平均表示
+            if (btn == CalcButton.BtnPlus)
+            {
+                _stock.Accept(btn);
+                return ModeResult.Continue();
+            }
+            // その他のボタンはモード継続
             return ModeResult.Continue();
-    }
+        }
 
         public DisplaySource RowDisplay()
         {
-            return new DisplaySource("株価機能", "sub", UIMode.CalcDefault);
+            return _stock.RowDisplay();
         }
     }
 }

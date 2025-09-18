@@ -12,11 +12,12 @@ namespace CalcLib.Mori
         public CalcContextExtend()
         {
             // モードの初期化
+            var calcMode = new CalcMode();
             _modes = new()
             {
-                [ModeKey.Calc] = new CalcMode(),
+                [ModeKey.Calc] = calcMode,
                 [ModeKey.Omikuji] = new OmikujiState(),
-                [ModeKey.Stock] = new StockState()
+                [ModeKey.Stock] = new StockState(calcMode)
             };
 
             // 既定モードでまずOnEnter
