@@ -75,9 +75,8 @@ namespace CalcLib.Util
         public static DowPrice GetDowPrice()
         {
             // スクレイピングせず仮の値を返す
-            return new DowPrice(decimal.Parse("45,757.90"),  DateTime.Now, DateTime.Now);
+            // return new DowPrice(decimal.Parse("45,757.90"),  DateTime.Now, DateTime.Now);
             
-            // TODO: みんかぶダウ ちゃんとスクレイピングできるようにする
             //HTMLのコードを文書として保存
             var doc = new HtmlAgilityPack.HtmlDocument();
             var web = new System.Net.WebClient();
@@ -108,20 +107,19 @@ namespace CalcLib.Util
                 //webを通してHTMLのコード取得
                 doc.LoadHtml(html);
 
-                //ＮＹダウ平均のXPath
-                string pricePath = @"//td[@class=""stoksPrice""]";
-                //ＮＹダウ平均時間
-                string getDateXPath = @"//dd[@class=""yjSb real""]";
-                ////株価取得時間
-                //string getTimeXPath = @"//dd[@class=""yjSb real""]/span";
+                // ^DJI のボックスを特定して price 属性を読む
+                var box = doc.DocumentNode.SelectSingleNode("//div[@data-stocks--favorite-stock-code-value='^DJI']");
+                if (box == null) throw new Exception("DJI block not found");
 
-                var stock = doc.DocumentNode.SelectSingleNode(pricePath);
-                var time = doc.DocumentNode.SelectSingleNode(getDateXPath);
-                //var time = doc.DocumentNode.SelectSingleNode(getTimeXPath);
-              
+                var priceRaw = box.GetAttributeValue("data-stocks--favorite-stock-price-value", null);
+                if (string.IsNullOrEmpty(priceRaw)) throw new Exception("price attribute is missing");
+
+                // 小数点と桁区切り対応
+                var price = decimal.Parse(priceRaw.Replace(",", ""));
+                // 仮の日時
                 var GetDowDate = DateTime.Now;
                 
-                return new DowPrice(decimal.Parse(stock.InnerText), GetDowDate, DateTime.Now);
+                return new DowPrice(price, GetDowDate, DateTime.Now);
             }
             catch (Exception e)
             {
