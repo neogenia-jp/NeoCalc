@@ -27,9 +27,12 @@ namespace CalcLib.Util
             var doc = new HtmlAgilityPack.HtmlDocument();
             var web = new System.Net.WebClient();
             web.Encoding = Encoding.UTF8;
+            web.Headers.Add("User-Agent",
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+                + "(KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36");
 
-            //Yahooファイナンスの株式ページURL
-            string urlText = "https://stocks.finance.yahoo.co.jp/stocks/detail/?code=^DJI";
+            //みんかぶDJIダウ工業株30種平均のURL
+            string urlText = "https://us.kabutan.jp/indexes/%5EDJI";
             var html = "";
 
             try
@@ -49,20 +52,31 @@ namespace CalcLib.Util
                 //webを通してHTMLのコード取得
                 doc.LoadHtml(html);
 
-                //ＮＹダウ平均のXPath
-                string pricePath = @"//td[@class=""stoksPrice""]";
-                //ＮＹダウ平均時間
-                string getDateXPath = @"//dd[@class=""yjSb real""]";
-                ////株価取得時間
-                //string getTimeXPath = @"//dd[@class=""yjSb real""]/span";
+                // ^DJI のボックスを特定して price 属性を読む
+                var box = doc.DocumentNode.SelectSingleNode("//div[@data-stocks--favorite-stock-code-value='^DJI']");
+                if (box == null) throw new Exception("DJI block not found");
 
-                var stock = doc.DocumentNode.SelectSingleNode(pricePath);
-                var time = doc.DocumentNode.SelectSingleNode(getDateXPath);
-                //var time = doc.DocumentNode.SelectSingleNode(getTimeXPath);
-              
-                var GetDowDate = NMethod(time.InnerText);
-                
-                return new DowPrice(decimal.Parse(stock.InnerText), GetDowDate, DateTime.Now);
+                var priceRaw = box.GetAttributeValue("data-stocks--favorite-stock-price-value", null);
+                if (string.IsNullOrEmpty(priceRaw)) throw new Exception("price attribute is missing");
+
+                // 小数点と桁区切り対応
+                var price = decimal.Parse(priceRaw.Replace(",", ""));
+                // 仮の日時
+                var GetDowDate = DateTime.Now;
+
+                // TODO: 時刻もスクレイピングする 現状、DateTime.Now を仮に入れている
+                // ＮＹダウ平均時間
+                // string getDateXPath = @"//dd[@class=""yjSb real""]";
+                // ////株価取得時間
+                // //string getTimeXPath = @"//dd[@class=""yjSb real""]/span";
+
+                // var stock = doc.DocumentNode.SelectSingleNode(pricePath);
+                // var time = doc.DocumentNode.SelectSingleNode(getDateXPath);
+                // //var time = doc.DocumentNode.SelectSingleNode(getTimeXPath);
+
+                // var GetDowDate = NMethod(time.InnerText);
+
+                return new DowPrice(price, GetDowDate, DateTime.Now);
             }
             catch (Exception e)
             {
