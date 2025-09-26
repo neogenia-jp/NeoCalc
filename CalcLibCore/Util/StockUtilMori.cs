@@ -25,13 +25,8 @@ namespace CalcLib.Util
                 "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
             + "(KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36");
 
-            // https://minkabu.jp/stock/100000018 日経平均
-            // https://us.kabutan.jp/indexes/%5EDJI ＮＹダウ
-            // みんかぶの株式ページURL
-            string URLText = "https://minkabu.jp/stock/100000018";
-            //証券コードをURLに追加
-            // みんかぶの株式ページURL
-            URLText = $"https://minkabu.jp/stock/{code}";
+            // みんかぶのURLに証券コードを追加
+            string URLText = $"https://minkabu.jp/stock/{code}";
 
             var html = "";
 
@@ -74,9 +69,6 @@ namespace CalcLib.Util
         /// <returns>株価情報</returns>
         public static DowPrice GetDowPrice()
         {
-            // スクレイピングせず仮の値を返す
-            // return new DowPrice(decimal.Parse("45,757.90"),  DateTime.Now, DateTime.Now);
-            
             //HTMLのコードを文書として保存
             var doc = new HtmlAgilityPack.HtmlDocument();
             var web = new System.Net.WebClient();
