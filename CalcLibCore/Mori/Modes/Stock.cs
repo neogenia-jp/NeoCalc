@@ -38,7 +38,7 @@ namespace CalcLib.Mori
             try
             {
                 var stockPrice = StockUtilMori.GetStockPrice(text);
-                _main = $"[{stockPrice.Code}] {stockPrice.Price.ToString("#,0")} JPY";
+                _main = $"[{stockPrice.Code}] {stockPrice.Price.ToString("#,0.00")} JPY";
                 _sub = BuildDateTimeText();
                 _hasGetPrice = true;
                 _currentCode = stockPrice.Code;
@@ -91,7 +91,7 @@ namespace CalcLib.Mori
                 else
                 {
                     var sp = StockUtilMori.GetStockPrice(_currentCode);
-                    _main = $"[{sp.Code}] {sp.Price.ToString("#,0")} JPY";
+                    _main = $"[{sp.Code}] {sp.Price.ToString("#,0.00")} JPY";
                 }
                 _sub = BuildDateTimeText();
                 _hasGetPrice = true;
