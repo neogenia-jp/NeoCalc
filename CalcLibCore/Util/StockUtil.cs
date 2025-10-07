@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using HtmlAgilityPack;
+using System.Text.RegularExpressions;
 
 namespace CalcLib.Util
 {
@@ -32,10 +33,17 @@ namespace CalcLib.Util
             var doc = new HtmlAgilityPack.HtmlDocument();
             var web = new System.Net.WebClient();
 
-            //Yahooファイナンスの株式ページURL
-            string URLText = "https://stocks.finance.yahoo.co.jp/stocks/detail/?code=";
+            // User-Agentヘッダーを追加（みんかぶはこれが必要）
+            web.Headers.Add("User-Agent",
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+            + "(KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36");
+
+            // みんかぶの日経平均URL
+            // string URLText = "https://minkabu.jp/stock/100000018";
+
             //証券コードをURLに追加
-            URLText += code;
+            // みんかぶの株式ページURL
+            string URLText = $"https://minkabu.jp/stock/{code}";
 
             var html = "";
 
@@ -56,15 +64,18 @@ namespace CalcLib.Util
                 doc.LoadHtml(html);
 
                 //株価を示す部分をXPathで指定
-                string xPath = @"//td[@class=""stoksPrice""]";
-
+                string xPath = @"//div[@class=""stock_price""]";
+                
                 var stock = doc.DocumentNode.SelectSingleNode(xPath);
+                string stockText = stock.InnerText;
+                string cleaned = Regex.Replace(stockText, @"[^\d.,]", "");
 
-                return new StockPrice(code, decimal.Parse(stock.InnerText), DateTime.Now);
+                return new StockPrice(code, decimal.Parse(cleaned), DateTime.Now);
             }
             catch (Exception e)
             {
-                throw new ApplicationException("エラーが発生しました", e) {
+                throw new ApplicationException("エラーが発生しました", e)
+                {
                     Data = { { "エラー種別", "SCRAPING ERROR" } }
                 };
             }
