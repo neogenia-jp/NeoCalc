@@ -17,4 +17,3 @@ namespace CalcLib.Mori.Display
         }
     }
 }
-

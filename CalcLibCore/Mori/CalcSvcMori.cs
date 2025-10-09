@@ -19,6 +19,7 @@ namespace CalcLib
             return num switch
             {
                 2 => "omikuji",
+                3 => "stock",
                 _ => null
             };
         }
@@ -30,8 +31,8 @@ namespace CalcLib
                 Debug.WriteLine("Context is not CalcContext type");
                 return;
             }
-            var cmd = ButtonCommandFactory.Create(btn);
-            cmd.Execute(ctx);
+            // ButtonCommandは廃止直接 contextへbtnを渡す
+            ctx.Accept(btn);
         }
     }
 }
